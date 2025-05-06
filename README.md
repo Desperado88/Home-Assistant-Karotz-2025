@@ -31,7 +31,7 @@ Redémarre Home Assistant depuis Paramètres → Système → Redémarrer.
 
 🧠 API Karotz
 Tu peux consulter l’ensemble des commandes disponibles via l’API OpenKarotz ici :
-👉 Documentation API OpenKarotz
+👉 [Documentation API OpenKarotz](https://www.openkarotz.org/api/)
 
 ✅ Fonctionnalités incluses
 
