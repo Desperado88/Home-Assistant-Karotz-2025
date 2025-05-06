@@ -1,0 +1,334 @@
+#! /usr/bin/python
+
+import os
+import sys
+import time
+import simplejson as json
+
+os.system("killall led")
+os.system("/karotz/bin/led -l 00FFFF -p 000000 -d 700 &")
+time.sleep(1)
+
+success = False
+
+sys.path.append("/usr/scripts")
+sys.path.append("/karotz/scripts")
+
+path = "/mnt/usbkey/"
+#path = "/usr/"
+
+def SAY(sentence,block=0):
+  cmd = "LD_LIBRARY_PATH=/tmp /tmp/madplay /tmp/" + sentence+".mp3"
+  if block : cmd +='&'
+  os.system(cmd)
+
+def SAYLOOP(sentence,wait):
+  cmd = "LD_LIBRARY_PATH=/tmp /tmp/madplay /tmp/" + sentence+".mp3\n"
+  g = open("/tmp/loop.sh","w")
+  g.write("while :\ndo\n"+cmd+"sleep "+str(wait)+"\ndone\n")
+  g.close()
+  os.system("chmod 755 /tmp/loop.sh")
+  os.system("echo  \"::once:/bin/sh /tmp/loop.sh\" >> /etc/inittab")
+
+def SAYLOOPDEMO(sentence,wait):
+  cmd = "LD_LIBRARY_PATH=/tmp /tmp/madplay /tmp/" + sentence+".mp3 &\n"
+  os.system("chmod 755 /tmp/demo.sh")
+
+  g = open("/tmp/loop.sh","w")
+  g.write("/bin/mknod /dev/rabbit_button c 52 0\ncat /dev/rabbit_button\nwhile :\ndo\n"+cmd
+  +"x=0\nwhile [ $x -le "+str(wait)+" ]\ndo\nsleep 1\n"
+  +"BUTTON=`cat /dev/rabbit_button`\n"
+  +"[ \"$BUTTON\" == \"\" ] || /bin/bash /tmp/demo.sh\n"
+  +"x=$(( $x + 1 ))\ndone\ndone\n")
+  g.close()
+  os.system("chmod 755 /tmp/loop.sh")
+  os.system("echo  \"::once:/bin/sh /tmp/loop.sh\" >> /etc/inittab")
+  
+
+def match(line,keyword):
+    """If the first part of line (modulo blanks) matches keyword,
+    returns the end of that line. Otherwise returns None"""
+    line=line.strip()
+    length=len(keyword)
+    if line[:length] == keyword:
+        return line[length:]
+    else:
+        return None
+
+def matching_line(lines, keyword):
+    """Returns the first matching line in a list of lines. See match()"""
+    for line in lines:
+        matching=match(line,keyword)
+        if matching!=None:
+            return matching
+    return None
+
+def detect(line, keyword):
+    line=line.lstrip()
+    length=len(keyword)
+    if line[:length] == keyword:
+        return 1
+    else:
+        return 0
+
+def get_encryption(cell):
+    enc=""
+    if matching_line(cell,"Encryption key:") == "off":
+        enc="none"
+    else:
+        for line in cell:
+            matching = match(line,"IE:")
+            if matching!=None:
+                if detect(matching, "WPA Version"):
+                    enc="wpa"
+                if detect(matching, "IEEE 802.11i/WPA2 Version"):
+                    enc="wpa2"
+        if enc=="":
+            enc="wep"
+    return enc
+
+def iwlist():
+  os.system("ifconfig wlan0 up")
+  list = os.popen("iwlist wlan0 scan")
+  tab = list.readlines()
+  list.close()
+  i=0
+  cells = {}
+  while i < len(tab):
+    try:
+      essid = match(tab[i],"ESSID:")[1:-1]
+      print essid
+      cells[essid]=[]
+      i = i+1
+      while match(tab[i],"Cell ") == None and i < len(tab):
+        cells[essid].append(tab[i].strip())
+        i = i+1
+    except:
+      i=i  
+    i=i+1
+  return cells
+
+def genNetworkConf(enc,essid,pswd):
+  print "genNetworkConf " + enc +" "+  essid +" "+ pswd
+  ret = ""
+  if enc == "none" or enc == "wep":
+    if enc == "none": enc = "open"
+    if enc == "wep":
+      if len(pswd) == 5 or len(pswd) == 13:
+        pwd2=""
+        for i in pswd:
+          pwd2+= "%X" % ord(i)
+        pswd = pwd2
+    ret = '{"cmd":"set_wifi","encryption":"'+enc+'","ssid":"'+essid+'","key":"'+pswd+'"}'
+  if enc == "wpa" or enc == "wpa2":
+    ret  ='{"cmd":"set_wifi","encryption":"'+enc+'","settings":{"scan_ssid":1,"key_mgmt":"WPA-PSK","ssid":"\\"'+essid+'\\"","psk":"\\"'+ pswd +'\\"","proto":"WPA RSN"},"ssid":"'+essid+'"}'
+  print ret
+  return ret
+
+ESSID = ""
+EXIT = 0;
+INSTALLTYPE = "wifi"
+try :
+  import config
+### extract and init system
+  f = open(path + "uuid.conf")
+  l = f.read()
+  ll = l.split('\n') 
+  UUID = ll[0]
+  f.close()
+
+  f = open(path + "network.conf")
+  l = f.read()
+  ll = l.split('\n') 
+  f.close()
+  #config.serialFileW = sys.stdout
+  os.system("rm "+path+"log.txt")
+  f = open(path+"log.txt","w")
+  config.serialFileW = f
+  config.serialFileW.write("START\n");
+  
+  #os.system("/tmp/sound/setmixer 100 0 80");
+  #os.system("LD_LIBRARY_PATH=/tmp /tmp/madplay /tmp/3freqamp.mp3");
+
+### begin wifi or ethernet connection
+
+  def network_connection(cmd ):
+    enc=""
+    pwd=""
+    global ESSID
+    global EXIT
+    global f
+    global INSTALLTYPE
+    if 'enc' in cmd: enc = cmd["enc"]
+    else: return {'response':'ERROR'}
+    if 'essid' in cmd: ESSID = cmd["essid"]; 
+    if 'pwd' in cmd: pwd  = cmd["pwd"];
+    
+    if enc == "auto": # auto essi pswdt
+      cells=iwlist()
+      if not ESSID in cells:
+        cells=iwlist()
+        if not ESSID in cells:
+          f.write("wrong essid " + ESSID)
+          SAY("essid_not_found")
+          sys.exit()
+      enc = get_encryption(cells[ESSID])
+      print enc
+      if enc == None:
+        print "encoding not found " + ESSID
+        SAY("essid_not_found")
+        sys.exit()
+
+    if enc in ['none','wep','wpa','wpa2']:   
+      line = genNetworkConf(enc,ESSID,pwd) 
+      f.write(line) 
+      f.flush() 
+      config.onReceivedLine(line)
+          
+    if enc == "eth0":
+      INSTALLTYPE = "eth"
+      f.write("ethernet dongle configuration") 
+      f.flush()
+      f.close()
+      f = open("/dev/null","w")
+      config.serialFileW = f
+      os.system("killall led")
+      os.system("/karotz/bin/led -l ffffff -p 000000 -d 700 &")
+      SAY("connect_ethernet")
+      os.system("ifconfig wlan0 up")
+      count=0
+      while os.system("ifconfig | grep eth0"):
+        time.sleep(0.5)
+        count += 1
+        if count == 10:
+            count = 0
+            SAY("connect_ethernet")
+
+      os.system("killall led")
+      os.system("/karotz/bin/led -l 00FFFF -p 000000 -d 800 &")
+      
+
+            
+  
+  config.onReceivedLine('{"cmd":"ping"}')
+  config.cmdTab["network_connection"]= network_connection
+  if 1:
+    lastcmd = ""
+    for line in ll:
+      print line
+      
+      f.write(line + "\n");
+      f.flush()
+      config.onReceivedLine(line)
+      if len(line) > 2: lastcmd = line 
+      time.sleep(1)
+      
+    os.system("killall led")
+    os.system("/karotz/bin/led -l 00FFFF -p 000000 -d 400 &")
+    #wait for connected
+    SAY("Karotz_SFX_OK")
+    SAY("connection_wifi")
+    timeout=15
+    nbTry=2
+    while 1:
+      timeout -= 1
+      if timeout <0:
+        timeout=4
+        if INSTALLTYPE == "wifi":
+          nbTry -= 1
+          if nbTry < 0:
+            sys.exit()
+          else :
+            SAY("Karotz_error")    
+            SAY("wifi_timeout")
+          cells=iwlist()
+          #print ESSID
+          if not ESSID in cells:
+            f.write("wrong essid " + ESSID + "\n")
+            SAY("essid_not_found")
+        else:
+          nbTry -= 1
+          if nbTry < 0:
+            sys.exit()
+          else :     
+            SAY("eth_timeout") 
+        
+      print 'cmd' + lastcmd
+      f.write(lastcmd + "\n");
+      f.flush()
+      time.sleep(2)
+      g = open("/tmp/tmpfile","w")
+      config.serialFileW = g 
+      config.onReceivedLine(lastcmd)
+      g.close()
+      g = open("/tmp/tmpfile","r")
+      s = g.read()
+      print s
+      f.write(s)
+      g.close()
+      if s.find(".") >= 0: break;
+  
+    SAY("wifi_ok")
+    config.serialFileW = f
+    time.sleep(2)
+    os.system("ifconfig wlan0 up")
+    try :
+      config.onReceivedLine('{"cmd":"get_id"}')
+    except:
+      print "exept1"
+    f.flush()
+    ID =config.__get_id()
+    f.write("ID "+ID + "\n");
+    f.flush()
+      
+    SIGN = os.popen('md5sum /karotz/etc/gpg/pubring.gpg').read().split()[0]
+    SUM = UUID+ID+SIGN
+    h = open("/tmp/tmpsign","w")
+    h.write(SUM)
+    h.close()
+    f.write("SUM")
+    f.flush()
+    FINALSIGN = os.popen('md5sum /tmp/tmpsign').read().split()[0]
+    f.write("FINALSIGN")
+    f.flush()
+    for c in UUID:
+      if c not in "0123456789abcdefABCDE-": 
+        raise 0
+      
+    f.write("REGISTERING")
+    f.flush()
+ 
+    PWD="OpenKarotz"
+
+    config.set_pass({'pwd':PWD})
+    os.system("sync")
+    f.write("SUCCESS")
+    f.flush()
+
+    success = True
+    os.system("killall led")
+    os.system("/karotz/bin/led -l 00FF00 -b 000000&")
+    SAY("Karotz_SFX_OK")
+    f.write("END2\n");
+    f.close()
+    if INSTALLTYPE == "wifi":
+      SAYLOOPDEMO("success",15)
+    else:
+      SAYLOOPDEMO("success_eth",15)
+    EXIT = 1  
+    sys.exit()
+except:
+  print "except"
+  print sys.exc_info()
+
+if EXIT == 0:
+  os.system("killall led")
+  os.system("/karotz/bin/led -l FF0000 -b 000000&") 
+  os.system("killall madplay") 
+  time.sleep(0.4)
+  print "Karotz_error"
+  SAY("Karotz_error")
+  SAYLOOP("error",15)
+
+
+
