@@ -1,62 +1,70 @@
+# Configuration des entrées textuelles pour le Nabaztag
 input_text:
   nabaztag_ip_address:
     name: Nabaztag Ip Address
-    initial: YOUR_IP
+    initial: "192.168.1.xxx"  # Adresse IP par défaut du Nabaztag
   nabaztag_color_1:
     name: Nabaztag Color 1
-    initial: ffff00
+    initial: "ffff00"  # Couleur primaire en hexadécimal (jaune)
   nabaztag_color_2:
     name: Nabaztag Color 2
-    initial: 000000
+    initial: "000000"  # Couleur secondaire en hexadécimal (noir)
 
+# État d'éveil du Nabaztag
 input_boolean:
   nabaztag_awake:
     initial: on
     
+# Configuration des contrôles numériques
 input_number:
   nabaztag_ear_left:
     name: Nabaztag Ear Left
     initial: 0
     min: 0
-    max: 16
+    max: 16  # Position maximale de l'oreille gauche
     step: 1
   nabaztag_ear_right:
     name: Nabaztag Ear Right
     initial: 0
     min: 0
-    max: 16
+    max: 16  # Position maximale de l'oreille droite
     step: 1
   nabaztag_light_speed:
     name: Nabaztag Light Speed
     initial: 700
     min: 0
-    max: 2000
+    max: 2000  # Vitesse maximale des effets lumineux
     step: 100
 
+# Groupement des contrôles Nabaztag
 group:
   nabaztag_utils:
     name: Nabaztag Utils
     entities:
       - script.nabaztag_moods
 
+# Scripts de contrôle du Nabaztag
 script:
-  nabaztag_moods:
-    alias: Talk!
+  nabaztag_moods: 
+    alias: "Talk!"  # Fait parler le Nabaztag
     sequence:
-      - service: rest_command.nabaztag_moods
+      - action: rest_command.nabaztag_moods
+
   nabaztag_wakeup:
-    alias: Wake Up
+    alias: "Wake Up"  # Réveille le Nabaztag
     sequence:
-      - service: rest_command.nabaztag_wakeup
-      - service: rest_command.nabaztag_light
+      - action: rest_command.nabaztag_wakeup
+      - action: rest_command.nabaztag_light
+
   nabaztag_sleep:
-    alias: Sleep
+    alias: "Sleep"  # Met le Nabaztag en veille
     sequence:
-      - service: rest_command.nabaztag_sleep
-      - service: input_boolean.turn_off
-        data:
+      - action: rest_command.nabaztag_sleep
+      - action: input_boolean.turn_off
+        target:
           entity_id: input_boolean.nabaztag_awake
 
+# Interrupteur template pour contrôler l'état d'éveil
 switch:
   - platform: template
     switches:
@@ -64,12 +72,16 @@ switch:
         friendly_name: "Éveillé"
         value_template: "{{ is_state('input_boolean.nabaztag_awake', 'on') }}"
         turn_on:
-          - service: script.turn_on
+          action: script.turn_on
+          target:
             entity_id: script.nabaztag_wakeup
         turn_off:
-          - service: script.turn_on
+          action: script.turn_on
+          target:
             entity_id: script.nabaztag_sleep
 
+# Configuration des commandes REST pour contrôler le Nabaztag
+# source : https://www.openkarotz.org/api/
 rest_command:
   nabaztag_moods:
     url: "http://{{ states('input_text.nabaztag_ip_address') }}/cgi-bin/apps/moods"
@@ -83,71 +95,109 @@ rest_command:
     url: "http://{{ states('input_text.nabaztag_ip_address') }}/cgi-bin/ears?left={{ states('input_number.nabaztag_ear_left') }}&right={{ states('input_number.nabaztag_ear_right') }}&noreset=1"
   nabaztag_light:
     url: "http://{{ states('input_text.nabaztag_ip_address') }}/cgi-bin/leds?pulse=1&color={{ states('input_text.nabaztag_color_1') }}&speed={{ states('input_number.nabaztag_light_speed') }}&color2={{ states('input_text.nabaztag_color_2') }}"
-    
+# ajout du TTS
+  nabaztag_say:
+    url: "http://{{ states('input_text.nabaztag_ip_address') }}/cgi-bin/tts?voice=1&text={{ text }}&nocache=0"
+    method: get
+    content_type: "application/x-www-form-urlencoded"
+# ajout des sons
+# sounds : bip1,bling,flush,install_ok,jet1,laser_15,ready,rfid_error,rfid_ok,saut1,start,twang_01,twang_04,return":"0"
+  nabaztag_sound:
+    url: "http://{{ states('input_text.nabaztag_ip_address') }}/cgi-bin/sound?id={{ sound }}"
+
+# Capteur pour surveiller l'état de sommeil
 sensor:
   - platform: rest
-    resource: http://192.168.1.84/cgi-bin/status
+    resource: http://192.168.1.xxx/cgi-bin/status #IP du Karotz
     name: KarotzSleep
     value_template: '{{ value_json.sleep }}'
+
+# ajout de la liste des sons
+# input_select:
+#   nabaztag_sound_selector:
+#     name: Son du Karotz
+#     options:
+#       - bip1
+#       - bling
+#       - flush
+#       - install_ok
+#       - jet1
+#       - laser_15
+#       - ready
+#       - rfid_error
+#       - rfid_ok
+#       - saut1
+#       - start
+#       - twang_01
+#       - twang_04
+#     initial: ready
+
     
+# Automatisations
 automation:
-  - alias: Karotz on
+  # Gestion de l'état d'éveil
+  - alias: "Karotz on"
     trigger:
-      platform: state
-      entity_id: sensor.KarotzSleep
-      to: '0'
-    action:
-      - service: input_boolean.turn_on
-        entity_id: input_boolean.nabaztag_awake
-        
-  - alias: Karotz off
+      - trigger: state
+        entity_id: sensor.nabaztag_sleep
+        to: "0"
+    actions:
+      - action: input_boolean.turn_on
+        target:
+          entity_id: input_boolean.nabaztag_awake
+
+  - alias: "Karotz off"
     trigger:
-      platform: state
-      entity_id: sensor.KarotzSleep
+      trigger: state
+      entity_id: sensor.nabaztag_sleep
       to: '1'
-    action:
-      - service: input_boolean.turn_off
-        entity_id: input_boolean.nabaztag_awake
+    actions:
+      - action: input_boolean.turn_off
+        target:
+          entity_id: input_boolean.nabaztag_awake
 
-  - alias: Update nabaztag color 1
+  # Mise à jour des couleurs et effets lumineux
+  - alias: "Update nabaztag color 1"
     trigger:
-      - platform: state
-        entity_id: input_text.nabaztag_color_1
-    action:
-      - service: rest_command.nabaztag_light
+      trigger: state       
+      entity_id: input_text.nabaztag_color_1
+    actions:
+      - action: rest_command.nabaztag_light
 
-  - alias: Update nabaztag color 2
+  - alias: "Update nabaztag color 2"
     trigger:
-      - platform: state
+      - trigger: state
         entity_id: input_text.nabaztag_color_2
-    action:
-      - service: rest_command.nabaztag_light
+    actions:
+      - action: rest_command.nabaztag_light
 
-  - alias: Update nabaztag light speed
+  - alias: "Update nabaztag light speed"
     trigger:
-      - platform: state
+      - trigger: state
         entity_id: input_number.nabaztag_light_speed
-    action:
-      - service: rest_command.nabaztag_light
+    actions:
+      - action: rest_command.nabaztag_light
 
-  - alias: Update nabaztag ear left
+  # Mise à jour de la position des oreilles
+  - alias: "Update nabaztag ear left"
     trigger:
-      - platform: state
+      - trigger: state
         entity_id: input_number.nabaztag_ear_left
-    action:
-      - service: rest_command.nabaztag_ears
+    actions:
+      - action: rest_command.nabaztag_ears
 
-  - alias: Update nabaztag ear right
+  - alias: "Update nabaztag ear right"
     trigger:
-      - platform: state
+      - trigger: state
         entity_id: input_number.nabaztag_ear_right
-    action:
-      - service: rest_command.nabaztag_ears
-      
+    actions:
+      - action: rest_command.nabaztag_ears
+
+  # Automatisations basées sur la température
   - alias: Température sous -10
-    description: ''
+    description: 'Change la couleur en bleu foncé quand il fait très froid'
     trigger:
-    - platform: time_pattern
+    - trigger: time_pattern
       hours: '*'
       minutes: '/5'
       seconds: '0'
@@ -155,20 +205,20 @@ automation:
     - condition: numeric_state
       entity_id: sensor.weather_temperature
       below: -10
-    action:
-    - service: input_text.set_value
-      data_template:
+    actions:
+    - action: input_text.set_value
+      data:
         entity_id: input_text.nabaztag_color_1
-        value: "1a00ff"
-    - service: input_text.set_value
-      data_template:
+        value: "1a00ff"  # Bleu foncé
+    - action: input_text.set_value
+      data:
         entity_id: input_text.nabaztag_color_2
-        value: "000000"
+        value: "000000"  # Noir
       
   - alias: Température de -10 à 0
-    description: ''
+    description: 'Change la couleur en bleu clair pour les températures froides'
     trigger:
-    - platform: time_pattern
+    - trigger: time_pattern
       hours: '*'
       minutes: '/5'
       seconds: '0'
@@ -177,20 +227,20 @@ automation:
       entity_id: sensor.weather_temperature
       above: -10
       below: 0
-    action:
-    - service: input_text.set_value
-      data_template:
+    actions:
+    - action: input_text.set_value
+      data:
         entity_id: input_text.nabaztag_color_1
-        value: "003cff"
-    - service: input_text.set_value
-      data_template:
+        value: "003cff"  # Bleu clair
+    - action: input_text.set_value
+      data:
         entity_id: input_text.nabaztag_color_2
         value: "000000"
       
   - alias: Température de 0 à 10
-    description: ''
+    description: 'Change la couleur en vert pour les températures fraîches'
     trigger:
-    - platform: time_pattern
+    - trigger: time_pattern
       hours: '*'
       minutes: '/5'
       seconds: '0'
@@ -199,20 +249,20 @@ automation:
       entity_id: sensor.weather_temperature
       above: 0
       below: 10
-    action:
-    - service: input_text.set_value
-      data_template:
+    actions:
+    - action: input_text.set_value
+      data:
         entity_id: input_text.nabaztag_color_1
-        value: "00FF00"
-    - service: input_text.set_value
-      data_template:
+        value: "00FF00"  # Vert
+    - action: input_text.set_value
+      data:
         entity_id: input_text.nabaztag_color_2
         value: "000000"
       
   - alias: Température de 10 à 20
     description: ''
     trigger:
-    - platform: time_pattern
+    - trigger: time_pattern
       hours: '*'
       minutes: '/5'
       seconds: '0'
@@ -221,20 +271,20 @@ automation:
       entity_id: sensor.weather_temperature
       above: 10
       below: 20
-    action:
-    - service: input_text.set_value
-      data_template:
+    actions:
+    - action: input_text.set_value
+      data:
         entity_id: input_text.nabaztag_color_1
         value: "62ff00"
-    - service: input_text.set_value
-      data_template:
+    - action: input_text.set_value
+      data:
         entity_id: input_text.nabaztag_color_2
         value: "000000"
       
   - alias: Température de 20 à 30
     description: ''
     trigger:
-    - platform: time_pattern
+    - trigger: time_pattern
       hours: '*'
       minutes: '/5'
       seconds: '0'
@@ -243,20 +293,20 @@ automation:
       entity_id: sensor.weather_temperature
       above: 20
       below: 30
-    action:
-    - service: input_text.set_value
-      data_template:
+    actions:
+    - action: input_text.set_value
+      data:
         entity_id: input_text.nabaztag_color_1
         value: "ff9100"
-    - service: input_text.set_value
-      data_template:
+    - action: input_text.set_value
+      data:
         entity_id: input_text.nabaztag_color_2
         value: "000000"
       
   - alias: Température supérieure à 30
     description: ''
     trigger:
-    - platform: time_pattern
+    - trigger: time_pattern
       hours: '*'
       minutes: '/5'
       seconds: '0'
@@ -264,20 +314,21 @@ automation:
     - condition: numeric_state
       entity_id: sensor.weather_temperature
       above: 30
-    action:
-    - service: input_text.set_value
-      data_template:
+    actions:
+    - action: input_text.set_value
+      data:
         entity_id: input_text.nabaztag_color_1
         value: "ff0000"
-    - service: input_text.set_value
-      data_template:
+    - action: input_text.set_value
+      data:
         entity_id: input_text.nabaztag_color_2
         value: "000000"
       
+  # Automatisations basées sur les risques de pluie
   - alias: Risque de pluie < 40%
-    description: ''
+    description: 'Mouvements aléatoires des oreilles pour faible risque de pluie'
     trigger:
-    - platform: time_pattern
+    - trigger: time_pattern
       hours: '*'
       minutes: '/15'
       seconds: '0'
@@ -286,13 +337,13 @@ automation:
       entity_id: sensor.weather_rain_chance
       above: 10
       below: 40
-    action:
-    - service: rest_command.nabaztag_ears_random
+    actions:
+    - action: rest_command.nabaztag_ears_random
       
   - alias: Risque de pluie de 40% à 60%
     description: ''
     trigger:
-    - platform: time_pattern
+    - trigger: time_pattern
       hours: '*'
       minutes: '/5'
       seconds: '0'
@@ -301,20 +352,20 @@ automation:
       entity_id: sensor.weather_rain_chance
       above: 40
       below: 60
-    action:
-    - service: input_number.set_value
-      data_template:
+    actions:
+    - action: input_number.set_value
+      data:
         entity_id: input_number.nabaztag_ear_left
         value: 15
-    - service: input_number.set_value
-      data_template:
+    - action: input_number.set_value
+      data:
         entity_id: input_number.nabaztag_ear_right
         value: 1
       
   - alias: Risque de pluie > 60%
     description: ''
     trigger:
-    - platform: time_pattern
+    - trigger: time_pattern
       hours: '*'
       minutes: '/5'
       seconds: '0'
@@ -322,20 +373,21 @@ automation:
     - condition: numeric_state
       entity_id: sensor.weather_rain_chance
       above: 60
-    action:
-    - service: input_number.set_value
-      data_template:
+    actions:
+    - action: input_number.set_value
+      data:
         entity_id: input_number.nabaztag_ear_left
         value: 9
-    - service: input_number.set_value
-      data_template:
+    - action: input_number.set_value
+      data:
         entity_id: input_number.nabaztag_ear_right
         value: 13
       
+  # Automatisations basées sur la vitesse du vent
   - alias: Wind 0
-    description: ''
+    description: 'Vitesse de clignotement très lente pour vent calme'
     trigger:
-    - platform: time_pattern
+    - trigger: time_pattern
       hours: '*'
       minutes: '/5'
       seconds: '0'
@@ -343,16 +395,16 @@ automation:
     - condition: numeric_state
       entity_id: sensor.weather_wind_speed
       below: 1
-    action:
-    - service: input_number.set_value
-      data_template:
+    actions:
+    - action: input_number.set_value
+      data:
         entity_id: input_number.nabaztag_light_speed
-        value: 2000
-      
+        value: 2000  # Clignotement très lent
+
   - alias: Wind 1
     description: ''
     trigger:
-    - platform: time_pattern
+    - trigger: time_pattern
       hours: '*'
       minutes: '/5'
       seconds: '0'
@@ -361,16 +413,16 @@ automation:
       entity_id: sensor.weather_wind_speed
       above: 1
       below: 5
-    action:
-    - service: input_number.set_value
-      data_template:
+    actions:
+    - action: input_number.set_value
+      data:
         entity_id: input_number.nabaztag_light_speed
         value: 1834
       
   - alias: Wind 2
     description: ''
     trigger:
-    - platform: time_pattern
+    - trigger: time_pattern
       hours: '*'
       minutes: '/5'
       seconds: '0'
@@ -379,16 +431,16 @@ automation:
       entity_id: sensor.weather_wind_speed
       above: 6
       below: 11
-    action:
-    - service: input_number.set_value
-      data_template:
+    actions:
+    - action: input_number.set_value
+      data:
         entity_id: input_number.nabaztag_light_speed
         value: 1668
       
   - alias: Wind 3
     description: ''
     trigger:
-    - platform: time_pattern
+    - trigger: time_pattern
       hours: '*'
       minutes: '/5'
       seconds: '0'
@@ -397,16 +449,16 @@ automation:
       entity_id: sensor.weather_wind_speed
       above: 12
       below: 19
-    action:
-    - service: input_number.set_value
-      data_template:
+    actions:
+    - action: input_number.set_value
+      data:
         entity_id: input_number.nabaztag_light_speed
         value: 1502
       
   - alias: Wind 4
     description: ''
     trigger:
-    - platform: time_pattern
+    - trigger: time_pattern
       hours: '*'
       minutes: '/5'
       seconds: '0'
@@ -415,16 +467,16 @@ automation:
       entity_id: sensor.weather_wind_speed
       above: 20
       below: 28
-    action:
-    - service: input_number.set_value
-      data_template:
+    actions:
+    - action: input_number.set_value
+      data:
         entity_id: input_number.nabaztag_light_speed
         value: 1336
       
   - alias: Wind 5
     description: ''
     trigger:
-    - platform: time_pattern
+    - trigger: time_pattern
       hours: '*'
       minutes: '/5'
       seconds: '0'
@@ -433,16 +485,16 @@ automation:
       entity_id: sensor.weather_wind_speed
       above: 29
       below: 38
-    action:
-    - service: input_number.set_value
-      data_template:
+    actions:
+    - action: input_number.set_value
+      data:
         entity_id: input_number.nabaztag_light_speed
         value: 1170
       
   - alias: Wind 6
     description: ''
     trigger:
-    - platform: time_pattern
+    - trigger: time_pattern
       hours: '*'
       minutes: '/5'
       seconds: '0'
@@ -451,16 +503,16 @@ automation:
       entity_id: sensor.weather_wind_speed
       above: 39
       below: 49
-    action:
-    - service: input_number.set_value
-      data_template:
+    actions:
+    - action: input_number.set_value
+      data:
         entity_id: input_number.nabaztag_light_speed
         value: 1004
       
   - alias: Wind 7
     description: ''
     trigger:
-    - platform: time_pattern
+    - trigger: time_pattern
       hours: '*'
       minutes: '/5'
       seconds: '0'
@@ -469,16 +521,16 @@ automation:
       entity_id: sensor.weather_wind_speed
       above: 50
       below: 61
-    action:
-    - service: input_number.set_value
-      data_template:
+    actions:
+    - action: input_number.set_value
+      data:
         entity_id: input_number.nabaztag_light_speed
         value: 838
       
   - alias: Wind 8
     description: ''
     trigger:
-    - platform: time_pattern
+    - trigger: time_pattern
       hours: '*'
       minutes: '/5'
       seconds: '0'
@@ -487,16 +539,16 @@ automation:
       entity_id: sensor.weather_wind_speed
       above: 62
       below: 74
-    action:
-    - service: input_number.set_value
-      data_template:
+    actions:
+    - action: input_number.set_value
+      data:
         entity_id: input_number.nabaztag_light_speed
         value: 672
       
   - alias: Wind 9
     description: ''
     trigger:
-    - platform: time_pattern
+    - trigger: time_pattern
       hours: '*'
       minutes: '/5'
       seconds: '0'
@@ -505,16 +557,16 @@ automation:
       entity_id: sensor.weather_wind_speed
       above: 75
       below: 88
-    action:
-    - service: input_number.set_value
-      data_template:
+    actions:
+    - action: input_number.set_value
+      data:
         entity_id: input_number.nabaztag_light_speed
         value: 506
       
   - alias: Wind 10
     description: ''
     trigger:
-    - platform: time_pattern
+    - trigger: time_pattern
       hours: '*'
       minutes: '/5'
       seconds: '0'
@@ -523,16 +575,16 @@ automation:
       entity_id: sensor.weather_wind_speed
       above: 89
       below: 102
-    action:
-    - service: input_number.set_value
-      data_template:
+    actions:
+    - action: input_number.set_value
+      data:
         entity_id: input_number.nabaztag_light_speed
         value: 340
       
   - alias: Wind 11
     description: ''
     trigger:
-    - platform: time_pattern
+    - trigger: time_pattern
       hours: '*'
       minutes: '/5'
       seconds: '0'
@@ -541,16 +593,16 @@ automation:
       entity_id: sensor.weather_wind_speed
       above: 103
       below: 117
-    action:
-    - service: input_number.set_value
-      data_template:
+    actions:
+    - action: input_number.set_value
+      data:
         entity_id: input_number.nabaztag_light_speed
         value: 174
       
   - alias: Wind 12
     description: ''
     trigger:
-    - platform: time_pattern
+    - trigger: time_pattern
       hours: '*'
       minutes: '/5'
       seconds: '0'
@@ -558,8 +610,8 @@ automation:
     - condition: numeric_state
       entity_id: sensor.weather_wind_speed
       above: 118
-    action:
-    - service: input_number.set_value
-      data_template:
+    actions:
+    - action: input_number.set_value
+      data:
         entity_id: input_number.nabaztag_light_speed
         value: 8
