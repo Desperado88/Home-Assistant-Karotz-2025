@@ -95,20 +95,24 @@ rest_command:
     url: "http://{{ states('input_text.nabaztag_ip_address') }}/cgi-bin/ears?left={{ states('input_number.nabaztag_ear_left') }}&right={{ states('input_number.nabaztag_ear_right') }}&noreset=1"
   nabaztag_light:
     url: "http://{{ states('input_text.nabaztag_ip_address') }}/cgi-bin/leds?pulse=1&color={{ states('input_text.nabaztag_color_1') }}&speed={{ states('input_number.nabaztag_light_speed') }}&color2={{ states('input_text.nabaztag_color_2') }}"
+  nabaztag_light_fixed:
+    url: "http://{{ states('input_text.nabaztag_ip_address') }}/cgi-bin/leds?color={{ states('input_text.nabaztag_color_1') }}"
 # ajout du TTS
+# /cgi-bin/tts?voice=2&text=Bonjour les amis&nocache=undefined
   nabaztag_say:
-    url: "http://{{ states('input_text.nabaztag_ip_address') }}/cgi-bin/tts?voice=1&text={{ text }}&nocache=0"
-    method: get
-    content_type: "application/x-www-form-urlencoded"
+    url: "http://{{ states('input_text.nabaztag_ip_address') }}/cgi-bin/tts?voice=2&text={{ text }}&nocache=undefined"
+    # method: get
+    # content_type: "application/x-www-form-urlencoded"
 # ajout des sons
 # sounds : bip1,bling,flush,install_ok,jet1,laser_15,ready,rfid_error,rfid_ok,saut1,start,twang_01,twang_04,return":"0"
   nabaztag_sound:
     url: "http://{{ states('input_text.nabaztag_ip_address') }}/cgi-bin/sound?id={{ sound }}"
 
+
 # Capteur pour surveiller l'état de sommeil
 sensor:
   - platform: rest
-    resource: http://192.168.1.xxx/cgi-bin/status #IP du Karotz
+    resource: http://192.168.1.101/cgi-bin/status
     name: KarotzSleep
     value_template: '{{ value_json.sleep }}'
 
@@ -145,6 +149,9 @@ automation:
       - action: input_boolean.turn_on
         target:
           entity_id: input_boolean.nabaztag_awake
+      - action: rest_command.nabaztag_say
+        data:
+          text: Bonjour tous le monde !
 
   - alias: "Karotz off"
     trigger:
@@ -152,6 +159,9 @@ automation:
       entity_id: sensor.nabaztag_sleep
       to: '1'
     actions:
+      - action: rest_command.nabaztag_say
+        data:
+          text: Bonne nuit les petits !
       - action: input_boolean.turn_off
         target:
           entity_id: input_boolean.nabaztag_awake
@@ -203,8 +213,11 @@ automation:
       seconds: '0'
     condition:
     - condition: numeric_state
-      entity_id: sensor.weather_temperature
+      entity_id: sensor.weather_station_temperature_exterieur
       below: -10
+    - condition: time
+      after: "08:00:00"
+      before: "19:00:00"
     actions:
     - action: input_text.set_value
       data:
@@ -214,28 +227,9 @@ automation:
       data:
         entity_id: input_text.nabaztag_color_2
         value: "000000"  # Noir
-      
-  - alias: Température de -10 à 0
-    description: 'Change la couleur en bleu clair pour les températures froides'
-    trigger:
-    - trigger: time_pattern
-      hours: '*'
-      minutes: '/5'
-      seconds: '0'
-    condition:
-    - condition: numeric_state
-      entity_id: sensor.weather_temperature
-      above: -10
-      below: 0
-    actions:
-    - action: input_text.set_value
+    - action: rest_command.nabaztag_say
       data:
-        entity_id: input_text.nabaztag_color_1
-        value: "003cff"  # Bleu clair
-    - action: input_text.set_value
-      data:
-        entity_id: input_text.nabaztag_color_2
-        value: "000000"
+        text: Penssez a prendre vos moufles !
       
   - alias: Température de 0 à 10
     description: 'Change la couleur en vert pour les températures fraîches'
@@ -246,21 +240,27 @@ automation:
       seconds: '0'
     condition:
     - condition: numeric_state
-      entity_id: sensor.weather_temperature
+      entity_id: sensor.weather_station_temperature_exterieur
       above: 0
       below: 10
+    - condition: time
+      after: "08:00:00"
+      before: "19:00:00"
     actions:
     - action: input_text.set_value
       data:
         entity_id: input_text.nabaztag_color_1
-        value: "00FF00"  # Vert
+        value: "00FF00"  # Vert vif
     - action: input_text.set_value
       data:
         entity_id: input_text.nabaztag_color_2
         value: "000000"
-      
+    - action: rest_command.nabaztag_say
+      data:
+        text: J'ai les carotes geler !
+
   - alias: Température de 10 à 20
-    description: ''
+    description: 'Change la couleur en vert citron pour une température modérée'
     trigger:
     - trigger: time_pattern
       hours: '*'
@@ -268,21 +268,27 @@ automation:
       seconds: '0'
     condition:
     - condition: numeric_state
-      entity_id: sensor.weather_temperature
+      entity_id: sensor.weather_station_temperature_exterieur
       above: 10
       below: 20
+    - condition: time
+      after: "08:00:00"
+      before: "19:00:00"
     actions:
     - action: input_text.set_value
       data:
         entity_id: input_text.nabaztag_color_1
-        value: "62ff00"
+        value: "A6FF00"  # Vert citron
     - action: input_text.set_value
       data:
         entity_id: input_text.nabaztag_color_2
         value: "000000"
-      
+    - action: rest_command.nabaztag_say
+      data:
+        text: Brou, je garde mon manteau quand même !
+
   - alias: Température de 20 à 30
-    description: ''
+    description: 'Change la couleur en orange pour une température chaude'
     trigger:
     - trigger: time_pattern
       hours: '*'
@@ -290,21 +296,27 @@ automation:
       seconds: '0'
     condition:
     - condition: numeric_state
-      entity_id: sensor.weather_temperature
+      entity_id: sensor.weather_station_temperature_exterieur
       above: 20
       below: 30
+    - condition: time
+      after: "08:00:00"
+      before: "19:00:00"
     actions:
     - action: input_text.set_value
       data:
         entity_id: input_text.nabaztag_color_1
-        value: "ff9100"
+        value: "FF9100"  # Orange
     - action: input_text.set_value
       data:
         entity_id: input_text.nabaztag_color_2
         value: "000000"
-      
+    - action: rest_command.nabaztag_say
+      data:
+        text: Voila l'été, enfin !
+
   - alias: Température supérieure à 30
-    description: ''
+    description: 'Change la couleur en rouge pour une température très chaude'
     trigger:
     - trigger: time_pattern
       hours: '*'
@@ -312,17 +324,24 @@ automation:
       seconds: '0'
     condition:
     - condition: numeric_state
-      entity_id: sensor.weather_temperature
+      entity_id: sensor.weather_station_temperature_exterieur
       above: 30
+    - condition: time
+      after: "08:00:00"
+      before: "19:00:00"
     actions:
     - action: input_text.set_value
       data:
         entity_id: input_text.nabaztag_color_1
-        value: "ff0000"
+        value: "FF0000"  # Rouge vif
     - action: input_text.set_value
       data:
         entity_id: input_text.nabaztag_color_2
         value: "000000"
+    - action: rest_command.nabaztag_say
+      data:
+        text: Penssez a boire, il fait très chaud !
+
       
   # Automatisations basées sur les risques de pluie
   - alias: Risque de pluie < 40%
@@ -334,9 +353,12 @@ automation:
       seconds: '0'
     condition:
     - condition: numeric_state
-      entity_id: sensor.weather_rain_chance
+      entity_id: sensor.treillieres_rain_chance
       above: 10
       below: 40
+    - condition: time
+      after: "08:00:00"
+      before: "19:00:00"
     actions:
     - action: rest_command.nabaztag_ears_random
       
@@ -349,9 +371,12 @@ automation:
       seconds: '0'
     condition:
     - condition: numeric_state
-      entity_id: sensor.weather_rain_chance
+      entity_id: sensor.treillieres_rain_chance
       above: 40
       below: 60
+    - condition: time
+      after: "08:00:00"
+      before: "19:00:00"
     actions:
     - action: input_number.set_value
       data:
@@ -371,8 +396,11 @@ automation:
       seconds: '0'
     condition:
     - condition: numeric_state
-      entity_id: sensor.weather_rain_chance
+      entity_id: sensor.treillieres_rain_chance
       above: 60
+    - condition: time
+      after: "08:00:00"
+      before: "19:00:00"
     actions:
     - action: input_number.set_value
       data:
@@ -389,102 +417,136 @@ automation:
     trigger:
     - trigger: time_pattern
       hours: '*'
-      minutes: '/5'
+      minutes: '/6'
       seconds: '0'
     condition:
     - condition: numeric_state
-      entity_id: sensor.weather_wind_speed
+      entity_id: sensor.weather_station_vitesse_moyenne_du_vent_km_h
       below: 1
+    - condition: time
+      after: "08:00:00"
+      before: "19:00:00"
     actions:
     - action: input_number.set_value
       data:
         entity_id: input_number.nabaztag_light_speed
         value: 2000  # Clignotement très lent
+    - action: rest_command.nabaztag_say
+      data:
+        text: Pas un brin de vent !
+
 
   - alias: Wind 1
     description: ''
     trigger:
     - trigger: time_pattern
       hours: '*'
-      minutes: '/5'
+      minutes: '/6'
       seconds: '0'
     condition:
     - condition: numeric_state
-      entity_id: sensor.weather_wind_speed
+      entity_id: sensor.weather_station_vitesse_moyenne_du_vent_km_h
       above: 1
       below: 5
+    - condition: time
+      after: "08:00:00"
+      before: "19:00:00"
     actions:
     - action: input_number.set_value
       data:
         entity_id: input_number.nabaztag_light_speed
         value: 1834
+    - action: rest_command.nabaztag_say
+      data:
+        text: Ces pas aujourd'hui que je vais sortir le cerf-volant !
       
   - alias: Wind 2
     description: ''
     trigger:
     - trigger: time_pattern
       hours: '*'
-      minutes: '/5'
+      minutes: '/6'
       seconds: '0'
     condition:
     - condition: numeric_state
-      entity_id: sensor.weather_wind_speed
+      entity_id: sensor.weather_station_vitesse_moyenne_du_vent_km_h
       above: 6
       below: 11
+    - condition: time
+      after: "08:00:00"
+      before: "19:00:00"
     actions:
     - action: input_number.set_value
       data:
         entity_id: input_number.nabaztag_light_speed
         value: 1668
+    - action: rest_command.nabaztag_say
+      data:
+        text: Brou, j'ai les oreils qui s'ébourife !
       
   - alias: Wind 3
     description: ''
     trigger:
     - trigger: time_pattern
       hours: '*'
-      minutes: '/5'
+      minutes: '/6'
       seconds: '0'
     condition:
     - condition: numeric_state
-      entity_id: sensor.weather_wind_speed
+      entity_id: sensor.weather_station_vitesse_moyenne_du_vent_km_h
       above: 12
       below: 19
+    - condition: time
+      after: "08:00:00"
+      before: "19:00:00"
     actions:
     - action: input_number.set_value
       data:
         entity_id: input_number.nabaztag_light_speed
         value: 1502
+    - action: rest_command.nabaztag_say
+      data:
+        text: Hai, ça soufle un peu par ici !
       
   - alias: Wind 4
     description: ''
     trigger:
     - trigger: time_pattern
       hours: '*'
-      minutes: '/5'
+      minutes: '/6'
       seconds: '0'
     condition:
     - condition: numeric_state
-      entity_id: sensor.weather_wind_speed
+      entity_id: sensor.weather_station_vitesse_moyenne_du_vent_km_h
       above: 20
       below: 28
+    - condition: time
+      after: "08:00:00"
+      before: "19:00:00"
     actions:
     - action: input_number.set_value
       data:
         entity_id: input_number.nabaztag_light_speed
         value: 1336
+    - action: rest_command.nabaztag_say
+      data:
+        text: ha, le vent est bien réveillé !
       
   - alias: Wind 5
     description: ''
     trigger:
     - trigger: time_pattern
       hours: '*'
-      minutes: '/5'
+      minutes: '/6'
       seconds: '0'
     condition:
     - condition: numeric_state
-      entity_id: sensor.weather_wind_speed
+      entity_id: sensor.weather_station_vitesse_moyenne_du_vent_km_h
       above: 29
       below: 38
+    - condition: time
+      after: "08:00:00"
+      before: "19:00:00"
     actions:
     - action: input_number.set_value
       data:
@@ -496,122 +558,45 @@ automation:
     trigger:
     - trigger: time_pattern
       hours: '*'
-      minutes: '/5'
+      minutes: '/6'
       seconds: '0'
     condition:
     - condition: numeric_state
-      entity_id: sensor.weather_wind_speed
+      entity_id: sensor.weather_station_vitesse_moyenne_du_vent_km_h
       above: 39
       below: 49
+    - condition: time
+      after: "08:00:00"
+      before: "19:00:00"
     actions:
     - action: input_number.set_value
       data:
         entity_id: input_number.nabaztag_light_speed
         value: 1004
+    - action: rest_command.nabaztag_say
+      data:
+        text: Hou la la, je vais m'envoler !
       
   - alias: Wind 7
     description: ''
     trigger:
     - trigger: time_pattern
       hours: '*'
-      minutes: '/5'
+      minutes: '/6'
       seconds: '0'
     condition:
     - condition: numeric_state
-      entity_id: sensor.weather_wind_speed
+      entity_id: sensor.weather_station_vitesse_moyenne_du_vent_km_h
       above: 50
       below: 61
+    - condition: time
+      after: "08:00:00"
+      before: "19:00:00"
     actions:
     - action: input_number.set_value
       data:
         entity_id: input_number.nabaztag_light_speed
         value: 838
-      
-  - alias: Wind 8
-    description: ''
-    trigger:
-    - trigger: time_pattern
-      hours: '*'
-      minutes: '/5'
-      seconds: '0'
-    condition:
-    - condition: numeric_state
-      entity_id: sensor.weather_wind_speed
-      above: 62
-      below: 74
-    actions:
-    - action: input_number.set_value
+    - action: rest_command.nabaztag_say
       data:
-        entity_id: input_number.nabaztag_light_speed
-        value: 672
-      
-  - alias: Wind 9
-    description: ''
-    trigger:
-    - trigger: time_pattern
-      hours: '*'
-      minutes: '/5'
-      seconds: '0'
-    condition:
-    - condition: numeric_state
-      entity_id: sensor.weather_wind_speed
-      above: 75
-      below: 88
-    actions:
-    - action: input_number.set_value
-      data:
-        entity_id: input_number.nabaztag_light_speed
-        value: 506
-      
-  - alias: Wind 10
-    description: ''
-    trigger:
-    - trigger: time_pattern
-      hours: '*'
-      minutes: '/5'
-      seconds: '0'
-    condition:
-    - condition: numeric_state
-      entity_id: sensor.weather_wind_speed
-      above: 89
-      below: 102
-    actions:
-    - action: input_number.set_value
-      data:
-        entity_id: input_number.nabaztag_light_speed
-        value: 340
-      
-  - alias: Wind 11
-    description: ''
-    trigger:
-    - trigger: time_pattern
-      hours: '*'
-      minutes: '/5'
-      seconds: '0'
-    condition:
-    - condition: numeric_state
-      entity_id: sensor.weather_wind_speed
-      above: 103
-      below: 117
-    actions:
-    - action: input_number.set_value
-      data:
-        entity_id: input_number.nabaztag_light_speed
-        value: 174
-      
-  - alias: Wind 12
-    description: ''
-    trigger:
-    - trigger: time_pattern
-      hours: '*'
-      minutes: '/5'
-      seconds: '0'
-    condition:
-    - condition: numeric_state
-      entity_id: sensor.weather_wind_speed
-      above: 118
-    actions:
-    - action: input_number.set_value
-      data:
-        entity_id: input_number.nabaztag_light_speed
-        value: 8
+        text: Oai, bah la je rentre dans mon terrier tchao !
