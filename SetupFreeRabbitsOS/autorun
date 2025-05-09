@@ -1,0 +1,38 @@
+#!/bin/bash
+
+source /mnt/usbkey/functions.sh
+
+led_orange_pulse
+LOG ""
+LOG "Start USB Key FreeRabbits OS Setup"
+
+# Start
+LOG "Setup tools and play instructions"
+SetupTools
+CopySounds
+PlayUsbStartSound
+
+ROOTFS_VERSION="00.00.00.00"
+if [ -e /karotz/etc/rootfs_version ]; then
+    ROOTFS_VERSION=$(cat /karotz/etc/rootfs_version)
+fi
+LOG "Root Filesystem Version = ${ROOTFS_VERSION}"
+
+if [ "12.07.19.00" = ${ROOTFS_VERSION} ]; then
+    LOG "Root Filesystem is up-to-date"
+    LOG "Installing Network"
+    InstallNetwork
+    LOG "Installing Install-page"
+    InstallInstallPage
+    UpdateInittab
+else
+    LOG "Root Filesystem needs update"
+    PlayStartRootInstall
+    /mnt/usbkey/installfirmware.sh
+    PlayEndRootInstall
+    AddRebootToInittab
+fi
+
+# End
+LOG "End USB Key FreeRabbits OS Setup"
+sync
