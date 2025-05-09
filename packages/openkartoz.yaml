@@ -143,460 +143,373 @@ automation:
   - alias: "Karotz on"
     trigger:
       - trigger: state
-        entity_id: sensor.nabaztag_sleep
+        entity_id: sensor.karotz_sleep
         to: "0"
     actions:
       - action: input_boolean.turn_on
         target:
-          entity_id: input_boolean.nabaztag_awake
-      - action: rest_command.nabaztag_say
+          entity_id: input_boolean.karotz_awake
+      - action: rest_command.karotz_say
         data:
           text: Bonjour tous le monde !
 
   - alias: "Karotz off"
     trigger:
       trigger: state
-      entity_id: sensor.nabaztag_sleep
+      entity_id: sensor.karotz_sleep
       to: '1'
     actions:
-      - action: rest_command.nabaztag_say
+      - action: rest_command.karotz_say
         data:
           text: Bonne nuit les petits !
       - action: input_boolean.turn_off
         target:
-          entity_id: input_boolean.nabaztag_awake
+          entity_id: input_boolean.karotz_awake
 
   # Mise à jour des couleurs et effets lumineux
-  - alias: "Update nabaztag color 1"
+  - alias: "Update karotz color 1"
     trigger:
       trigger: state       
-      entity_id: input_text.nabaztag_color_1
+      entity_id: input_text.karotz_color_1
     actions:
-      - action: rest_command.nabaztag_light
+      - action: rest_command.karotz_light
 
-  - alias: "Update nabaztag color 2"
+  - alias: "Update karotz color 2"
     trigger:
       - trigger: state
-        entity_id: input_text.nabaztag_color_2
+        entity_id: input_text.karotz_color_2
     actions:
-      - action: rest_command.nabaztag_light
+      - action: rest_command.karotz_light
 
-  - alias: "Update nabaztag light speed"
+  - alias: "Update karotz light speed"
     trigger:
       - trigger: state
-        entity_id: input_number.nabaztag_light_speed
+        entity_id: input_number.karotz_light_speed
     actions:
-      - action: rest_command.nabaztag_light
+      - action: rest_command.karotz_light
 
   # Mise à jour de la position des oreilles
-  - alias: "Update nabaztag ear left"
+  - alias: "Update karotz ear left"
     trigger:
       - trigger: state
-        entity_id: input_number.nabaztag_ear_left
+        entity_id: input_number.karotz_ear_left
     actions:
-      - action: rest_command.nabaztag_ears
+      - action: rest_command.karotz_ears
 
-  - alias: "Update nabaztag ear right"
+  - alias: "Update karotz ear right"
     trigger:
       - trigger: state
-        entity_id: input_number.nabaztag_ear_right
+        entity_id: input_number.karotz_ear_right
     actions:
-      - action: rest_command.nabaztag_ears
-
-  # Automatisations basées sur la température
-  - alias: Température sous -10
-    description: 'Change la couleur en bleu foncé quand il fait très froid'
-    trigger:
-    - trigger: time_pattern
-      hours: '*'
-      minutes: '/5'
-      seconds: '0'
-    condition:
-    - condition: numeric_state
-      entity_id: sensor.weather_station_temperature_exterieur
-      below: -10
-    - condition: time
-      after: "08:00:00"
-      before: "19:00:00"
-    actions:
-    - action: input_text.set_value
-      data:
-        entity_id: input_text.nabaztag_color_1
-        value: "1a00ff"  # Bleu foncé
-    - action: input_text.set_value
-      data:
-        entity_id: input_text.nabaztag_color_2
-        value: "000000"  # Noir
-    - action: rest_command.nabaztag_say
-      data:
-        text: Penssez a prendre vos moufles !
+      - action: rest_command.karotz_ears
       
-  - alias: Température de 0 à 10
-    description: 'Change la couleur en vert pour les températures fraîches'
+# Automatisations basées sur les risques de pluie
+  - alias: Karotz - Mouvement des oreilles selon le risque de pluie
+    description: "Déplace les oreilles du Karotz et annonce une phrase selon le risque de pluie toutes les heures à la minute 5"
     trigger:
-    - trigger: time_pattern
-      hours: '*'
-      minutes: '/5'
-      seconds: '0'
-    condition:
-    - condition: numeric_state
-      entity_id: sensor.weather_station_temperature_exterieur
-      above: 0
-      below: 10
-    - condition: time
-      after: "08:00:00"
-      before: "19:00:00"
-    actions:
-    - action: input_text.set_value
-      data:
-        entity_id: input_text.nabaztag_color_1
-        value: "00FF00"  # Vert vif
-    - action: input_text.set_value
-      data:
-        entity_id: input_text.nabaztag_color_2
-        value: "000000"
-    - action: rest_command.nabaztag_say
-      data:
-        text: J'ai les carotes geler !
+      - trigger: time_pattern
+        hours: "*"
+        minutes: "5"
+        seconds: "0"
 
-  - alias: Température de 10 à 20
-    description: 'Change la couleur en vert citron pour une température modérée'
-    trigger:
-    - trigger: time_pattern
-      hours: '*'
-      minutes: '/5'
-      seconds: '0'
     condition:
-    - condition: numeric_state
-      entity_id: sensor.weather_station_temperature_exterieur
-      above: 10
-      below: 20
-    - condition: time
-      after: "08:00:00"
-      before: "19:00:00"
-    actions:
-    - action: input_text.set_value
-      data:
-        entity_id: input_text.nabaztag_color_1
-        value: "A6FF00"  # Vert citron
-    - action: input_text.set_value
-      data:
-        entity_id: input_text.nabaztag_color_2
-        value: "000000"
-    - action: rest_command.nabaztag_say
-      data:
-        text: Brou, je garde mon manteau quand même !
+      - condition: time
+        after: "08:00:00"
+        before: "19:00:00"
 
-  - alias: Température de 20 à 30
-    description: 'Change la couleur en orange pour une température chaude'
-    trigger:
-    - trigger: time_pattern
-      hours: '*'
-      minutes: '/5'
-      seconds: '0'
-    condition:
-    - condition: numeric_state
-      entity_id: sensor.weather_station_temperature_exterieur
-      above: 20
-      below: 30
-    - condition: time
-      after: "08:00:00"
-      before: "19:00:00"
     actions:
-    - action: input_text.set_value
-      data:
-        entity_id: input_text.nabaztag_color_1
-        value: "FF9100"  # Orange
-    - action: input_text.set_value
-      data:
-        entity_id: input_text.nabaztag_color_2
-        value: "000000"
-    - action: rest_command.nabaztag_say
-      data:
-        text: Voila l'été, enfin !
+      - choose:
+          - conditions:
+              - condition: numeric_state
+                entity_id: sensor.treillieres_rain_chance
+                above: 10
+                below: 40
+            sequence:
+              - action: input_number.set_value
+                data:
+                  entity_id: input_number.karotz_ear_left
+                  value: 16
+              - action: input_number.set_value
+                data:
+                  entity_id: input_number.karotz_ear_right
+                  value: 16
+              - action: rest_command.karotz_say
+                data:
+                  text: >
+                    Petit risque de pluie à {{ states('sensor.treillieres_rain_chance')|round(0) }}%. 
+                    Ça sent la balade tranquille ! Sauf si tu es un sucre...
 
-  - alias: Température supérieure à 30
-    description: 'Change la couleur en rouge pour une température très chaude'
-    trigger:
-    - trigger: time_pattern
-      hours: '*'
-      minutes: '/5'
-      seconds: '0'
-    condition:
-    - condition: numeric_state
-      entity_id: sensor.weather_station_temperature_exterieur
-      above: 30
-    - condition: time
-      after: "08:00:00"
-      before: "19:00:00"
-    actions:
-    - action: input_text.set_value
-      data:
-        entity_id: input_text.nabaztag_color_1
-        value: "FF0000"  # Rouge vif
-    - action: input_text.set_value
-      data:
-        entity_id: input_text.nabaztag_color_2
-        value: "000000"
-    - action: rest_command.nabaztag_say
-      data:
-        text: Penssez a boire, il fait très chaud !
+          - conditions:
+              - condition: numeric_state
+                entity_id: sensor.treillieres_rain_chance
+                above: 40
+                below: 60
+            sequence:
+              - action: input_number.set_value
+                data:
+                  entity_id: input_number.karotz_ear_left
+                  value: 10
+              - action: input_number.set_value
+                data:
+                  entity_id: input_number.karotz_ear_right
+                  value: 10
+              - action: rest_command.karotz_say
+                data:
+                  text: >
+                    Risque de pluie modéré à {{ states('sensor.treillieres_rain_chance')|round(0) }}%. 
+                    N'oublie pas ton parapluie... ou une capuche de secours, au cas où je t’arrose aussi !
 
-      
-  # Automatisations basées sur les risques de pluie
-  - alias: Risque de pluie < 40%
-    description: 'Mouvements aléatoires des oreilles pour faible risque de pluie'
-    trigger:
-    - trigger: time_pattern
-      hours: '*'
-      minutes: '/15'
-      seconds: '0'
-    condition:
-    - condition: numeric_state
-      entity_id: sensor.treillieres_rain_chance
-      above: 10
-      below: 40
-    - condition: time
-      after: "08:00:00"
-      before: "19:00:00"
-    actions:
-    - action: rest_command.nabaztag_ears_random
-      
-  - alias: Risque de pluie de 40% à 60%
-    description: ''
-    trigger:
-    - trigger: time_pattern
-      hours: '*'
-      minutes: '/5'
-      seconds: '0'
-    condition:
-    - condition: numeric_state
-      entity_id: sensor.treillieres_rain_chance
-      above: 40
-      below: 60
-    - condition: time
-      after: "08:00:00"
-      before: "19:00:00"
-    actions:
-    - action: input_number.set_value
-      data:
-        entity_id: input_number.nabaztag_ear_left
-        value: 15
-    - action: input_number.set_value
-      data:
-        entity_id: input_number.nabaztag_ear_right
-        value: 1
-      
-  - alias: Risque de pluie > 60%
-    description: ''
-    trigger:
-    - trigger: time_pattern
-      hours: '*'
-      minutes: '/5'
-      seconds: '0'
-    condition:
-    - condition: numeric_state
-      entity_id: sensor.treillieres_rain_chance
-      above: 60
-    - condition: time
-      after: "08:00:00"
-      before: "19:00:00"
-    actions:
-    - action: input_number.set_value
-      data:
-        entity_id: input_number.nabaztag_ear_left
-        value: 9
-    - action: input_number.set_value
-      data:
-        entity_id: input_number.nabaztag_ear_right
-        value: 13
-      
-  # Automatisations basées sur la vitesse du vent
-  - alias: Wind 0
-    description: 'Vitesse de clignotement très lente pour vent calme'
-    trigger:
-    - trigger: time_pattern
-      hours: '*'
-      minutes: '/6'
-      seconds: '0'
-    condition:
-    - condition: numeric_state
-      entity_id: sensor.weather_station_vitesse_moyenne_du_vent_km_h
-      below: 1
-    - condition: time
-      after: "08:00:00"
-      before: "19:00:00"
-    actions:
-    - action: input_number.set_value
-      data:
-        entity_id: input_number.nabaztag_light_speed
-        value: 2000  # Clignotement très lent
-    - action: rest_command.nabaztag_say
-      data:
-        text: Pas un brin de vent !
+          - conditions:
+              - condition: numeric_state
+                entity_id: sensor.treillieres_rain_chance
+                above: 60
+            sequence:
+              - action: input_number.set_value
+                data:
+                  entity_id: input_number.karotz_ear_left
+                  value: 6
+              - action: input_number.set_value
+                data:
+                  entity_id: input_number.karotz_ear_right
+                  value: 6
+              - action: rest_command.karotz_say
+                data:
+                  text: >
+                    Alerte pluie ! Le risque est à {{ states('sensor.treillieres_rain_chance')|round(0) }}%. 
+                    Sauve qui peut ! Ou au moins protège tes oreilles !
+    mode: single
 
 
-  - alias: Wind 1
-    description: ''
+
+# Automatisations basées sur la vitesse du vent
+  - alias: Karotz - Annonce Vitesse du Vent
+    description: "Annonce vocale et clignotement selon la vitesse du vent"
     trigger:
-    - trigger: time_pattern
-      hours: '*'
-      minutes: '/6'
-      seconds: '0'
+      - trigger: time_pattern
+        hours: "*"
+        minutes: "15"
+        seconds: "0"
+
     condition:
-    - condition: numeric_state
-      entity_id: sensor.weather_station_vitesse_moyenne_du_vent_km_h
-      above: 1
-      below: 5
-    - condition: time
-      after: "08:00:00"
-      before: "19:00:00"
+      - condition: time
+        after: "08:00:00"
+        before: "19:00:00"
+
     actions:
-    - action: input_number.set_value
-      data:
-        entity_id: input_number.nabaztag_light_speed
-        value: 1834
-    - action: rest_command.nabaztag_say
-      data:
-        text: Ces pas aujourd'hui que je vais sortir le cerf-volant !
-      
-  - alias: Wind 2
-    description: ''
+      - choose:
+        - conditions:
+            - condition: numeric_state
+              entity_id: sensor.weather_station_vitesse_moyenne_du_vent_km_h
+              below: 1
+          sequence:
+            - action: input_number.set_value
+              data:
+                entity_id: input_number.karotz_light_speed
+                value: 2000
+            - action: rest_command.karotz_say
+              data:
+                text: Pas un brin de vent ! Le vent souffle à {{ states('sensor.weather_station_vitesse_moyenne_du_vent_km_h')|round(1) }} KMH
+
+        - conditions:
+            - condition: numeric_state
+              entity_id: sensor.weather_station_vitesse_moyenne_du_vent_km_h
+              above: 1
+              below: 5
+          sequence:
+            - action: input_number.set_value
+              data:
+                entity_id: input_number.karotz_light_speed
+                value: 1834
+            - action: rest_command.karotz_say
+              data:
+                text: C’est pas aujourd’hui que je vais sortir le cerf-volant ! Le vent souffle à {{ states('sensor.weather_station_vitesse_moyenne_du_vent_km_h')|round(1) }} KMH
+
+        - conditions:
+            - condition: numeric_state
+              entity_id: sensor.weather_station_vitesse_moyenne_du_vent_km_h
+              above: 6
+              below: 11
+          sequence:
+            - action: input_number.set_value
+              data:
+                entity_id: input_number.karotz_light_speed
+                value: 1668
+            - action: rest_command.karotz_say
+              data:
+                text: Brou, j'ai les oreilles qui s’ébouriffent ! Le vent souffle à {{ states('sensor.weather_station_vitesse_moyenne_du_vent_km_h')|round(1) }} KMH
+
+        - conditions:
+            - condition: numeric_state
+              entity_id: sensor.weather_station_vitesse_moyenne_du_vent_km_h
+              above: 12
+              below: 19
+          sequence:
+            - action: input_number.set_value
+              data:
+                entity_id: input_number.karotz_light_speed
+                value: 1502
+            - action: rest_command.karotz_say
+              data:
+                text: Haï, ça souffle un peu par ici ! Le vent souffle à {{ states('sensor.weather_station_vitesse_moyenne_du_vent_km_h')|round(1) }} KMH
+
+        - conditions:
+            - condition: numeric_state
+              entity_id: sensor.weather_station_vitesse_moyenne_du_vent_km_h
+              above: 20
+              below: 28
+          sequence:
+            - action: input_number.set_value
+              data:
+                entity_id: input_number.karotz_light_speed
+                value: 1336
+            - action: rest_command.karotz_say
+              data:
+                text: Ah, le vent est bien réveillé ! Le vent souffle à {{ states('sensor.weather_station_vitesse_moyenne_du_vent_km_h')|round(1) }} KMH
+
+        - conditions:
+            - condition: numeric_state
+              entity_id: sensor.weather_station_vitesse_moyenne_du_vent_km_h
+              above: 29
+              below: 38
+          sequence:
+            - action: input_number.set_value
+              data:
+                entity_id: input_number.karotz_light_speed
+                value: 1170
+            - action: rest_command.karotz_say
+              data:
+                text: Hey, ça souffle ! Le vent souffle à {{ states('sensor.weather_station_vitesse_moyenne_du_vent_km_h')|round(1) }} KMH
+
+        - conditions:
+            - condition: numeric_state
+              entity_id: sensor.weather_station_vitesse_moyenne_du_vent_km_h
+              above: 39
+              below: 49
+          sequence:
+            - action: input_number.set_value
+              data:
+                entity_id: input_number.karotz_light_speed
+                value: 1004
+            - action: rest_command.karotz_say
+              data:
+                text: Hou là là, je vais m’envoler ! Le vent souffle à {{ states('sensor.weather_station_vitesse_moyenne_du_vent_km_h')|round(1) }} KMH
+
+        - conditions:
+            - condition: numeric_state
+              entity_id: sensor.weather_station_vitesse_moyenne_du_vent_km_h
+              above: 50
+              below: 61
+          sequence:
+            - action: input_number.set_value
+              data:
+                entity_id: input_number.karotz_light_speed
+                value: 838
+            - action: rest_command.karotz_say
+              data:
+                text: Ouaï, bah là je rentre dans mon terrier, tchao ! Le vent souffle à {{ states('sensor.weather_station_vitesse_moyenne_du_vent_km_h')|round(1) }} KMH
+    mode: single
+
+# Automatisations basées sur la température
+  - alias: Karotz - Couleur en fonction de la température
+    description: "Change la couleur et parle selon la température extérieure toutes les heures à la minute 35"
     trigger:
-    - trigger: time_pattern
-      hours: '*'
-      minutes: '/6'
-      seconds: '0'
+      - trigger: time_pattern
+        hours: "*"
+        minutes: "35"
+        seconds: "0"
+
     condition:
-    - condition: numeric_state
-      entity_id: sensor.weather_station_vitesse_moyenne_du_vent_km_h
-      above: 6
-      below: 11
-    - condition: time
-      after: "08:00:00"
-      before: "19:00:00"
-    actions:
-    - action: input_number.set_value
-      data:
-        entity_id: input_number.nabaztag_light_speed
-        value: 1668
-    - action: rest_command.nabaztag_say
-      data:
-        text: Brou, j'ai les oreils qui s'ébourife !
-      
-  - alias: Wind 3
-    description: ''
-    trigger:
-    - trigger: time_pattern
-      hours: '*'
-      minutes: '/6'
-      seconds: '0'
-    condition:
-    - condition: numeric_state
-      entity_id: sensor.weather_station_vitesse_moyenne_du_vent_km_h
-      above: 12
-      below: 19
-    - condition: time
-      after: "08:00:00"
-      before: "19:00:00"
-    actions:
-    - action: input_number.set_value
-      data:
-        entity_id: input_number.nabaztag_light_speed
-        value: 1502
-    - action: rest_command.nabaztag_say
-      data:
-        text: Hai, ça soufle un peu par ici !
-      
-  - alias: Wind 4
-    description: ''
-    trigger:
-    - trigger: time_pattern
-      hours: '*'
-      minutes: '/6'
-      seconds: '0'
-    condition:
-    - condition: numeric_state
-      entity_id: sensor.weather_station_vitesse_moyenne_du_vent_km_h
-      above: 20
-      below: 28
-    - condition: time
-      after: "08:00:00"
-      before: "19:00:00"
-    actions:
-    - action: input_number.set_value
-      data:
-        entity_id: input_number.nabaztag_light_speed
-        value: 1336
-    - action: rest_command.nabaztag_say
-      data:
-        text: ha, le vent est bien réveillé !
-      
-  - alias: Wind 5
-    description: ''
-    trigger:
-    - trigger: time_pattern
-      hours: '*'
-      minutes: '/6'
-      seconds: '0'
-    condition:
-    - condition: numeric_state
-      entity_id: sensor.weather_station_vitesse_moyenne_du_vent_km_h
-      above: 29
-      below: 38
-    - condition: time
-      after: "08:00:00"
-      before: "19:00:00"
-    actions:
-    - action: input_number.set_value
-      data:
-        entity_id: input_number.nabaztag_light_speed
-        value: 1170
-      
-  - alias: Wind 6
-    description: ''
-    trigger:
-    - trigger: time_pattern
-      hours: '*'
-      minutes: '/6'
-      seconds: '0'
-    condition:
-    - condition: numeric_state
-      entity_id: sensor.weather_station_vitesse_moyenne_du_vent_km_h
-      above: 39
-      below: 49
-    - condition: time
-      after: "08:00:00"
-      before: "19:00:00"
-    actions:
-    - action: input_number.set_value
-      data:
-        entity_id: input_number.nabaztag_light_speed
-        value: 1004
-    - action: rest_command.nabaztag_say
-      data:
-        text: Hou la la, je vais m'envoler !
-      
-  - alias: Wind 7
-    description: ''
-    trigger:
-    - trigger: time_pattern
-      hours: '*'
-      minutes: '/6'
-      seconds: '0'
-    condition:
-    - condition: numeric_state
-      entity_id: sensor.weather_station_vitesse_moyenne_du_vent_km_h
-      above: 50
-      below: 61
-    - condition: time
-      after: "08:00:00"
-      before: "19:00:00"
-    actions:
-    - action: input_number.set_value
-      data:
-        entity_id: input_number.nabaztag_light_speed
-        value: 838
-    - action: rest_command.nabaztag_say
-      data:
-        text: Oai, bah la je rentre dans mon terrier tchao !
+      - condition: time
+        after: "08:00:00"
+        before: "19:00:00"
+
+    action:
+      - choose:
+          - conditions:
+              - condition: numeric_state
+                entity_id: sensor.weather_station_temperature_exterieur
+                below: -10
+            sequence:
+              - action: input_text.set_value
+                data:
+                  entity_id: input_text.karotz_color_1
+                  value: "1a00ff"
+              - action: input_text.set_value
+                data:
+                  entity_id: input_text.karotz_color_2
+                  value: "000000"
+              - action: rest_command.karotz_say
+                data:
+                  text: Penssez a prendre vos moufles ! Il fait {{ states('sensor.pac_atom_temp_ext')|round(1) }} degrés.
+
+          - conditions:
+              - condition: numeric_state
+                entity_id: sensor.weather_station_temperature_exterieur
+                above: 0
+                below: 10
+            sequence:
+              - action: input_text.set_value
+                data:
+                  entity_id: input_text.karotz_color_1
+                  value: "00FF00"
+              - action: input_text.set_value
+                data:
+                  entity_id: input_text.karotz_color_2
+                  value: "000000"
+              - action: rest_command.karotz_say
+                data:
+                  text: J'ai les carotes geler ! Il fait {{ states('sensor.pac_atom_temp_ext')|round(1) }} degrés.
+
+          - conditions:
+              - condition: numeric_state
+                entity_id: sensor.weather_station_temperature_exterieur
+                above: 10
+                below: 20
+            sequence:
+              - action: input_text.set_value
+                data:
+                  entity_id: input_text.karotz_color_1
+                  value: "A6FF00"
+              - action: input_text.set_value
+                data:
+                  entity_id: input_text.karotz_color_2
+                  value: "000000"
+              - action: rest_command.karotz_say
+                data:
+                  text: Brou, je garde mon manteau quand même ! Il fait {{ states('sensor.pac_atom_temp_ext')|round(1) }} degrés.
+
+          - conditions:
+              - condition: numeric_state
+                entity_id: sensor.weather_station_temperature_exterieur
+                above: 20
+                below: 30
+            sequence:
+              - action: input_text.set_value
+                data:
+                  entity_id: input_text.karotz_color_1
+                  value: "FF9100"
+              - action: input_text.set_value
+                data:
+                  entity_id: input_text.karotz_color_2
+                  value: "000000"
+              - action: rest_command.karotz_say
+                data:
+                  text: Voila l'été, enfin ! Il fait {{ states('sensor.pac_atom_temp_ext')|round(1) }} degrés.
+
+          - conditions:
+              - condition: numeric_state
+                entity_id: sensor.weather_station_temperature_exterieur
+                above: 30
+            sequence:
+              - action: input_text.set_value
+                data:
+                  entity_id: input_text.karotz_color_1
+                  value: "FF0000"
+              - action: input_text.set_value
+                data:
+                  entity_id: input_text.karotz_color_2
+                  value: "000000"
+              - action: rest_command.karotz_say
+                data:
+                  text: Penssez a boire, il fait très chaud ! Il fait {{ states('sensor.pac_atom_temp_ext')|round(1) }} degrés.
+    mode: single
