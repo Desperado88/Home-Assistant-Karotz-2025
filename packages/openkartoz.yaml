@@ -80,46 +80,42 @@ switch:
           target:
             entity_id: script.nabaztag_sleep
 
-# Configuration des commandes REST pour contrôler le Nabaztag
+# Configuration des commandes REST pour contrôler le karotz
 # source : https://www.openkarotz.org/api/
 rest_command:
-  nabaztag_moods:
-    url: "http://{{ states('input_text.nabaztag_ip_address') }}/cgi-bin/apps/moods"
-  nabaztag_wakeup:
-    url: "http://{{ states('input_text.nabaztag_ip_address') }}/cgi-bin/wakeup?silent=1"
-  nabaztag_sleep:
-    url: "http://{{ states('input_text.nabaztag_ip_address') }}/cgi-bin/sleep"
-  nabaztag_ears_random:
-    url: "http://{{ states('input_text.nabaztag_ip_address') }}/cgi-bin/ears_random"
-  nabaztag_ears:
-    url: "http://{{ states('input_text.nabaztag_ip_address') }}/cgi-bin/ears?left={{ states('input_number.nabaztag_ear_left') }}&right={{ states('input_number.nabaztag_ear_right') }}&noreset=1"
-  nabaztag_light:
-    url: "http://{{ states('input_text.nabaztag_ip_address') }}/cgi-bin/leds?pulse=1&color={{ states('input_text.nabaztag_color_1') }}&speed={{ states('input_number.nabaztag_light_speed') }}&color2={{ states('input_text.nabaztag_color_2') }}"
-  nabaztag_light_fixed:
-    url: "http://{{ states('input_text.nabaztag_ip_address') }}/cgi-bin/leds?color={{ states('input_text.nabaztag_color_1') }}"
-# ajout du TTS
-# /cgi-bin/tts?voice=2&text=Bonjour les amis&nocache=undefined
-  nabaztag_say:
-    url: "http://{{ states('input_text.nabaztag_ip_address') }}/cgi-bin/tts?voice=2&text={{ text }}&nocache=undefined"
-    # method: get
-    # content_type: "application/x-www-form-urlencoded"
-# ajout des sons
+  karotz_moods:
+    url: "http://{{ states('input_text.karotz_ip_address') }}/cgi-bin/apps/moods" # dit une parole prés enregistrée aléatoire
+  karotz_moods_id:
+    url: "http://{{ states('input_text.karotz_ip_address') }}/cgi-bin/apps/moods?id={{ moods_id }}" # dit une parole près enregistrée 1 à 305
+  karotz_wakeup:
+    url: "http://{{ states('input_text.karotz_ip_address') }}/cgi-bin/wakeup?silent=1" # réveille en silence
+  karotz_sleep:
+    url: "http://{{ states('input_text.karotz_ip_address') }}/cgi-bin/sleep" # dormir
+  karotz_ears_random:
+    url: "http://{{ states('input_text.karotz_ip_address') }}/cgi-bin/ears_random" # position des oreilles alléatoires
+  karotz_ears:
+    url: "http://{{ states('input_text.karotz_ip_address') }}/cgi-bin/ears?left={{ states('input_number.karotz_ear_left') }}&right={{ states('input_number.karotz_ear_right') }}&noreset=1" # position des oreilles
+  karotz_light:
+    url: "http://{{ states('input_text.karotz_ip_address') }}/cgi-bin/leds?pulse=1&color={{ states('input_text.karotz_color_1') }}&speed={{ states('input_number.karotz_light_speed') }}&color2={{ states('input_text.karotz_color_2') }}" # allume la led et clignote
+  karotz_light_fixed:
+    url: "http://{{ states('input_text.karotz_ip_address') }}/cgi-bin/leds?color={{ states('input_text.karotz_color_1') }}" # allume la led fixe
+  karotz_say:
+    url: "http://{{ states('input_text.karotz_ip_address') }}/cgi-bin/tts?voice=2&text={{ text }}&nocache=undefined" # Text to speeck, dit un du text
+  karotz_sound:
+    url: "http://{{ states('input_text.karotz_ip_address') }}/cgi-bin/sound?id={{ sound }}" # jour un son près enregistré
 # sounds : bip1,bling,flush,install_ok,jet1,laser_15,ready,rfid_error,rfid_ok,saut1,start,twang_01,twang_04,return":"0"
-  nabaztag_sound:
-    url: "http://{{ states('input_text.nabaztag_ip_address') }}/cgi-bin/sound?id={{ sound }}"
-
 
 # Capteur pour surveiller l'état de sommeil
 sensor:
   - platform: rest
     resource: http://192.168.1.101/cgi-bin/status
-    name: KarotzSleep
+    name: karotzSleep
     value_template: '{{ value_json.sleep }}'
 
 # ajout de la liste des sons
 # input_select:
-#   nabaztag_sound_selector:
-#     name: Son du Karotz
+#   karotz_sound_selector:
+#     name: Son du karotz
 #     options:
 #       - bip1
 #       - bling
@@ -140,7 +136,7 @@ sensor:
 # Automatisations
 automation:
   # Gestion de l'état d'éveil
-  - alias: "Karotz on"
+  - alias: "karotz on"
     trigger:
       - trigger: state
         entity_id: sensor.karotz_sleep
@@ -153,7 +149,7 @@ automation:
         data:
           text: Bonjour tous le monde !
 
-  - alias: "Karotz off"
+  - alias: "karotz off"
     trigger:
       trigger: state
       entity_id: sensor.karotz_sleep
@@ -204,12 +200,12 @@ automation:
       - action: rest_command.karotz_ears
       
 # Automatisations basées sur les risques de pluie
-  - alias: Karotz - Mouvement des oreilles selon le risque de pluie
-    description: "Déplace les oreilles du Karotz et annonce une phrase selon le risque de pluie toutes les heures à la minute 5"
+  - alias: karotz - Mouvement des oreilles selon le risque de pluie
+    description: "Déplace les oreilles du karotz et annonce une phrase selon le risque de pluie toutes les heures à la minute 15"
     trigger:
       - trigger: time_pattern
         hours: "*"
-        minutes: "5"
+        minutes: "15"
         seconds: "0"
 
     condition:
@@ -282,12 +278,12 @@ automation:
 
 
 # Automatisations basées sur la vitesse du vent
-  - alias: Karotz - Annonce Vitesse du Vent
+  - alias: karotz - Annonce Vitesse du Vent
     description: "Annonce vocale et clignotement selon la vitesse du vent"
     trigger:
       - trigger: time_pattern
         hours: "*"
-        minutes: "15"
+        minutes: "30"
         seconds: "0"
 
     condition:
@@ -308,7 +304,7 @@ automation:
                 value: 2000
             - action: rest_command.karotz_say
               data:
-                text: Pas un brin de vent ! Le vent souffle à {{ states('sensor.weather_station_vitesse_moyenne_du_vent_km_h')|round(1) }} KMH
+                text: Pas un brin de vent ! Le vent souffle à {{ states('sensor.weather_station_vitesse_moyenne_du_vent_km_h')|round(0) }} KMH
 
         - conditions:
             - condition: numeric_state
@@ -322,7 +318,7 @@ automation:
                 value: 1834
             - action: rest_command.karotz_say
               data:
-                text: C’est pas aujourd’hui que je vais sortir le cerf-volant ! Le vent souffle à {{ states('sensor.weather_station_vitesse_moyenne_du_vent_km_h')|round(1) }} KMH
+                text: Le vent souffle à {{ states('sensor.weather_station_vitesse_moyenne_du_vent_km_h')|round(0) }} KMH. C’est pas aujourd’hui que je vais sortir le cerf-volant ! 
 
         - conditions:
             - condition: numeric_state
@@ -336,7 +332,7 @@ automation:
                 value: 1668
             - action: rest_command.karotz_say
               data:
-                text: Brou, j'ai les oreilles qui s’ébouriffent ! Le vent souffle à {{ states('sensor.weather_station_vitesse_moyenne_du_vent_km_h')|round(1) }} KMH
+                text: Le vent souffle à {{ states('sensor.weather_station_vitesse_moyenne_du_vent_km_h')|round(0) }} KMH. Brou, j'ai les oreilles qui s’ébouriffent !
 
         - conditions:
             - condition: numeric_state
@@ -350,7 +346,7 @@ automation:
                 value: 1502
             - action: rest_command.karotz_say
               data:
-                text: Haï, ça souffle un peu par ici ! Le vent souffle à {{ states('sensor.weather_station_vitesse_moyenne_du_vent_km_h')|round(1) }} KMH
+                text: Le vent souffle à {{ states('sensor.weather_station_vitesse_moyenne_du_vent_km_h')|round(0) }} KMH. Haï, ça souffle un peu par ici !
 
         - conditions:
             - condition: numeric_state
@@ -364,7 +360,7 @@ automation:
                 value: 1336
             - action: rest_command.karotz_say
               data:
-                text: Ah, le vent est bien réveillé ! Le vent souffle à {{ states('sensor.weather_station_vitesse_moyenne_du_vent_km_h')|round(1) }} KMH
+                text: Le vent souffle à {{ states('sensor.weather_station_vitesse_moyenne_du_vent_km_h')|round(0) }} KMH. Ah, le vent est bien réveillé ! 
 
         - conditions:
             - condition: numeric_state
@@ -378,7 +374,7 @@ automation:
                 value: 1170
             - action: rest_command.karotz_say
               data:
-                text: Hey, ça souffle ! Le vent souffle à {{ states('sensor.weather_station_vitesse_moyenne_du_vent_km_h')|round(1) }} KMH
+                text: Le vent souffle à {{ states('sensor.weather_station_vitesse_moyenne_du_vent_km_h')|round(0) }} KMH. Hey, ça souffle !
 
         - conditions:
             - condition: numeric_state
@@ -392,7 +388,7 @@ automation:
                 value: 1004
             - action: rest_command.karotz_say
               data:
-                text: Hou là là, je vais m’envoler ! Le vent souffle à {{ states('sensor.weather_station_vitesse_moyenne_du_vent_km_h')|round(1) }} KMH
+                text: Le vent souffle à {{ states('sensor.weather_station_vitesse_moyenne_du_vent_km_h')|round(0) }} KMH. Hou là là, je vais m’envoler !
 
         - conditions:
             - condition: numeric_state
@@ -406,16 +402,16 @@ automation:
                 value: 838
             - action: rest_command.karotz_say
               data:
-                text: Ouaï, bah là je rentre dans mon terrier, tchao ! Le vent souffle à {{ states('sensor.weather_station_vitesse_moyenne_du_vent_km_h')|round(1) }} KMH
+                text: Le vent souffle à {{ states('sensor.weather_station_vitesse_moyenne_du_vent_km_h')|round(0) }} KMH. Ouaï, bah là je rentre dans mon terrier, tchao !
     mode: single
 
 # Automatisations basées sur la température
-  - alias: Karotz - Couleur en fonction de la température
-    description: "Change la couleur et parle selon la température extérieure toutes les heures à la minute 35"
+  - alias: karotz - Couleur en fonction de la température
+    description: "Change la couleur et parle selon la température extérieure toutes les heures à la minute 45"
     trigger:
       - trigger: time_pattern
         hours: "*"
-        minutes: "35"
+        minutes: "45"
         seconds: "0"
 
     condition:
@@ -440,7 +436,7 @@ automation:
                   value: "000000"
               - action: rest_command.karotz_say
                 data:
-                  text: Penssez a prendre vos moufles ! Il fait {{ states('sensor.pac_atom_temp_ext')|round(1) }} degrés.
+                  text: Penssez a prendre vos moufles ! Il fait {{ states('sensor.pac_atom_temp_ext')|round(0) }} degrés.
 
           - conditions:
               - condition: numeric_state
@@ -458,7 +454,7 @@ automation:
                   value: "000000"
               - action: rest_command.karotz_say
                 data:
-                  text: J'ai les carotes geler ! Il fait {{ states('sensor.pac_atom_temp_ext')|round(1) }} degrés.
+                  text: J'ai les carotes geler ! Il fait {{ states('sensor.pac_atom_temp_ext')|round(0) }} degrés.
 
           - conditions:
               - condition: numeric_state
@@ -476,7 +472,7 @@ automation:
                   value: "000000"
               - action: rest_command.karotz_say
                 data:
-                  text: Brou, je garde mon manteau quand même ! Il fait {{ states('sensor.pac_atom_temp_ext')|round(1) }} degrés.
+                  text: Brou, je garde mon manteau quand même ! Il fait {{ states('sensor.pac_atom_temp_ext')|round(0) }} degrés.
 
           - conditions:
               - condition: numeric_state
@@ -494,7 +490,7 @@ automation:
                   value: "000000"
               - action: rest_command.karotz_say
                 data:
-                  text: Voila l'été, enfin ! Il fait {{ states('sensor.pac_atom_temp_ext')|round(1) }} degrés.
+                  text: Voila l'été, enfin ! Il fait {{ states('sensor.pac_atom_temp_ext')|round(0) }} degrés.
 
           - conditions:
               - condition: numeric_state
@@ -511,5 +507,5 @@ automation:
                   value: "000000"
               - action: rest_command.karotz_say
                 data:
-                  text: Penssez a boire, il fait très chaud ! Il fait {{ states('sensor.pac_atom_temp_ext')|round(1) }} degrés.
+                  text: Penssez a boire, il fait très chaud ! Il fait {{ states('sensor.pac_atom_temp_ext')|round(0) }} degrés.
     mode: single
