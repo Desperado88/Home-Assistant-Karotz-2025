@@ -1,0 +1,652 @@
+Nom;Fonction;exemple
+AcapelaTTS;"    TTS=$1
+    VOICE=$2
+    NOCACHE=$3";"function AcapelaTTS {  
+    TTS=$1
+    VOICE=$2
+    NOCACHE=$3
+    MD5FILE=""""
+   
+    PARAM=""?MyLanguages=sonid4&MySelectedVoice=""${VOICE}""&MyTextForTTS=""${TTS}""&SendToVaaS=&t=1""
+    RESULT=$(eval curl -s --request POST --header ""Keep-Alive:300"" --header ""Connection:keep-alive"" --header ""Content-type:application/x-www-form-urlencoded"" --data '${PARAM}' http://www.acapela-group.com/demo-tts/DemoHTML5Form_V2.php)
+
+    position_depart=$(awk -v a=""${RESULT}"" -v b=""var myPhpVar = '"" 'BEGIN{print index(a,b)}')
+    LIEN=${RESULT:${position_depart}+15}
+    position_fin=$(awk -v a=""${LIEN}"" -v b=""'"" 'BEGIN{print index(a,b)}')
+    FILERESULT=${LIEN:0:${position_fin}-1}
+
+    if [ ""${FILERESULT}"" != """" ]; then
+
+        MD5FILE=$(echo ""$TTS$VOICE"" | md5sum | cut -d ' ' -f 1)
+        curl -s -o ${CNF_DATADIR}/Tmp/${MD5FILE}.mp3 ${FILERESULT} >>/dev/null 2>>/dev/null
+        
+        Log ""[TTS]"" ""Playing sound ${MD5FILE}.mp3""  
+        PlaySound $CNF_DATADIR/Tmp/${MD5FILE}.mp3
+
+        if [ ""$NOCACHE"" == ""1"" ]; then
+            rm -f $CNF_DATADIR/Tmp/${MD5FILE}.mp3 >>/dev/null 2>>/dev/null
+        else
+            Log ""[TTS]"" ""File stored in cache as $CNF_DATADIR/Tmp/${MD5FILE}.mp3""
+        fi
+
+    fi
+    echo ${MD5FILE}   
+}
+"
+BuildEeDomusUrl;"#   IP=$1
+#   MACRO=$2
+#   USER=$3
+#   PASSWORD=$4
+#   URLONLY=$5
+#   REMOTE=$6   (Call via eedomus Portal)";"function BuildEeDomusUrl {
+# 
+#   IP=$1
+#   MACRO=$2
+#   USER=$3
+#   PASSWORD=$4
+#   URLONLY=$5
+#   REMOTE=$6   (Call via eedomus Portal)
+
+   # Local
+   if [ ""$6"" == ""1"" ]; then
+     Log ""Eedomus portal call""
+     EEPROTOCOL=""https""
+     EEHOST=""api.eedomus.com""
+     EEPATH=""""
+   else
+     Log ""Eedomus local call""
+     EEPROTOCOL=""http""
+     EEPATH=""/api""
+     EEHOST=$1
+   fi
+
+   EEURL=""$EEPROTOCOL://$EEHOST$EEPATH$EEDOMUS_BASE_URL&macro=$2&api_user=$3&api_secret=$4""
+   Log ""Building URL: $EEURL""
+   if [ ""$5"" != ""1"" ]; then
+      printf -v EETEMP '%s ""%s""' ""$CURL_BASE"" ""$EEURL""
+      EEURL=$EETEMP
+      Log ""Adding Curl prefix : "" ""$EEURL""
+   fi
+   echo -n $EEURL
+}
+"
+BuildUrl;"#URL=$1
+#PARAM=$2
+#USER=$3
+#PASSWORD=$4
+#URLONLY=$5";"function BuildUrl {
+#URL=$1
+#PARAM=$2
+#USER=$3
+#PASSWORD=$4
+#URLONLY=$5
+
+   if [ ""$2"" != """" ]; then          
+    LURL=""$1?$2""
+   else
+    LURL=$1
+   fi
+   
+   if [ ""$3"" == """" ]; then
+     Log ""Building URL: $LURL""   
+   else
+     Log ""Building URL (Auth): $LURL ($3:$4)""
+   fi
+
+   if [ ""$5"" != ""1"" ]; then
+      if [ ""$3"" != """" ]; then
+        Log ""==>"" ""$3:$4""
+        printf -v UTEMP '%s --user %s:%s ""%s""' ""$CURL_BASE"" ""$3"" ""$4"" ""$LURL""
+      else
+        printf -v UTEMP '%s ""%s""' ""$CURL_BASE"" ""$LURL""
+      fi
+      LURL=$UTEMP
+      Log ""Adding Curl prefix : "" ""$LURL""
+   fi
+   echo -n $LURL
+}
+"
+BuildVeraUrl;"#   IP=$1
+#   SCENE=$2
+#   URLONLY=3";"function BuildVeraUrl {
+#   IP=$1
+#   SCENE=$2
+#   URLONLY=3
+   
+   VERAURL='http://'$1$VERA_BASE_URL$2
+   Log ""Building URL: $VERAURL""
+   if [ ""$3"" != ""1"" ]; then
+     printf -v VERATEMP '%s ""%s""' ""$CURL_BASE"" ""$VERAURL""
+     VERAURL=$VERATEMP
+     Log ""Adding Curl prefix : "" ""$VERAURL""
+   fi
+
+   echo -n $VERAURL
+}  
+"
+BuildZibaseUrl;"#   IP=$1
+#   CMD=$2
+#   URLONLY=3";"function BuildZibaseUrl {
+#   IP=$1
+#   CMD=$2
+#   URLONLY=3
+
+  ZURL='http://'$1'/cgi-bin/domo.cgi?cmd='$2
+  Log ""Building URL: $ZURL""
+   if [ ""$3"" != ""1"" ]; then
+     printf -v ZTEMP '%s ""%s""' ""$CURL_BASE"" ""$ZURL""
+     ZURL=$ZTEMP
+     Log ""Adding Curl prefix : "" ""$ZURL""
+   fi
+
+  echo -n $ZURL
+} 
+"
+cgi_decodevar;(internal) routine to decode urlencoded strings;"# (internal) routine to decode urlencoded strings
+function cgi_decodevar()
+{
+    [ $# -ne 1 ] && return
+    local v t h
+    # replace all + with whitespace and append %%
+    t=""${1//+/ }%%""
+    while [ ${#t} -gt 0 -a ""${t}"" != ""%"" ]; do
+    v=""${v}${t%%\%*}"" # digest up to the first %
+    t=""${t#*%}""       # remove digested part
+    # decode if there is anything to decode and if not at end of string
+    if [ ${#t} -gt 0 -a ""${t}"" != ""%"" ]; then
+        h=${t:0:2} # save first two chars
+        t=""${t:2}"" # remove these
+        v=""${v}""`echo -e \\\\x${h}` # convert hex to special char
+    fi
+    done
+    # return decoded string
+    echo ""${v}""
+    return
+}
+"
+cgi_get_POST_vars;(internal) routine to store POST data;"# (internal) routine to store POST data
+function cgi_get_POST_vars()
+{
+    # check content type
+    # FIXME: not sure if we could handle uploads with this..
+    [ ""${CONTENT_TYPE}"" != ""application/x-www-form-urlencoded"" ] && \
+    #echo ""bash.cgi warning: you should probably use MIME type ""\
+    #echo ""application/x-www-form-urlencoded!"" 1>&2
+    # save POST variables (only first time this is called)
+    [ -z ""$QUERY_STRING_POST"" \
+      -a ""$REQUEST_METHOD"" = ""POST"" -a ! -z ""$CONTENT_LENGTH"" ] && \
+        read -n $CONTENT_LENGTH QUERY_STRING_POST
+    # prevent shell execution
+    local t
+    t=${QUERY_STRING_POST//%60//} # %60 = `
+    t=${t//\`//}
+    t=${t//\$(//}
+    QUERY_STRING_POST=${t}
+    return
+}
+"
+cgi_getvars;routine to get variables from http requests;"# routine to get variables from http requests
+# usage: cgi_getvars method varname1 [.. varnameN]
+# method is either GET or POST or BOTH
+# the magic varible name ALL gets everything
+function cgi_getvars()
+{
+    [ $# -lt 2 ] && return
+    local q p k v s
+    # prevent shell execution
+    t=${QUERY_STRING//%60//} # %60 = `
+    t=${t//\`//}
+    t=${t//\$(//}
+    QUERY_STRING=${t}
+    # get query
+    case $1 in
+    GET)
+        [ ! -z ""${QUERY_STRING}"" ] && q=""${QUERY_STRING}&""
+        ;;
+    POST)
+        cgi_get_POST_vars
+        [ ! -z ""${QUERY_STRING_POST}"" ] && q=""${QUERY_STRING_POST}&""
+        ;;
+    BOTH)
+        [ ! -z ""${QUERY_STRING}"" ] && q=""${QUERY_STRING}&""
+        cgi_get_POST_vars
+        [ ! -z ""${QUERY_STRING_POST}"" ] && q=""${q}${QUERY_STRING_POST}&""
+        ;;
+    esac
+    shift
+    s="" $* ""
+    # parse the query data
+    while [ ! -z ""$q"" ]; do
+    p=""${q%%&*}""  # get first part of query string
+    k=""${p%%=*}""  # get the key (variable name) from it
+    v=""${p#*=}""   # get the value from it
+    q=""${q#$p&*}"" # strip first part from query string
+    # decode and evaluate var if requested
+#    [ ""$1"" = ""ALL"" -o ""${s/ $k /}"" != ""$s"" ] 
+#&& \
+        eval ""$k=\""`cgi_decodevar \""$v\""`\""""
+    done
+    return
+}
+"
+CheckMandatoryDirectory;vérifie l’existence du chemin;"function CheckMandatoryDirectory {
+
+if [ ! -d ""$1"" ]; then
+  mkdir ""$1"" >>/dev/null 2>>/dev/null
+  if [ ! -d ""$1"" ]; then
+     DATA='{""return"":""1"",""msg"":""'$1' directory missing""}'
+     SendResponse ""$DATA""
+     exit 0
+  fi
+fi
+
+}
+"
+"CheckMandatoryParameter
+";vérifier que le paramètre $APP est bien défini, valeur à vérifier, nom du paramètre;"function CheckMandatoryParameter {
+
+#echo ""-""$1""-""
+#echo ""-""$2""-""
+if [ ""$1"" == """" ]; then
+    Log  ""API"" ""Missing mandatory parameter : ('${2}')"" 1
+    DATA='{""return"":""1"",""msg"":""Missing mandatory parameter : ('${2}')"" }'
+    SendResponse ""$DATA""
+    exit 0
+fi
+
+}
+"
+Download;"URL=$1
+RDIR=$2
+LDIR=$3
+NAME=$4
+GROUP=$5
+NL=$6";"function Download {
+URL=$1
+RDIR=$2
+LDIR=$3
+NAME=$4
+GROUP=$5
+NL=$6
+
+echo ""----------------------------------------""
+echo ""Updating : ""$NAME
+wget $URL$RDIR/list.txt -O $LDIR/list.txt -q
+nbline=$(cat $LDIR/list.txt | wc -l )
+echo $nbline"" File(s) to download""
+echo ""----------------------------------------""
+i=1
+while read line;
+do
+    n=$((i%$GROUP))
+        if [ $n -eq 0 ]; then
+               echo -n "".""
+                   fi
+                       wget $URL$RDIR/$line -q -O $LDIR/$line
+                           chmod 777 $LDIR/$line
+                               i=$((i+1))
+                               done < $LDIR/list.txt
+                               rm -f $LDIR/list.txt >>/dev/null 2>>/dev/null
+                               echo """"
+}
+"
+EarMoveRight;déplacer l’oreille droite;"function EarMoveRight
+{
+    dbus-send --system --type=method_call --dest=com.mindscape.karotz.Ears /com/mindscape/karotz/Ears \
+com.mindscape.karotz.KarotzInterface.move_righ string:$uuid string:1 string:3
+}
+"
+EarsMove;bouge les oreilles, oreilles G en °, oreilles D en °, vitesse en ms petit = rapide;"function EarsMove 
+{   
+   if [ ! -e ""$CNF_DATADIR/Run/ears.disabled"" ]; then
+       /karotz/bin/ears $1 $3 $2 $3 >>/dev/null 2>>/dev/null
+   fi
+} 
+"
+EarsReset;revenir à la position initiale;"function EarsReset 
+{
+  if [ ! -e ""$CNF_DATADIR/Run/ears.disabled"" ]; then
+     /karotz/bin/ears >>/dev/null 2>>/dev/null
+  fi
+}
+"
+GetCmdName;;"function GetCmdName {
+ TNAME=""""
+    case $1 in
+      1) TNAME=""VERA"";;
+      2) TNAME=""EEDOMUS"";;
+      3) TNAME=""URL"";;
+      4) TNAME=""ZIBASE"";;
+      5) TNAME=""KAROTZ"";;
+      6) TNAME=""CALAOS"";;
+      7) TNAME=""PLUGIN"";;
+      *) TNAME=""Unknown"";;
+    esac
+                                
+    echo $TNAME
+}
+"
+GetCurlError;retourne l’erreur de CURL;
+GetRfidColorName;"  case $1 in 
+      1)  CNAME=""RED"";;
+      2)  CNAME=""BLUE"";; 
+      3)  CNAME=""GREEN"";;
+      4)  CNAME=""YELLOW"";;
+      5)  CNAME=""PINK"";;
+      6)  CNAME=""BLACK"";;
+      7)  CNAME=""GREY"";;
+      8)  CNAME=""ORANGE"";;
+      9)  CNAME=""PURPLE"";;
+      10) CNAME=""WHITE"";;
+      51) CNAME=""BROWN"";;
+      *)  CNAME=""UNKNOWN"";;
+   esac
+";"function GetRfidColorName { 
+ CNAME=""""                          
+  case $1 in 
+      1)  CNAME=""RED"";;
+      2)  CNAME=""BLUE"";; 
+      3)  CNAME=""GREEN"";;
+      4)  CNAME=""YELLOW"";;
+      5)  CNAME=""PINK"";;
+      6)  CNAME=""BLACK"";;
+      7)  CNAME=""GREY"";;
+      8)  CNAME=""ORANGE"";;
+      9)  CNAME=""PURPLE"";;
+      10) CNAME=""WHITE"";;
+      51) CNAME=""BROWN"";;
+      *)  CNAME=""UNKNOWN"";;
+   esac
+   
+   echo $CNAME
+}
+"
+GetRfidTypeName;"   case $1 in
+      1) TNAME=""FLATANOZ"";;
+      2) TNAME=""NANOZTAG"";;
+      3) TNAME=""ZSTAMPS"";;
+      15) TNAME=""KEYRING"";;
+      *) TNAME=""UNKNOWN""
+    esac
+";"function GetRfidTypeName {   
+ TNAME=""""
+   case $1 in
+      1) TNAME=""FLATANOZ"";;
+      2) TNAME=""NANOZTAG"";;
+      3) TNAME=""ZSTAMPS"";;
+      15) TNAME=""KEYRING"";;
+      *) TNAME=""UNKNOWN""
+    esac
+    
+    echo $TNAME
+}
+"
+GetUrl;"#URL=$1
+#USER=$2
+#PASS=$3
+#PARAM=$4";"function GetUrl { 
+#URL=$1
+#USER=$2
+#PASS=$3
+#PARAM=$4
+
+ if [ ""$2"" == """" ]; then
+    # URL=$(echo '$CURL_BASE  ""'$1'""' )
+    printf -v UTEMP '%s ""%s""' ""$CURL_BASE"" ""$1""
+    URL=$UTEMP
+ else
+    printf -v UTEMP '%s --user %s:%s ""%s""' ""$CURL_BASE"" ""$2"" ""$3"" ""$URL""
+    URL=$UTEMP
+ fi
+ Log  ""Calling URL :"" ""$URL""
+ eval $URL  
+
+echo $?
+
+} 
+"
+IsSoundPlaying;mplayer ou squeezeslave;"function IsSoundPlaying {
+
+  pidof mplayer >>/dev/null 2>>/dev/null
+  if [ $? -eq 0 ]; then
+    echo 1
+    exit
+  fi 
+  
+  pidof squeezeslave >>/dev/null 2>>/dev/null
+  if [ $? -eq 0 ]; then
+    echo 1
+    exit
+  fi
+  
+  echo 0    
+}
+"
+KillProcess;arrête le processus;"function KillProcess { 
+# $1 : Process To kill
+
+if [ ""$1"" == """" ]; then
+   Log  ""System"" ""Stopping all Ok process""
+   /bin/killall led  >> /dev/null 2>> /dev/null
+   /bin/killall ears >> /dev/null 2>> /dev/null
+   /bin/killall madplay >> /dev/null 2>> /dev/null
+   /bin/killall mpd  >> /dev/null 2>> /dev/null  
+   /bin/killall mplayer >> /dev/null 2>> /dev/null
+   /bin/killall squeezeslave >> /dev/null 2>> /dev/null
+else
+   if [ ""$1"" == ""LEDS"" ]; then
+      Log  ""System"" ""Stopping led process""
+      /bin/killall led  >> /dev/null 2>>/dev/null
+   fi
+   
+   if [ ""$1"" == ""EARS"" ]; then
+     Log  ""System"" ""Stopping ears process""
+     /bin/killall ears  >> /dev/null 2>> /dev/null
+   fi
+
+   if [ ""$1"" == ""SOUNDS"" ]; then
+     Log  ""System"" ""Stopping sounds process""
+     /bin/killall madplay >> /dev/null 2>> /dev/null
+     /bin/killall mpd  >> /dev/null 2>> /dev/null
+     /bin/killall mplayer >> /dev/null 2>> /dev/null
+     /bin/killall squeezeslave >> /dev/null 2>> /dev/null
+   fi  
+
+fi
+
+}
+"
+Leds;"   LED_COLOR=$1
+   LED_COLOR_PULSE=$2
+   LED_PULSE=$3
+   LED_NO_MEMORY=$4
+   LED_SPEED=$5 Leds FF0000 0000FF 1 1 100
+";"function Leds {
+   /bin/killall led  >>/dev/null 2>>/dev/null 
+   
+   LED_COLOR=$1
+   LED_COLOR_PULSE=$2
+   LED_PULSE=$3
+   LED_NO_MEMORY=$4
+   LED_SPEED=$5
+ 
+   Log ""[LEDS]""  ""Led color $1,$2,$3""  
+  
+   if [ ""$LED_PULSE"" == """" ]; then
+     LED_PULSE=0 
+   fi
+   
+   if [ ""$LED_NO_MEMORY"" == """" ]; then                                           
+      LED_NO_MEMORY=0                                                             
+   fi  
+   
+   # Led pulse
+   if [ $LED_PULSE -eq 1 ]; then
+      dbus_led_pulse $LED_COLOR $LED_COLOR_PULSE $LED_SPEED
+      
+      if [ $LED_NO_MEMORY -ne 1 ]; then
+        echo ""1"" > ""$CNF_DATADIR/Run/led.pulse""
+      fi
+    else
+      # Led Fixe
+      if [ -e ""$CNF_DATADIR/Run/led.pulse"" ]; then                               
+         if [ $LED_NO_MEMORY -ne 1 ]; then
+           rm ""$CNF_DATADIR/Run/led.pulse""                                         
+         fi
+      fi
+      dbus_led_fixed $LED_COLOR                                
+   fi 
+   
+   if [ $LED_NO_MEMORY -ne 1 ]; then   
+      echo $LED_COLOR > $CNF_DATADIR/Run/led.color 
+   fi
+} 
+"
+LedsRestore;;"function LedsRestore {                                                       
+                                                              
+    if [ -e ""$CNF_DATADIR/Run/led.pulse"" ]; then                               
+        LED_PULSE=1                                                           
+    else                                                                      
+        LED_PULSE=0                                                           
+    fi                                                                        
+                                                                                                                                                                                 
+    if [ -e ""$CNF_DATADIR/Run/led.color"" ]; then                               
+       LED_COLOR=`cat $CNF_DATADIR/Run/led.color`                             
+    else                                                                      
+       LED_COLOR=00FF00                                                      
+    fi                                                                        
+    Leds $LED_COLOR 000000 $LED_PULSE                                               
+ }   
+"
+PlaySound;"      # TODO : Volume management
+      # -softvol -af volume=-20
+      #  0  => Normal
+      #  -x => Down
+      #  +x => Up #SOUND $1
+
+";"function PlaySound {
+#SOUND $1
+
+      # TODO : Volume management
+      # -softvol -af volume=-20
+      #  0  => Normal
+      #  -x => Down
+      #  +x => Up
+   # killall mr >>/dev/null 2>>/dev/null
+   CHECK=$(IsSoundPlaying)
+   if [ $CHECK -eq 0 ]; then
+        KillProcess SOUNDS
+    /usr/bin/madplay -q $1 >>/dev/null 2>>/dev/null
+   fi
+}
+"
+PlaySoundEx;"#SOUND $1
+#BG    $2
+# TODO : Volume management
+# -softvol -af volume=-20
+#  0  => Normal
+#  -x => Down
+#  +x => Up 
+";"function PlaySoundEx { 
+#SOUND $1
+#BG    $2
+# TODO : Volume management
+# -softvol -af volume=-20
+#  0  => Normal
+#  -x => Down
+#  +x => Up 
+   CHECK=$(IsSoundPlaying)
+   if [ $CHECK -eq 0 ]; then
+        KillProcess SOUNDS
+        if [ ! -f /tmp/mplayer-control ]; then
+          mknod /tmp/mplayer-control p  >>/dev/null 2>>/dev/null
+        fi
+        if [ ""$2"" == ""1"" ]; then
+          mplayer -quiet -slave -input file=/tmp/mplayer-control $1 >>/dev/null 2>>/dev/null & 
+        else
+          mplayer -quiet -slave -input file=/tmp/mplayer-control $1 >>/dev/null 2>>/dev/null
+        fi
+   fi
+}  
+"
+ReadParam;lit les paramètres d’un tag rfid;"function ReadParam {  
+FILE_NAME=$1
+DEFAULT_VALUE=$2
+
+     if [ -e ""$1"" ]; then     
+        echo -n $(cat $1)
+     else
+        echo -n $2
+     fi 
+
+} 
+"
+ReadUrlParam;Lit les paramètre contenu dans l’url, ici le paramètre “app”;"function ReadUrlParam {  
+ saveIFS=$IFS
+  IFS='=&'
+  parm=($QUERY_STRING)
+  IFS=$saveIFS
+  for ((i=0; i<${#parm[@]}; i+=2))
+  do
+      URLParam[${parm[i]}]=${parm[i+1]}
+  done
+}
+"
+SendResponse;retour de la commande JSON;"function SendResponse {
+   DT=${1}
+   echo ""Server: OpenKarotz WebServer 1.0""
+   echo ""Connection: close""
+   echo ""Accept-Ranges: bytes""
+#   echo ""Content-Length: ""${#DT}
+   #echo ""Content-type: application/json""
+   echo ""Content-type: text/plain""
+   echo ""Access-Control-Allow-Origin: *""
+   echo """"
+   echo -e $DT
+}
+
+"
+sleep;Attendre;sleep 1
+StartTagRecording;démarre l’enregistrement d’un tag rfid;"function StartTagRecording { 
+    Leds 775577 000000 1 1
+    echo ""1"" > $CNF_DATADIR/Run/rfid.record  >>/dev/null 2>>/dev/null
+    PlaySound $CNF_DATADIR/Voice/Rfid_Start_Record.mp3 1 >>/dev/null 2>>/dev/null
+}  
+"
+"StopTagRecording
+";arrêt de l’enregistrement d’un tag rfid;"function StopTagRecording {
+    rm -f   $CNF_DATADIR/Run/rfid.record  >>/dev/null 2>>/dev/null
+    PlaySound $CNF_DATADIR/Voice/Rfid_Stop_record.mp3 1 >>/dev/null 2>>/dev/null
+    LedsRestore
+} 
+"
+TakeSnapshot;prends une capture de la caméra;"# ffmpeg -vcodec rawvideo -f rawvideo -pix_fmt rgb565 -s 640x480 -i /dev/camera -ss 00:00:01  -r 1 -vframes 1 -y /tmp/%d.jpg
+# --print-reply
+function TakeSnapshot 
+{  
+   Log  ""Snapshot"" ""Taking Snapshot""
+   dbus-send --system --type=method_call --print-reply --dest=com.mindscape.karotz.Webcam /com/mindscape/karotz/Webcam com.mindscape.karotz.KarotzInterface.takeSnapshot string:1 string:""file"" int32:50
+}  
+"
+UrlDecode;"echo -e ""$(sed 's/+/ /g; s/%/\\x/g')""";"function UrlDecode  {             
+    echo -e ""$(sed 's/+/ /g; s/%/\\x/g')""
+} 
+"
+UrlEncode;encode en URL;"UrlEncode() {
+    local string=""${1}""
+    local strlen=${#string}
+    local encoded=""""
+            
+    for (( pos=0 ; pos<strlen ; pos++ )); do
+       c=${string:$pos:1}
+       case ""$c"" in
+          [-_.~a-zA-Z0-9] )   o=""${c}"" ;;
+          * )                 printf -v o '%%%02x' ""'$c""
+
+       esac
+       encoded+=""${o}""
+     done
+     
+     echo ""${encoded}"" 
+} 
+"
