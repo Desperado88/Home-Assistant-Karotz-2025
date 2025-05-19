@@ -1,88 +1,323 @@
-# Configuration des entrées textuelles pour le Nabaztag
+# Configuration des entrées textuelles pour le karotz 101 Salon
 input_text:
-  nabaztag_ip_address:
-    name: Nabaztag Ip Address
-    initial: "192.168.1.xxx"  # Adresse IP par défaut du Nabaztag
-  nabaztag_color_1:
-    name: Nabaztag Color 1
+  karotz_ip_address:
+    name: karotz Ip Address
+    initial: "192.168.1.xxx"  # Adresse IP par défaut du karotz
+  karotz_color_1:
+    name: karotz Color 1
     initial: "ffff00"  # Couleur primaire en hexadécimal (jaune)
-  nabaztag_color_2:
-    name: Nabaztag Color 2
+  karotz_color_2:
+    name: karotz Color 2
     initial: "000000"  # Couleur secondaire en hexadécimal (noir)
+# ajout d'un interface pour les tag rfid
+  karotz_rfid_id:
+    name: ID du Tag RFID
+  karotz_rfid_name:
+    name: Nom de l'action
 
-# État d'éveil du Nabaztag
+  karotz_rfid_url:
+    name: URL à appeler
+
+
+# État d'éveil du karotz
 input_boolean:
-  nabaztag_awake:
+  karotz_awake:
     initial: on
+# ajout pour l'automatisation courrier et colis
+  courrier_detecte:
+    name: Courrier déjà signalé
+    initial: false
+  colis_detecte:
+    name: Colis déjà signalé
+    initial: false
+# active ou désactive l'ajout d'un tag rfid
+  karotz_mode_enregistrement_tag:
+    name: Enregistrement Tag Karotz
+
+# Capteur pour surveiller l'état de sommeil
+sensor:
+  - platform: rest
+    resource: http://192.168.1.xxx/cgi-bin/status
+    name: karotzSleep
+    value_template: '{{ value_json.sleep }}'
+
+# dernier tag enregistré
+  - platform: rest
+    name: Dernier Tag Karotz
+    resource: "http://192.168.1.xxx/cgi-bin/rfid_list"
+    value_template: "{{ value_json['tags'][-1]['id'] }}"
+    scan_interval: 5
     
 # Configuration des contrôles numériques
 input_number:
-  nabaztag_ear_left:
-    name: Nabaztag Ear Left
+  karotz_ear_left:
+    name: karotz Ear Left
     initial: 0
     min: 0
     max: 16  # Position maximale de l'oreille gauche
     step: 1
-  nabaztag_ear_right:
-    name: Nabaztag Ear Right
+  karotz_ear_right:
+    name: karotz Ear Right
     initial: 0
     min: 0
     max: 16  # Position maximale de l'oreille droite
     step: 1
-  nabaztag_light_speed:
-    name: Nabaztag Light Speed
+  karotz_light_speed:
+    name: karotz Light Speed
     initial: 700
     min: 0
     max: 2000  # Vitesse maximale des effets lumineux
     step: 100
 
-# Groupement des contrôles Nabaztag
+# Groupement des contrôles karotz
 group:
-  nabaztag_utils:
-    name: Nabaztag Utils
+  karotz_utils:
+    name: karotz Utils
     entities:
-      - script.nabaztag_moods
+      - script.karotz_moods
 
-# Scripts de contrôle du Nabaztag
+# Scripts de contrôle du karotz
 script:
-  nabaztag_moods: 
-    alias: "Talk!"  # Fait parler le Nabaztag
+  karotz_moods: 
+    alias: "Talk!"  # Fait parler le karotz
     sequence:
-      - action: rest_command.nabaztag_moods
+      - action: rest_command.karotz_moods
 
-  nabaztag_wakeup:
-    alias: "Wake Up"  # Réveille le Nabaztag
+  karotz_wakeup:
+    alias: "Wake Up"  # Réveille le karotz
     sequence:
-      - action: rest_command.nabaztag_wakeup
-      - action: rest_command.nabaztag_light
+      - action: rest_command.karotz_ears_reset
+      - action: rest_command.karotz_wakeup
+      - action: rest_command.karotz_light
 
-  nabaztag_sleep:
-    alias: "Sleep"  # Met le Nabaztag en veille
+  karotz_sleep:
+    alias: "Sleep"  # Met le karotz en veille
     sequence:
-      - action: rest_command.nabaztag_sleep
+      - action: rest_command.karotz_sleep
       - action: input_boolean.turn_off
         target:
-          entity_id: input_boolean.nabaztag_awake
+          entity_id: input_boolean.karotz_awake
+# script pour envoyé la commande d'ajout d'un tag rfid
+  assign_tag_to_karotz:
+    alias: Assigner un tag RFID
+    sequence:
+      - action: rest_command.karotz_rfid_assign
 
+# Tai-chi
+  karotz_tai_chi:
+    alias: karotz - Mode Tai Chi
+    sequence:
+      - action: rest_command.karotz_play_taichi
+      - delay: "00:00:02"
+      - variables:
+          positions: [ [4,12], [8,8], [12,4], [6,10], [10,6], [8,8] ]
+          colors: [ "ADD8E6", "DDA0DD", "98FB98", "E6E6FA", "AFEEEE", "F0FFF0" ]
+      - repeat:
+          count: 3
+          sequence:
+            - repeat:
+                for_each: "{{ range(positions|length) | list }}"
+                sequence:
+                  - action: input_number.set_value
+                    data:
+                      entity_id: input_number.karotz_ear_left
+                      value: "{{ positions[repeat.index][0] }}"
+                  - action: input_number.set_value
+                    data:
+                      entity_id: input_number.karotz_ear_right
+                      value: "{{ positions[repeat.index][1] }}"
+                  - action: input_text.set_value
+                    data:
+                      entity_id: input_text.karotz_color_1
+                      value: "{{ colors[repeat.index] }}"
+                  - action: input_text.set_value
+                    data:
+                      entity_id: input_text.karotz_color_2
+                      value: "000000"
+                  - action: input_number.set_value
+                    data:
+                      entity_id: input_number.karotz_light_speed
+                      value: 1800
+                  - action: rest_command.karotz_light
+                  - action: rest_command.karotz_ears
+                  - delay: "00:00:08"
+            - delay: "00:00:10"
+      - data:
+          text: Le Tai Chi est terminé. Respire... et souris.
+        action: rest_command.karotz_say
+# annimations alléaroites
+  karotz_amusements:
+    alias: karotz - S'amuse tout seul (avec restauration)
+    sequence:
+      # Sauvegarde de l'état initial
+      - variables:
+          ear_left_prev: "{{ states('input_number.karotz_ear_left') | int }}"
+          ear_right_prev: "{{ states('input_number.karotz_ear_right') | int }}"
+          color1_prev: "{{ states('input_text.karotz_color_1') }}"
+          color2_prev: "{{ states('input_text.karotz_color_2') }}"
+          speed_prev: "{{ states('input_number.karotz_light_speed') | int }}"
+      # Définition des animations possibles
+      - variables:
+          animations:
+            - ears: [4, 12]
+              phrase: "Ça me démange le dos, tu peux me gratter ?"
+              color: "FFFF00"
+              pulse: true
+              speed: 300
+            - sequence:
+                - [0, 0]
+                - [5, 5]
+                - [10, 10]
+                - [15, 15]
+                - [0, 0]
+                - [5, 5]
+                - [10, 10]
+                - [15, 15]
+                - [0, 0]
+              phrase: "Je suis en surchauffe, mes oreilles tournent !"
+              color: "FF0000"
+              pulse: true
+              speed: 150
+            - ears: [8, 8]
+              phrase: "J'ai un doute existentiel... C’est grave ?"
+              color: "800080"
+              pulse: false
+              speed: 1000
+            - sequence:
+                - [15, 6]
+                - [6, 15]
+                - [15, 6]
+                - [6, 15]
+                - [15, 6]
+                - [6, 15]
+                - [15, 6]
+                - [15, 6]
+                - [6, 15]
+              phrase: "Tu veux jouer avec moi ?"
+              color: "00FF00"
+              pulse: true
+              speed: 400
+            - ears: [12, 4]
+              phrase: "Alerte ! Des carottes en approche !"
+              color: "FFA500"
+              pulse: true
+              speed: 200
+      - variables:
+          pick: "{{ range(animations | length) | list | random }}"
+          ear_l: "{{ animations[pick].ears[0] }}"
+          ear_r: "{{ animations[pick].ears[1] }}"
+          message: "{{ animations[pick].phrase }}"
+          color: "{{ animations[pick].color }}"
+          pulse: "{{ animations[pick].pulse }}"
+          speed: "{{ animations[pick].speed }}"
+      # Appliquer la couleur LED et vitesse
+      - action: input_text.set_value
+        data:
+          entity_id: input_text.karotz_color_1
+          value: "{{ color }}"
+      - action: input_text.set_value
+        data:
+          entity_id: input_text.karotz_color_2
+          value: "000000"
+      - action: input_number.set_value
+        data:
+          entity_id: input_number.karotz_light_speed
+          value: "{{ speed }}"
+      # Clignotement ou lumière fixe
+      - choose:
+          - conditions:
+              - condition: template
+                value_template: "{{ pulse }}"
+            sequence:
+              - action: rest_command.karotz_light
+          - conditions:
+              - condition: template
+                value_template: "{{ not pulse }}"
+            sequence:
+              - action: rest_command.karotz_light_fixed
+      # Oreilles (rotation multiple si sequence)
+      - choose:
+          - conditions:
+              - condition: template
+                value_template: "{{ 'sequence' in animations[pick] }}"
+            sequence:
+              - repeat:
+                  for_each: "{{ animations[pick].sequence }}"
+                  sequence:
+                    - action: input_number.set_value
+                      data:
+                        entity_id: input_number.karotz_ear_left
+                        value: "{{ repeat.item[0] }}"
+                    - action: input_number.set_value
+                      data:
+                        entity_id: input_number.karotz_ear_right
+                        value: "{{ repeat.item[1] }}"
+                    - action: rest_command.karotz_ears
+                    - delay: "00:00:40"
+          - conditions:
+              - condition: template
+                value_template: "{{ 'ears' in animations[pick] }}"
+            sequence:
+              - action: input_number.set_value
+                data:
+                  entity_id: input_number.karotz_ear_left
+                  value: "{{ animations[pick].ears[0] }}"
+              - action: input_number.set_value
+                data:
+                  entity_id: input_number.karotz_ear_right
+                  value: "{{ animations[pick].ears[1] }}"
+              - action: rest_command.karotz_ears
+              - delay: "00:00:02"
+      # Voix
+      - action: rest_command.karotz_say
+        data:
+          text: "{{ message }}"
+      - delay: "00:00:05"
+      # Restauration de l'état initial
+      - action: input_number.set_value
+        data:
+          entity_id: input_number.karotz_ear_left
+          value: "{{ ear_left_prev }}"
+      - action: input_number.set_value
+        data:
+          entity_id: input_number.karotz_ear_right
+          value: "{{ ear_right_prev }}"
+      - action: input_text.set_value
+        data:
+          entity_id: input_text.karotz_color_1
+          value: "{{ color1_prev }}"
+      - action: input_text.set_value
+        data:
+          entity_id: input_text.karotz_color_2
+          value: "{{ color2_prev }}"
+      - action: input_number.set_value
+        data:
+          entity_id: input_number.karotz_light_speed
+          value: "{{ speed_prev }}"
+      - action: rest_command.karotz_light
+      - action: rest_command.karotz_ears
+        
 # Interrupteur template pour contrôler l'état d'éveil
 switch:
   - platform: template
     switches:
-      nabaztag_life:
+      karotz_life:
         friendly_name: "Éveillé"
-        value_template: "{{ is_state('input_boolean.nabaztag_awake', 'on') }}"
+        value_template: "{{ is_state('input_boolean.karotz_awake', 'on') }}"
         turn_on:
           action: script.turn_on
           target:
-            entity_id: script.nabaztag_wakeup
+            entity_id: script.karotz_wakeup
         turn_off:
           action: script.turn_on
           target:
-            entity_id: script.nabaztag_sleep
+            entity_id: script.karotz_sleep
 
 # Configuration des commandes REST pour contrôler le karotz
 # source : https://www.openkarotz.org/api/
 rest_command:
+  karotz_free_space:
+    url: "http://{{ states('input_text.karotz_ip_address') }}/cgi-bin/get_free_space" # espace mémoire utiliser
   karotz_moods:
     url: "http://{{ states('input_text.karotz_ip_address') }}/cgi-bin/apps/moods" # dit une parole prés enregistrée aléatoire
   karotz_moods_id:
@@ -95,6 +330,8 @@ rest_command:
     url: "http://{{ states('input_text.karotz_ip_address') }}/cgi-bin/ears_random" # position des oreilles alléatoires
   karotz_ears:
     url: "http://{{ states('input_text.karotz_ip_address') }}/cgi-bin/ears?left={{ states('input_number.karotz_ear_left') }}&right={{ states('input_number.karotz_ear_right') }}&noreset=1" # position des oreilles
+  karotz_ears_reset: 
+    url: "http://{{ states('input_text.karotz_ip_address') }}/cgi-bin/ears_reset"
   karotz_light:
     url: "http://{{ states('input_text.karotz_ip_address') }}/cgi-bin/leds?pulse=1&color={{ states('input_text.karotz_color_1') }}&speed={{ states('input_number.karotz_light_speed') }}&color2={{ states('input_text.karotz_color_2') }}" # allume la led et clignote
   karotz_light_fixed:
@@ -104,13 +341,18 @@ rest_command:
   karotz_sound:
     url: "http://{{ states('input_text.karotz_ip_address') }}/cgi-bin/sound?id={{ sound }}" # jour un son près enregistré
 # sounds : bip1,bling,flush,install_ok,jet1,laser_15,ready,rfid_error,rfid_ok,saut1,start,twang_01,twang_04,return":"0"
+# Controle pour l'ajout des tag rfid
+  karotz_rfid_record_start:
+    url: "http://{{ states('input_text.karotz_ip_address') }}/cgi-bin/rfid_start_record" # ajouter un nouveau tag rfid
+  karotz_rfid_record_stop:
+    url: "http://{{ states('input_text.karotz_ip_address') }}/cgi-bin/rfid_stop_record" # arrêter l'ajout de tag rfid
+  karotz_rfid_assign: # forge l'url pour l'ajout d'un tag rfid /cgi-bin/rfid_assign_url?tag=id du tag&url=url&name=nom de l’action
+    url: "http://{{ states('input_text.karotz_ip_address') }}/cgi-bin/rfid_assign_url?tag={{ states('input_text.karotz_rfid_id') }}&url={{ states('input_text.karotz_rfid_url') | urlencode }}&name={{ states('input_text.karotz_rfid_name') | urlencode }}"
 
-# Capteur pour surveiller l'état de sommeil
-sensor:
-  - platform: rest
-    resource: http://192.168.1.101/cgi-bin/status
-    name: karotzSleep
-    value_template: '{{ value_json.sleep }}'
+# rfid_assign_url : /cgi-bin/rfid_assign_url?tag=id du tag&url=url&name=nom de l’action
+# exemple : cgi-bin/rfid_assign_url?tag=D0021A3503xxxxxx&url=http://192.168.X.X/leds.cgi?led=3
+  karotz_play_taichi:
+    url: "http://{{ states('input_text.karotz_ip_address') }}/cgi-bin/sound?url=file:///usr/karotz/musiques/taichi.mp3" # url pour la musique du taichi
 
 # ajout de la liste des sons
 # input_select:
@@ -145,9 +387,9 @@ automation:
       - action: input_boolean.turn_on
         target:
           entity_id: input_boolean.karotz_awake
-      - action: rest_command.karotz_say
-        data:
+      - data:
           text: Bonjour tous le monde !
+        action: rest_command.karotz_say
 
   - alias: "karotz off"
     trigger:
@@ -198,314 +440,112 @@ automation:
         entity_id: input_number.karotz_ear_right
     actions:
       - action: rest_command.karotz_ears
-      
-# Automatisations basées sur les risques de pluie
-  - alias: karotz - Mouvement des oreilles selon le risque de pluie
-    description: "Déplace les oreilles du karotz et annonce une phrase selon le risque de pluie toutes les heures à la minute 15"
+
+# ajout des tag rfid
+  - alias: Démarrer enregistrement Karotz
     trigger:
-      - trigger: time_pattern
-        hours: "*"
-        minutes: "15"
-        seconds: "0"
-
-    condition:
-      - condition: time
-        after: "08:00:00"
-        before: "19:00:00"
-
-    actions:
-      - choose:
-          - conditions:
-              - condition: numeric_state
-                entity_id: sensor.treillieres_rain_chance
-                above: 10
-                below: 40
-            sequence:
-              - action: input_number.set_value
-                data:
-                  entity_id: input_number.karotz_ear_left
-                  value: 16
-              - action: input_number.set_value
-                data:
-                  entity_id: input_number.karotz_ear_right
-                  value: 16
-              - action: rest_command.karotz_say
-                data:
-                  text: >
-                    Petit risque de pluie à {{ states('sensor.treillieres_rain_chance')|round(0) }}%. 
-                    Ça sent la balade tranquille ! Sauf si tu es un sucre...
-
-          - conditions:
-              - condition: numeric_state
-                entity_id: sensor.treillieres_rain_chance
-                above: 40
-                below: 60
-            sequence:
-              - action: input_number.set_value
-                data:
-                  entity_id: input_number.karotz_ear_left
-                  value: 10
-              - action: input_number.set_value
-                data:
-                  entity_id: input_number.karotz_ear_right
-                  value: 10
-              - action: rest_command.karotz_say
-                data:
-                  text: >
-                    Risque de pluie modéré à {{ states('sensor.treillieres_rain_chance')|round(0) }}%. 
-                    N'oublie pas ton parapluie... ou une capuche de secours, au cas où je t’arrose aussi !
-
-          - conditions:
-              - condition: numeric_state
-                entity_id: sensor.treillieres_rain_chance
-                above: 60
-            sequence:
-              - action: input_number.set_value
-                data:
-                  entity_id: input_number.karotz_ear_left
-                  value: 6
-              - action: input_number.set_value
-                data:
-                  entity_id: input_number.karotz_ear_right
-                  value: 6
-              - action: rest_command.karotz_say
-                data:
-                  text: >
-                    Alerte pluie ! Le risque est à {{ states('sensor.treillieres_rain_chance')|round(0) }}%. 
-                    Sauve qui peut ! Ou au moins protège tes oreilles !
-    mode: single
-
-
-
-# Automatisations basées sur la vitesse du vent
-  - alias: karotz - Annonce Vitesse du Vent
-    description: "Annonce vocale et clignotement selon la vitesse du vent"
-    trigger:
-      - trigger: time_pattern
-        hours: "*"
-        minutes: "30"
-        seconds: "0"
-
-    condition:
-      - condition: time
-        after: "08:00:00"
-        before: "19:00:00"
-
-    actions:
-      - choose:
-        - conditions:
-            - condition: numeric_state
-              entity_id: sensor.weather_station_vitesse_moyenne_du_vent_km_h
-              below: 1
-          sequence:
-            - action: input_number.set_value
-              data:
-                entity_id: input_number.karotz_light_speed
-                value: 2000
-            - action: rest_command.karotz_say
-              data:
-                text: Pas un brin de vent ! Le vent souffle à {{ states('sensor.weather_station_vitesse_moyenne_du_vent_km_h')|round(0) }} KMH
-
-        - conditions:
-            - condition: numeric_state
-              entity_id: sensor.weather_station_vitesse_moyenne_du_vent_km_h
-              above: 1
-              below: 5
-          sequence:
-            - action: input_number.set_value
-              data:
-                entity_id: input_number.karotz_light_speed
-                value: 1834
-            - action: rest_command.karotz_say
-              data:
-                text: Le vent souffle à {{ states('sensor.weather_station_vitesse_moyenne_du_vent_km_h')|round(0) }} KMH. C’est pas aujourd’hui que je vais sortir le cerf-volant ! 
-
-        - conditions:
-            - condition: numeric_state
-              entity_id: sensor.weather_station_vitesse_moyenne_du_vent_km_h
-              above: 6
-              below: 11
-          sequence:
-            - action: input_number.set_value
-              data:
-                entity_id: input_number.karotz_light_speed
-                value: 1668
-            - action: rest_command.karotz_say
-              data:
-                text: Le vent souffle à {{ states('sensor.weather_station_vitesse_moyenne_du_vent_km_h')|round(0) }} KMH. Brou, j'ai les oreilles qui s’ébouriffent !
-
-        - conditions:
-            - condition: numeric_state
-              entity_id: sensor.weather_station_vitesse_moyenne_du_vent_km_h
-              above: 12
-              below: 19
-          sequence:
-            - action: input_number.set_value
-              data:
-                entity_id: input_number.karotz_light_speed
-                value: 1502
-            - action: rest_command.karotz_say
-              data:
-                text: Le vent souffle à {{ states('sensor.weather_station_vitesse_moyenne_du_vent_km_h')|round(0) }} KMH. Haï, ça souffle un peu par ici !
-
-        - conditions:
-            - condition: numeric_state
-              entity_id: sensor.weather_station_vitesse_moyenne_du_vent_km_h
-              above: 20
-              below: 28
-          sequence:
-            - action: input_number.set_value
-              data:
-                entity_id: input_number.karotz_light_speed
-                value: 1336
-            - action: rest_command.karotz_say
-              data:
-                text: Le vent souffle à {{ states('sensor.weather_station_vitesse_moyenne_du_vent_km_h')|round(0) }} KMH. Ah, le vent est bien réveillé ! 
-
-        - conditions:
-            - condition: numeric_state
-              entity_id: sensor.weather_station_vitesse_moyenne_du_vent_km_h
-              above: 29
-              below: 38
-          sequence:
-            - action: input_number.set_value
-              data:
-                entity_id: input_number.karotz_light_speed
-                value: 1170
-            - action: rest_command.karotz_say
-              data:
-                text: Le vent souffle à {{ states('sensor.weather_station_vitesse_moyenne_du_vent_km_h')|round(0) }} KMH. Hey, ça souffle !
-
-        - conditions:
-            - condition: numeric_state
-              entity_id: sensor.weather_station_vitesse_moyenne_du_vent_km_h
-              above: 39
-              below: 49
-          sequence:
-            - action: input_number.set_value
-              data:
-                entity_id: input_number.karotz_light_speed
-                value: 1004
-            - action: rest_command.karotz_say
-              data:
-                text: Le vent souffle à {{ states('sensor.weather_station_vitesse_moyenne_du_vent_km_h')|round(0) }} KMH. Hou là là, je vais m’envoler !
-
-        - conditions:
-            - condition: numeric_state
-              entity_id: sensor.weather_station_vitesse_moyenne_du_vent_km_h
-              above: 50
-              below: 61
-          sequence:
-            - action: input_number.set_value
-              data:
-                entity_id: input_number.karotz_light_speed
-                value: 838
-            - action: rest_command.karotz_say
-              data:
-                text: Le vent souffle à {{ states('sensor.weather_station_vitesse_moyenne_du_vent_km_h')|round(0) }} KMH. Ouaï, bah là je rentre dans mon terrier, tchao !
-    mode: single
-
-# Automatisations basées sur la température
-  - alias: karotz - Couleur en fonction de la température
-    description: "Change la couleur et parle selon la température extérieure toutes les heures à la minute 45"
-    trigger:
-      - trigger: time_pattern
-        hours: "*"
-        minutes: "45"
-        seconds: "0"
-
-    condition:
-      - condition: time
-        after: "08:00:00"
-        before: "19:00:00"
-
+      - trigger: state
+        entity_id: input_boolean.karotz_mode_enregistrement_tag
+        to: 'on'
     action:
-      - choose:
-          - conditions:
-              - condition: numeric_state
-                entity_id: sensor.weather_station_temperature_exterieur
-                below: -10
-            sequence:
-              - action: input_text.set_value
-                data:
-                  entity_id: input_text.karotz_color_1
-                  value: "1a00ff"
-              - action: input_text.set_value
-                data:
-                  entity_id: input_text.karotz_color_2
-                  value: "000000"
-              - action: rest_command.karotz_say
-                data:
-                  text: Penssez a prendre vos moufles ! Il fait {{ states('sensor.pac_atom_temp_ext')|round(0) }} degrés.
+      - action: rest_command.karotz_rfid_record_start
 
-          - conditions:
-              - condition: numeric_state
-                entity_id: sensor.weather_station_temperature_exterieur
-                above: 0
-                below: 10
-            sequence:
-              - action: input_text.set_value
-                data:
-                  entity_id: input_text.karotz_color_1
-                  value: "00FF00"
-              - action: input_text.set_value
-                data:
-                  entity_id: input_text.karotz_color_2
-                  value: "000000"
-              - action: rest_command.karotz_say
-                data:
-                  text: J'ai les carotes geler ! Il fait {{ states('sensor.pac_atom_temp_ext')|round(0) }} degrés.
+  - alias: Arrêter enregistrement Karotz
+    trigger:
+      - trigger: state
+        entity_id: input_boolean.karotz_mode_enregistrement_tag
+        to: 'off'
+    action:
+      - action: rest_command.karotz_rfid_record_stop
 
-          - conditions:
-              - condition: numeric_state
-                entity_id: sensor.weather_station_temperature_exterieur
-                above: 10
-                below: 20
-            sequence:
-              - action: input_text.set_value
-                data:
-                  entity_id: input_text.karotz_color_1
-                  value: "A6FF00"
-              - action: input_text.set_value
-                data:
-                  entity_id: input_text.karotz_color_2
-                  value: "000000"
-              - action: rest_command.karotz_say
-                data:
-                  text: Brou, je garde mon manteau quand même ! Il fait {{ states('sensor.pac_atom_temp_ext')|round(0) }} degrés.
+  - alias: Copier tag seulement si enregistrement actif
+    trigger:
+      - trigger: state
+        entity_id: sensor.dernier_tag_karotz
+    condition:
+      - condition: state
+        entity_id: input_boolean.karotz_mode_enregistrement_tag
+        state: 'on'
+    action:
+      - action: input_text.set_value
+        target:
+          entity_id: input_text.karotz_rfid_id
+        data:
+          value: "{{ states('sensor.dernier_tag_karotz') }}"
 
-          - conditions:
-              - condition: numeric_state
-                entity_id: sensor.weather_station_temperature_exterieur
-                above: 20
-                below: 30
-            sequence:
-              - action: input_text.set_value
-                data:
-                  entity_id: input_text.karotz_color_1
-                  value: "FF9100"
-              - action: input_text.set_value
-                data:
-                  entity_id: input_text.karotz_color_2
-                  value: "000000"
-              - action: rest_command.karotz_say
-                data:
-                  text: Voila l'été, enfin ! Il fait {{ states('sensor.pac_atom_temp_ext')|round(0) }} degrés.
+      
+# abaisser les oreilles en fonction du risque de pluie, clignoter plus ou moins vite en fonction de la vitesse du vent et avoir une couleur plus ou moins chaude en fonction de la température
+  - alias: karotz - Réaction météo complète
+    description: "Adapte les oreilles, la LED et le clignotement selon les conditions météo"
+    trigger:
+      - trigger: time_pattern
+        minutes: "15"
+    condition:
+      - condition: time
+        after: "07:00:00"
+        before: "19:00:00"
+    actions:
+      - action: rest_command.karotz_ears_reset
+      - variables:
+          rain_chance: "{{ states('sensor.treillieres_rain_chance') | float(0) }}"
+          temp: "{{ states('sensor.pac_atom_temp_ext') | float(0) }}"
+          wind: "{{ states('sensor.weather_station_vitesse_moyenne_du_vent_km_h') | float(0) }}"
 
-          - conditions:
-              - condition: numeric_state
-                entity_id: sensor.weather_station_temperature_exterieur
-                above: 30
-            sequence:
-              - action: input_text.set_value
-                data:
-                  entity_id: input_text.karotz_color_1
-                  value: "FF0000"
-              - action: input_text.set_value
-                data:
-                  entity_id: input_text.karotz_color_2
-                  value: "000000"
-              - action: rest_command.karotz_say
-                data:
-                  text: Penssez a boire, il fait très chaud ! Il fait {{ states('sensor.pac_atom_temp_ext')|round(0) }} degrés.
+          # Position des oreilles
+          ear_pos: >
+            {% set rain_chance = states('sensor.treillieres_rain_chance') | float(0) %}
+            {% if rain_chance < 5 %}
+              15
+            {% elif rain_chance > 60 %}
+              4
+            {% else %}
+              {{ 15 - ((rain_chance - 5) // 5) }}
+            {% endif %}
+
+          # Couleur LED
+          color_palette: [
+          'ADD8E6', '87CEFA', '00CED1', '40E0D0', '90EE90',
+          'ADFF2F', 'FFD700', 'FFA500', 'FF4500', 'FF0000'
+          ]
+          color_index: >
+            {% set index = ((temp + 10) // 5) | int %}
+            {% if index < 0 %}0{% elif index > 9 %}9{% else %}{{ index }}{% endif %}
+          led_color: "{{ color_palette[color_index] }}"
+
+          # Clignotement
+          blink_speed: >
+            {% set base = 2000 %}
+            {% set min_speed = 100 %}
+            {% set decrement = ((wind // 5) * 150) %}
+            {% set result = base - decrement %}
+            {% if result < min_speed %}{{ min_speed }}{% elif result > base %}{{ base }}{% else %}{{ result | int }}{% endif %}
+      - action: input_number.set_value
+        data:
+          entity_id: input_number.karotz_ear_left
+          value: "{{ ear_pos }}"
+      - action: input_number.set_value
+        data:
+          entity_id: input_number.karotz_ear_right
+          value: "{{ ear_pos }}"
+      - action: input_text.set_value
+        data:
+          entity_id: input_text.karotz_color_1
+          value: "{{ led_color }}"
+      - action: input_text.set_value
+        data:
+          entity_id: input_text.karotz_color_2
+          value: "000000"
+      - action: input_number.set_value
+        data:
+          entity_id: input_number.karotz_light_speed
+          value: "{{ blink_speed }}"
+      - action: rest_command.karotz_light
+      - action: rest_command.karotz_ears
+      - action: rest_command.karotz_say
+        data:
+          text: >-
+            Il fait {{ temp | round(0) }} degrés.
+            Le vent souffle à {{ wind | round(0) }} kilomètres par heure.
+            Le risque de pluie est de {{ rain_chance | round(0) }} pourcents.
     mode: single
+
