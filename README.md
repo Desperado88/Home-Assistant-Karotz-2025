@@ -25,12 +25,14 @@ Insère la clé dans ton Karotz et démarre-le. Il devrait se connecter automati
 
 🏠 Intégration dans Home Assistant
 
-Copie le fichier openkarotz.yaml dans un dossier nommé packages dans ton dossier de configuration Home Assistant :
+- Copie le fichier openkarotz.yaml dans un dossier nommé packages dans ton dossier de configuration Home Assistant :
 /config/packages/openkarotz.yaml
-Dans ton fichier configuration.yaml, ajoute (ou complète) la section suivante :
+
+- Dans ton fichier configuration.yaml, ajoute (ou complète) la section suivante :
 homeassistant:
   packages: !include_dir_named packages
-Redémarre Home Assistant depuis Paramètres → Système → Redémarrer.
+  
+- Redémarre Home Assistant depuis Paramètres → Système → Redémarrer.
 
 🧠 API Karotz
 Tu peux consulter l’ensemble des commandes disponibles via l’API OpenKarotz ici :
