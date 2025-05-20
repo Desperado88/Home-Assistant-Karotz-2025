@@ -2,8 +2,8 @@
 
 Ce dépôt contient une configuration Home Assistant permettant de contrôler un **Karotz** avec le firmware **OpenKarotz**.
 
-> OpenKarotz est un firmware alternatif qui redonne vie au lapin Karotz.  
-> 👉 [Installer OpenKarotz](https://www.openkarotz.org)
+> FreeRabbit est un firmware alternatif qui redonne vie au lapin Karotz.  
+> 👉 [Installer OpenKarotz](https://www.freerabbits.nl)
 
 ---
 
@@ -17,6 +17,9 @@ Ce dépôt contient une configuration Home Assistant permettant de contrôler un
 3. **Avant d’insérer la clé USB dans le Karotz**, édite le fichier `waitfornetwork.sh` pour y entrer :
    - Le **SSID** de ton Wi-Fi
    - Le **mot de passe** correspondant
+  
+4. se connecter sur l'ip du karotz : http://[ip du karotz]/install
+5. installer Openkarotz et ssh depuis cette page
 
 Insère la clé dans ton Karotz et démarre-le. Il devrait se connecter automatiquement au Wi-Fi.
 
