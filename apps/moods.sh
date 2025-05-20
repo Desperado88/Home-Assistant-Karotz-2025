@@ -1,0 +1,73 @@
+#!/bin/bash
+# joue une humeur aléatoire avec le mouvement qui correspond
+
+# Inclusion des fichiers de configuration et des fonctions utilitaires
+source /usr/www/cgi-bin/setup.inc
+source /usr/www/cgi-bin/url.inc
+source /usr/www/cgi-bin/utils.inc
+source /usr/www/cgi-bin/ears.inc
+
+# Log de l'appel du script Moods
+Log "[MOODS]" "Moods Called"
+
+# Arrêt des processus LEDS et SOUNDS si actifs
+KillProcess LEDS
+KillProcess SOUNDS
+# Lecture des paramètres passés dans l'URL
+ReadUrlParam
+
+# Vérification de l'existence des dossiers nécessaires pour les humeurs
+CheckMandatoryDirectory  "$CNF_DATADIR/Moods"
+CheckMandatoryDirectory  "$CNF_DATADIR/Moods/fr"
+
+# Récupération de l'ID de l'humeur et de la langue depuis les paramètres URL
+MOODS_ID=${URLParam[id]}
+LANG=${URLParam[lang]}
+# Si la langue n'est pas spécifiée, on utilise 'fr' par défaut
+if [ "$LANG" = "" ]; then
+   LANG="fr"
+fi
+
+# Si aucun ID d'humeur n'est fourni, on en choisit un aléatoirement entre 0 et 304
+if [ "$MOODS_ID" = "" ]; then
+    r=$RANDOM
+    MOODS=$(( r %= 305 )) 
+else
+    MOODS=$MOODS_ID    
+fi    
+
+# Vérifie si le fichier audio de l'humeur existe, sinon retourne une erreur JSON
+if [ ! -e "$CNF_DATADIR/Moods/fr/${MOODS}.mp3" ]; then
+  DATA='{"return":"1","msg":"Moods not found"}'
+  Log "[MOODS]"  "Moods not found"
+  SendResponse "$DATA"  
+  exit 0
+fi
+
+# Vérifie si le lapin est en veille (fichier karotz.sleep est il présent)
+if [ ! -e "$CNF_DATADIR/Run/karotz.sleep" ]; then
+   # Réinitialise les oreilles du lapin
+   EarsReset
+   # Vérifie à nouveau la présence du fichier audio
+   if [ ! -e "$CNF_DATADIR/Moods/fr/${MOODS}.mp3" ]; then
+      DATA='{"return":"1","msg":"File not found."}'
+   else
+      # Joue le son de l'humeur et prépare la réponse JSON de succès
+      PlaySound $CNF_DATADIR/Moods/fr/${MOODS}.mp3 1 &
+      DATA='{"moods":"'$MOODS'","return":"0"}'
+      Log "[MOODS]"  "Moods $MOODS played"
+      # Annimation en fonction du son
+      if [ "$MOODS" = "1" ]; then
+        /usr/www/cgi-bin/apps/moods_sleep.sh
+      else
+        /usr/www/cgi-bin/apps/moods_default.sh
+      fi
+   fi
+else
+   # Si le lapin est en veille, retourne une erreur JSON
+   DATA='{"return":"1","msg":"Unable to perform action, rabbit is sleeping."}'
+   Log "[MOODS]"  "Rabbit if sleeping."
+fi
+
+# Envoie la réponse JSON au client
+SendResponse "$DATA"
