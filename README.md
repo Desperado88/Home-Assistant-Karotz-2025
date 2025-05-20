@@ -9,12 +9,12 @@ Ce dépôt contient une configuration Home Assistant permettant de contrôler un
 
 ## 🔧 Préparation du Karotz
 
-1. Télécharge le firmware OpenKarotz depuis le site officiel :  
-   [https://www.openkarotz.org](https://www.openkarotz.org)
+1. Télécharge le firmware FreeRabbit depuis le site officiel :  
+[https://www.freerabbit.nl](https://www.freerabbits.nl)
 
-2. Copie le contenu du dossier `wifi_reset` fourni avec OpenKarotz sur **une clé USB** formatée en FAT32.
+2. Copie le contenu du dossier `SetupFreeRabbitsOS` fourni avec OpenKarotz sur **une clé USB** formatée en FAT32.
 
-3. **Avant d’insérer la clé USB dans le Karotz**, édite le fichier `network.conf` pour y entrer :
+3. **Avant d’insérer la clé USB dans le Karotz**, édite le fichier `waitfornetwork.sh` pour y entrer :
    - Le **SSID** de ton Wi-Fi
    - Le **mot de passe** correspondant
 
