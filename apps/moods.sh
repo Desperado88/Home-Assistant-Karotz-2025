@@ -57,11 +57,11 @@ if [ ! -e "$CNF_DATADIR/Run/karotz.sleep" ]; then
       DATA='{"moods":"'$MOODS'","return":"0"}'
       Log "[MOODS]"  "Moods $MOODS played"
       # Annimation en fonction du son
-      if [ "$MOODS" = "1" ]; then
-        /usr/www/cgi-bin/apps/moods_sleep.sh
-      else
-        /usr/www/cgi-bin/apps/moods_default.sh
-      fi
+      case "$MOODS" in
+      1)  /usr/www/cgi-bin/apps/moods_sleep.sh ;;
+
+      *)  /usr/www/cgi-bin/apps/moods_default.sh ;;
+      esac
    fi
 else
    # Si le lapin est en veille, retourne une erreur JSON
