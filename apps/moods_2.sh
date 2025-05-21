@@ -1,6 +1,6 @@
 #!/bin/bash
 # A placer dans /usr/www/cgi-bin/apps/moods_sleep.sh
-# baisse une oreille a l'horizontale et bouges légèrement
+# Baillement et baisse une oreille a l'horizontale et bouges légèrement
 
 source /usr/www/cgi-bin/setup.inc
 source /usr/www/cgi-bin/url.inc
