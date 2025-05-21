@@ -3,5 +3,5 @@
 
 # Remet les oreilles à l'origine
 EarsReset
-# led verte
-Leds 00FF00
+# led verte clignotante
+Leds 00FF00 000000 1 1 1000
