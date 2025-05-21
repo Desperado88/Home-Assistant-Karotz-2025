@@ -6,6 +6,7 @@ source /usr/www/cgi-bin/setup.inc
 source /usr/www/cgi-bin/url.inc
 source /usr/www/cgi-bin/ears.inc
 source /usr/www/cgi-bin/utils.inc
+source /usr/www/cgi-bin/leds.inc
 CNF_DATADIR="/usr/openkarotz"
 
 # Vérifie si Karotz est en veille
@@ -42,26 +43,32 @@ for i in 1 2; do
     # Étape 1 : Oreilles verticales
     EarsMove -2 -2 10
     sleep 5
+    Leds 9F00FF # purple
 
     # Étape 2 : Oreilles horizontales
     EarsMove 5 5 10
     sleep 5
+    Leds 0000FF # blue
 
     # Étape 3 : Dresse oreille droite
     EarsMove 5 -2 10
     sleep 5
+    Leds 9F00FF # purple
 
     # Étape 4 : Dresse oreille gauche
     EarsMove -2 5 10
     sleep 5
+    Leds 0000FF # blue
 
     # Étape 5 : Oreilles à l’horizontale
     EarsMove 5 5 10
     sleep 5
+    Leds 9F00FF # purple
 done
 
 # Retour à la position initiale
 EarsReset
+Leds 00FF00 000000 1 1 1000
 
 # Réponse JSON
 DATA='{"return":"0","msg":"Expressive Tai-Chi sequence completed (2 loops)."}'
