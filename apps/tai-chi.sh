@@ -31,8 +31,9 @@ if [ ! -f "$SOUND_FILE" ]; then
     exit 0
 fi
 
-# Lancer la musique
+KillProcess LEDS
 KillProcess SOUNDS
+# Lancer la musique
 PlaySound "$SOUND_FILE" &
 
 # Début de la séquence Tai-Chi expressive répétée 2 fois

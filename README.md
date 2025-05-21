@@ -17,11 +17,13 @@ Ce dépôt contient une configuration Home Assistant permettant de contrôler un
 3. **Avant d’insérer la clé USB dans le Karotz**, édite le fichier `waitfornetwork.sh` pour y entrer :
    - Le **SSID** de ton Wi-Fi
    - Le **mot de passe** correspondant
-  
-4. se connecter sur l'ip du karotz : http://[ip du karotz]/install
-5. installer Openkarotz et ssh depuis cette page
 
-Insère la clé dans ton Karotz et démarre-le. Il devrait se connecter automatiquement au Wi-Fi.
+4. Insère la clé dans ton Karotz et démarre-le. Il devrait se connecter automatiquement au Wi-Fi.
+
+5. se connecter sur l'ip du karotz : http://[ip du karotz]/install
+
+6. installer Openkarotz et ssh depuis cette page
+
 
 🏠 Intégration dans Home Assistant
 
