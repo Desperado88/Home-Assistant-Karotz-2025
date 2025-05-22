@@ -35,8 +35,8 @@ do
      # --------------------- 
       echo $line | grep "member=click"
       if [ $? -eq 0 ]; then
-         PlaySound "$CNF_DATADIR/Sounds/${SOUND}"
-	      /www/cgi-bin/apps/moods & 
+        PlaySound "$CNF_DATADIR/Sounds/${SOUND}"
+	/www/cgi-bin/apps/moods & 
       fi
       
       # ---------------------  
@@ -45,8 +45,8 @@ do
       # ---------------------  
       echo $line | grep "member=dclick"
       if [ $? -eq 0 ]; then
-         PlaySound $CNF_DATADIR/Sounds/${SOUND}
-	      /www/cgi-bin/apps/tai-chi.sh & 
+      	PlaySound $CNF_DATADIR/Sounds/${SOUND}
+	/www/cgi-bin/apps/tai-chi.sh & 
       fi
        
        # ---------------------  
