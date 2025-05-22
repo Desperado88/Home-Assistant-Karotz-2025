@@ -1,0 +1,27 @@
+#!/bin/bash
+# Animation Mood 5 : Bonjour ! Je suis un lapin, je suis gentil. Ha ha ha ha
+
+source /usr/www/cgi-bin/setup.inc
+source /usr/www/cgi-bin/url.inc
+source /usr/www/cgi-bin/utils.inc
+source /usr/www/cgi-bin/leds.inc
+source /usr/www/cgi-bin/ears.inc
+
+# Allume la LED en jaune orangé en pulsation douce
+Leds FFA500 FFC040 1 1 1500
+
+# Animation des oreilles : petites montées et descentes rapides
+for i in 1 2 3; do
+    EarsMove 10 6 8
+    sleep 0.5
+    EarsMove 6 10 8
+    sleep 0.5
+    EarsMove 8 8 10
+    sleep 0.5
+done
+
+# Retour position neutre
+EarsReset
+
+# LED verte pour signaler la fin de l'animation
+Leds 00FF00 000000 1 1 1000

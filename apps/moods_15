@@ -1,0 +1,37 @@
+#!/bin/bash
+# Animation Mood 15 : Et alors, tu fais les mêmes mouvements que moi. Euh ! comme ça; 1 et 2, 1 et 2, respire, 1 et 2.
+
+source /usr/www/cgi-bin/setup.inc
+source /usr/www/cgi-bin/url.inc
+source /usr/www/cgi-bin/utils.inc
+source /usr/www/cgi-bin/leds.inc
+source /usr/www/cgi-bin/ears.inc
+
+# LED orange pulsée pour l'énergie
+Leds FFA500 FFC040 1 1 1000
+sleep 2
+# Premier enchaînement : 1 et 2, 1 et 2
+for i in 1 2; do
+    EarsMove 10 6 100
+    sleep 2
+    EarsMove 6 10 100
+    sleep 1
+done
+sleep 1
+# Pause "respire"
+EarsMove 4 4 10
+sleep 1
+EarsMove 6 6 10
+sleep 1
+
+EarsMove 10 6 100
+sleep 2
+EarsMove 6 10 100
+sleep 2
+
+
+# Retour position neutre
+EarsReset
+
+# LED verte pour signaler la fin
+Leds 00FF00 000000 1 1 1000

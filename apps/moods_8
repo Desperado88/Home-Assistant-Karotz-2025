@@ -1,0 +1,33 @@
+#!/bin/bash
+# Animation Mood 8 : Et vous, euh, vous en pensez quoi de la réforme sur les garennes ...
+
+source /usr/www/cgi-bin/setup.inc
+source /usr/www/cgi-bin/url.inc
+source /usr/www/cgi-bin/utils.inc
+source /usr/www/cgi-bin/leds.inc
+source /usr/www/cgi-bin/ears.inc
+
+# LED violette, pulsation lente pour une ambiance de réflexion
+Leds 660099 9966CC 1 1 2000
+
+# Mouvement lent des oreilles, comme si le lapin se posait une question
+EarsMove 10 10 10
+sleep 1
+EarsMove 12 8 10
+sleep 1
+EarsMove 8 12 10
+sleep 1
+EarsMove 10 10 10
+sleep 1
+
+# Petite inclinaison asymétrique pour montrer le doute ou la curiosité
+EarsMove 6 10 8
+sleep 1
+EarsMove 10 6 8
+sleep 1
+
+# Retour position neutre
+EarsReset
+
+# LED verte pour signaler la fin
+Leds 00FF00 000000 1 1 1000
