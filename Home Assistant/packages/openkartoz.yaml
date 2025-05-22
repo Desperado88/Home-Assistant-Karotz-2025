@@ -309,8 +309,8 @@ automation:
 
           # Couleur LED
           color_palette: [
-          'ADD8E6', '87CEFA', '00CED1', '40E0D0', '90EE90',
-          'ADFF2F', 'FFD700', 'FFA500', 'FF4500', 'FF0000'
+            'ADD8E6', '87CEFA', '00CED1', '40E0D0', '90EE90',
+            'ADFF2F', 'FFD700', 'FFA500', 'FF4500', 'FF0000'
           ]
           color_index: >
             {% set index = ((temp + 10) // 5) | int %}
