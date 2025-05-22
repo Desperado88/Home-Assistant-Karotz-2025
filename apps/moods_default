@@ -1,7 +1,27 @@
 #!/bin/bash
-# S'exécute par defaut lors du moods
+# Animation par défaut : utilisée quand aucun ID de mood valide n'est fourni
 
-# Remet les oreilles à l'origine
+source /usr/www/cgi-bin/setup.inc
+source /usr/www/cgi-bin/url.inc
+source /usr/www/cgi-bin/utils.inc
+source /usr/www/cgi-bin/leds.inc
+source /usr/www/cgi-bin/ears.inc
+
+# LED cyan clignotante pour signal neutre/attente
+Leds 00FFFF 00CCCC 1 1 1200
+
+# Mouvements d’oreilles légers synchrones
+EarsMove 8 8 10
+sleep 0.7
+EarsMove 6 6 10
+sleep 0.7
+EarsMove 8 8 10
+sleep 0.7
+EarsMove 6 6 10
+sleep 0.7
+
+# Retour à la position de repos
 EarsReset
-# led verte clignotante
+
+# LED verte pour indiquer que l’action est terminée
 Leds 00FF00 000000 1 1 1000
