@@ -58,9 +58,13 @@ if [ ! -e "$CNF_DATADIR/Run/karotz.sleep" ]; then
       Log "[MOODS]"  "Moods $MOODS played"
       # Annimation en fonction du son
       case "$MOODS" in
-      1)  /usr/www/cgi-bin/apps/moods_1.sh ;; # Romfle, baisse les oreilles, led bleu
-      2)  /usr/www/cgi-bin/apps/moods_2.sh ;; # Baille, baisse les oreilles, led cyan
-      *)  /usr/www/cgi-bin/apps/moods_default.sh ;;
+      1)  /usr/www/cgi-bin/apps/moods_1 ;; # Romfle, baisse les oreilles, led bleu
+      2)  /usr/www/cgi-bin/apps/moods_2 ;; # Baille, baisse les oreilles, led cyan
+      3)  /usr/www/cgi-bin/apps/moods_3 ;; # Eternument, recule les oreilles
+      5)  /usr/www/cgi-bin/apps/moods_5 ;; # Je suis un lapin, je suis gentil. Ha ha ha ha
+      8)  /usr/www/cgi-bin/apps/moods_8 ;; # Et vous, euh, vous en pensez quoi de la réforme sur les garennes ...
+      15)  /usr/www/cgi-bin/apps/moods_15 ;; # Et alors, tu fais les mêmes mouvements que moi. Euh ! comme ça; 1 et 2, 1 et 2, respire, 1 et 2.
+      *)  /usr/www/cgi-bin/apps/moods_default ;;
       esac
    fi
 else

@@ -1,6 +1,6 @@
 #!/bin/bash
 # A placer dans /usr/www/cgi-bin/apps/moods_sleep.sh
-# Baillement et baisse une oreille a l'horizontale et bouges légèrement
+# Eternument, recule les oreilles
 
 source /usr/www/cgi-bin/setup.inc
 source /usr/www/cgi-bin/url.inc
@@ -10,21 +10,9 @@ source /usr/www/cgi-bin/ears.inc
 
 # Allume la LED en bleu clair
 Leds 0000FF 00FF9F 1 1 2000
-for i in 1 2; do
-    # Baisse les oreilles
-    EarsMove -1 6 10
-    sleep 1
-    EarsMove -3 3 10
-    sleep 1
-    EarsMove -1 6 10
-    sleep 1
-    EarsMove -3 3 10
-    sleep 1
-    EarsMove -1 6 10
-    sleep 1
-    EarsMove -3 3 10
-    sleep 1
-done
+EarsMove -5 -5 100
+sleep 3
+
 
 EarsReset
 Leds 00FF00 000000 1 1 1000
