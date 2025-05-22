@@ -18,12 +18,19 @@ Ce dépôt contient une configuration Home Assistant permettant de contrôler un
    - Le **SSID** de ton Wi-Fi
    - Le **mot de passe** correspondant
 
-4. Insère la clé dans ton Karotz et démarre-le. Il devrait se connecter automatiquement au Wi-Fi.
+4. Réinitialise le karotz en le démarrant en maintenant le bouton de la tête jusqu'a ce que la led s'allume bleu et attendre le redémarrage
 
-5. se connecter sur l'ip du karotz : http://[ip du karotz]/install
+5. Insère la clé dans ton Karotz et démarre-le. Il devrait se connecter automatiquement au Wi-Fi.
 
-6. installer Openkarotz et ssh depuis cette page
+6. se connecter sur l'ip du karotz : http://[ip du karotz]/install
 
+7. installer Openkarotz et ssh depuis cette page
+
+8. Redemmarer le karotz en le débranchant
+
+9. Se connecter au karotz en ssh via la commande terminal "ssh karotz@[Ip du karotz]"
+
+10. Se connecter en ssh et faire les commandes "passwd" et "passwd karotz" pour initialiser des mots de passes
 
 🏠 Intégration dans Home Assistant
 
