@@ -7,7 +7,8 @@ source /usr/www/cgi-bin/leds.inc
 
 rfiddetect=0
 RFID_DETECTED=0
-SOUND="twang_04.mp3"
+SOUND1="twang_01.mp3"
+SOUND2="twang_04.mp3"
 dbus-monitor --system | while read line 2> /dev/null
 do
       
@@ -35,7 +36,7 @@ do
      # --------------------- 
       echo $line | grep "member=click"
       if [ $? -eq 0 ]; then
-         PlaySound "$CNF_DATADIR/Sounds/${SOUND}"
+         PlaySound "$CNF_DATADIR/Sounds/${SOUND2}"
 	      /www/cgi-bin/apps/moods & 
       fi
       
@@ -45,7 +46,7 @@ do
       # ---------------------  
       echo $line | grep "member=dclick"
       if [ $? -eq 0 ]; then
-         PlaySound $CNF_DATADIR/Sounds/${SOUND}
+         PlaySound $CNF_DATADIR/Sounds/${SOUND1}
 	      /www/cgi-bin/apps/tai-chi.sh & 
       fi
        
