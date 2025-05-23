@@ -1,0 +1,35 @@
+#!/bin/bash
+# Animation Mood 24 : Bien sûr, tout le monde devrait faire ça, c’est évident. (9s)
+
+source /usr/www/cgi-bin/setup.inc
+source /usr/www/cgi-bin/url.inc
+source /usr/www/cgi-bin/utils.inc
+source /usr/www/cgi-bin/leds.inc
+source /usr/www/cgi-bin/ears.inc
+
+# LED jaune, stable et confiante
+Leds FFFF00 FFA500 1 1 800
+
+# Oreilles droites en position d'affirmation
+EarsMove 15 15 10
+sleep 0.8
+
+# Inclinaisons latérales en "je vous l’avais dit"
+for i in 1 2; do
+    EarsMove 13 9 12
+    sleep 0.7
+    EarsMove 9 13 12
+    sleep 0.7
+done
+
+# Petit hochement final
+EarsMove 12 12 10
+sleep 0.6
+EarsMove 14 14 10
+sleep 0.6
+
+# Retour position neutre
+EarsReset
+
+# LED verte pour signaler la fin
+Leds 00FF00 000000 1 1 1000

@@ -152,16 +152,18 @@ rest_command:
     url: "http://{{ states('input_text.karotz_ip_address') }}/cgi-bin/rfid_start_record" # ajouter un nouveau tag rfid
   karotz_rfid_record_stop:
     url: "http://{{ states('input_text.karotz_ip_address') }}/cgi-bin/rfid_stop_record" # arrêter l'ajout de tag rfid
-  karotz_rfid_assign: # forge l'url pour l'ajout d'un tag rfid /cgi-bin/rfid_assign_url?tag=id du tag&url=url&name=nom de l’action
+  karotz_rfid_assign: # forge l'url pour l'ajout d'un tag rfid /cgi-bin/rfid_assign_url?tag=id du tag&url=url&name=nom de l'action
     url: "http://{{ states('input_text.karotz_ip_address') }}/cgi-bin/rfid_assign_url?tag={{ states('input_text.karotz_rfid_id') }}&url={{ states('input_text.karotz_rfid_url') | urlencode }}&name={{ states('input_text.karotz_rfid_name') | urlencode }}"
 
-# rfid_assign_url : /cgi-bin/rfid_assign_url?tag=id du tag&url=url&name=nom de l’action
+# rfid_assign_url : /cgi-bin/rfid_assign_url?tag=id du tag&url=url&name=nom de l'action
 # exemple : cgi-bin/rfid_assign_url?tag=D0021A3503xxxxxx&url=http://192.168.X.X/leds.cgi?led=3
   karotz_play_tai_chi:
     url: "http://{{ states('input_text.karotz_ip_address') }}/cgi-bin/sound?url=file:///usr/karotz/musiques/taichi.mp3" # url pour la musique du taichi
 # Apps du karotz
   karotz_tai_chi:
-    url: "http://{{ states('input_text.karotz_ip_address') }}/cgi-bin/apps/tai-chi"
+    alias: "Tai-Chi"  # Fait faire du tai-chi au karotz
+    sequence:
+      - action: rest_command.karotz_tai_chi
 # Annonce de l'heure
   karotz_clock:
     url: "http://{{ states('input_text.karotz_ip_address') }}/cgi-bin/apps/clock"
@@ -359,4 +361,20 @@ automation:
             Le vent souffle à {{ wind | round(0) }} kilomètres par heure.
             Le risque de pluie est de {{ rain_chance | round(0) }} pourcents.
     mode: single
+
+  # Annonce de l'heure toutes les heures
+  - alias: "Karotz - Annonce de l'heure"
+    description: "Fait annoncer l'heure par le Karotz toutes les heures"
+    trigger:
+      - platform: time_pattern
+        minutes: "0"
+    condition:
+      - condition: time
+        after: "07:00:00"
+        before: "20:00:00"
+      - condition: state
+        entity_id: input_boolean.karotz_awake
+        state: "on"
+    action:
+      - action: rest_command.karotz_clock
 

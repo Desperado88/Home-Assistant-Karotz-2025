@@ -1,5 +1,5 @@
 #!/bin/bash
-# Animation Mood 15 : Et alors, tu fais les mêmes mouvements que moi. Euh ! comme ça; 1 et 2, 1 et 2, respire, 1 et 2.
+# Animation Mood 15 : Gym rythmée (durée 15 secondes)
 
 source /usr/www/cgi-bin/setup.inc
 source /usr/www/cgi-bin/url.inc
@@ -7,31 +7,36 @@ source /usr/www/cgi-bin/utils.inc
 source /usr/www/cgi-bin/leds.inc
 source /usr/www/cgi-bin/ears.inc
 
-# LED orange pulsée pour l'énergie
-Leds FFA500 FFC040 1 1 1000
-sleep 2
-# Premier enchaînement : 1 et 2, 1 et 2
-for i in 1 2; do
-    EarsMove 10 6 100
-    sleep 2
-    EarsMove 6 10 100
-    sleep 1
+# LED rouge/jaune clignotantes pour l’énergie
+Leds FF0000 FFFF00 1 1 400
+
+# Boucle rythmique : 3 cycles "1 et 2", respire, puis 3 cycles
+for i in 1 2 3; do
+    EarsMove 14 2 10
+    sleep 0.5
+    EarsMove 2 14 10
+    sleep 0.5
 done
-sleep 1
-# Pause "respire"
-EarsMove 4 4 10
-sleep 1
-EarsMove 6 6 10
+
+# Respire
+EarsMove 8 8 6
 sleep 1
 
-EarsMove 10 6 100
-sleep 2
-EarsMove 6 10 100
-sleep 2
+# Reprise du rythme
+for i in 1 2 3; do
+    EarsMove 14 2 10
+    sleep 0.5
+    EarsMove 2 14 10
+    sleep 0.5
+done
 
+# Ralentissement final
+EarsMove 10 6 8
+sleep 1
 
 # Retour position neutre
 EarsReset
 
-# LED verte pour signaler la fin
+# LED verte pour fin animation
 Leds 00FF00 000000 1 1 1000
+

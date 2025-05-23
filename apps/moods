@@ -64,6 +64,14 @@ if [ ! -e "$CNF_DATADIR/Run/karotz.sleep" ]; then
       5)  /usr/www/cgi-bin/apps/moods_5 ;; # Je suis un lapin, je suis gentil. Ha ha ha ha
       8)  /usr/www/cgi-bin/apps/moods_8 ;; # Et vous, euh, vous en pensez quoi de la réforme sur les garennes ...
       15)  /usr/www/cgi-bin/apps/moods_15 ;; # Et alors, tu fais les mêmes mouvements que moi. Euh ! comme ça; 1 et 2, 1 et 2, respire, 1 et 2.
+      16) /usr/www/cgi-bin/apps/moods_16 ;; # Hummm ! Y a pas moyen d’être tranquille, hein !
+      17) /usr/www/cgi-bin/apps/moods_17 ;; # Hum ! J'ai faim ! Quand est-ce qu'on mange ?
+      18) /usr/www/cgi-bin/apps/moods_18 ;; # Tada !!
+      19) /usr/www/cgi-bin/apps/moods_19 ;; # Enhhh ! Mais qu'est-ce que c'est qu'cette lampe ?
+      21) /usr/www/cgi-bin/apps/moods_21 ;; # Hum, hum, hum, humhum (chantonne en rythme, 10 secondes)
+      24) /usr/www/cgi-bin/apps/moods_24 ;; # Bien sûr, tout le monde devrait faire ça, c’est évident. (9s)
+      25) /usr/www/cgi-bin/apps/moods_25 ;; # Être extravagant ? Mais pourquoi ? (4s)
+      26) /usr/www/cgi-bin/apps/moods_26 ;; # Chuchotement (10s)
       *)  /usr/www/cgi-bin/apps/moods_default ;;
       esac
    fi

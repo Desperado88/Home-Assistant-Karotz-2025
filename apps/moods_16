@@ -1,0 +1,31 @@
+#!/bin/bash
+# Animation Mood 16 : Hummm ! Y a pas moyen d’être tranquille, hein !
+
+source /usr/www/cgi-bin/setup.inc
+source /usr/www/cgi-bin/url.inc
+source /usr/www/cgi-bin/utils.inc
+source /usr/www/cgi-bin/leds.inc
+source /usr/www/cgi-bin/ears.inc
+
+# LED rouge-orangée, pulsation rapide pour marquer l’agacement
+Leds FF0000 FFA500 1 1 800
+
+# Mouvement brusque des oreilles, comme un "grognement"
+EarsMove 12 4 12
+sleep 0.5
+EarsMove 4 12 12
+sleep 0.5
+EarsMove 10 6 10
+sleep 0.5
+EarsMove 6 10 10
+sleep 0.5
+
+# Soupir / baisse des oreilles
+EarsMove 3 3 8
+sleep 1
+
+# Retour à la normale, un peu sec
+EarsReset
+
+# LED verte rapide pour signaler la fin
+Leds 00FF00 000000 1 1 800
