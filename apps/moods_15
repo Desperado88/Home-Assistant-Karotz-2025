@@ -7,7 +7,21 @@ source /usr/www/cgi-bin/utils.inc
 source /usr/www/cgi-bin/leds.inc
 source /usr/www/cgi-bin/ears.inc
 
-# LED rouge/jaune clignotantes pour l’énergie
+# Vérifie si le lapin est en veille
+if [ -e "$CNF_DATADIR/Run/karotz.sleep" ]; then
+    DATA='{"return":"1","msg":"Unable to perform action, rabbit is sleeping."}'
+    SendResponse "$DATA"
+    exit 0
+fi
+
+# Vérifie si les oreilles sont désactivées
+if [ -e "$CNF_DATADIR/Run/ears.disabled" ]; then
+    DATA='{"return":"1","msg":"Unable to perform action, ears disabled."}'
+    SendResponse "$DATA"
+    exit 0
+fi
+
+# LED rouge/jaune clignotantes pour l'énergie
 Leds FF0000 FFFF00 1 1 400
 
 # Boucle rythmique : 3 cycles "1 et 2", respire, puis 3 cycles
@@ -39,4 +53,8 @@ EarsReset
 
 # LED verte pour fin animation
 Leds 00FF00 000000 1 1 1000
+
+# Réponse JSON
+DATA='{"return":"0","msg":"Gym animation completed."}'
+SendResponse "$DATA"
 
