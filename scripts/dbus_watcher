@@ -47,7 +47,7 @@ do
       echo $line | grep "member=dclick"
       if [ $? -eq 0 ]; then
          PlaySound $CNF_DATADIR/Sounds/${SOUND1}
-	      /www/cgi-bin/apps/tai-chi.sh & 
+	      /www/cgi-bin/apps/tai-chi & 
       fi
        
        # ---------------------  
