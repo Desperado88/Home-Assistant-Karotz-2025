@@ -1,0 +1,30 @@
+#!/bin/bash
+# Animation Mood 19 : Enhhh ! Mais qu’est-ce que c’est qu’cette lampe ? (4s)
+
+source /usr/www/cgi-bin/setup.inc
+source /usr/www/cgi-bin/url.inc
+source /usr/www/cgi-bin/utils.inc
+source /usr/www/cgi-bin/leds.inc
+source /usr/www/cgi-bin/ears.inc
+
+# LED cyan vive qui clignote (représente la lumière étrange)
+Leds 00FFFF FFFFFF 1 1 500
+
+# Mouvement de recul rapide
+EarsMove 2 14 15
+sleep 0.5
+EarsMove 14 2 15
+sleep 0.5
+
+# Balancement interrogatif
+EarsMove 8 6 12
+sleep 0.4
+EarsMove 6 8 12
+sleep 0.4
+
+# Retour position neutre
+EarsReset
+
+# LED verte de fin
+Leds 00FF00 000000 1 1 1000
+

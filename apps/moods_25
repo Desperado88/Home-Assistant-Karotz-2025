@@ -1,0 +1,29 @@
+#!/bin/bash
+# Animation Mood 25 : Être extravagant ? Mais pourquoi ? (4s)
+
+source /usr/www/cgi-bin/setup.inc
+source /usr/www/cgi-bin/url.inc
+source /usr/www/cgi-bin/utils.inc
+source /usr/www/cgi-bin/leds.inc
+source /usr/www/cgi-bin/ears.inc
+
+# LED violette, clignotante pour l’effet théâtral
+Leds 660099 9900FF 1 1 600
+
+# Sursaut des oreilles (mouvement vif vers l’arrière)
+EarsMove 4 12 15
+sleep 0.6
+
+# Recentrage rapide, comme un "quoi ?"
+EarsMove 12 4 15
+sleep 0.6
+
+# Petit basculement théâtral vers l'avant
+EarsMove 8 8 10
+sleep 0.8
+
+# Retour à la normale
+EarsReset
+
+# LED verte fin animation
+Leds 00FF00 000000 1 1 1000

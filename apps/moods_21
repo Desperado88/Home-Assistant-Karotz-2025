@@ -1,0 +1,31 @@
+#!/bin/bash
+# Animation Mood 21 : Hum, hum, hum, humhum (chantonne en rythme, 10 secondes)
+
+source /usr/www/cgi-bin/setup.inc
+source /usr/www/cgi-bin/url.inc
+source /usr/www/cgi-bin/utils.inc
+source /usr/www/cgi-bin/leds.inc
+source /usr/www/cgi-bin/ears.inc
+
+# LED rose pulsante, douce et rythmée
+Leds FFC0CB FFA5B0 1 1 800
+
+# Balancement rythmique sur 10 secondes
+for i in 1 2; do
+    EarsMove 10 4 12
+    sleep 0.6
+    EarsMove 4 10 12
+    sleep 0.6
+    EarsMove 8 6 12
+    sleep 0.6
+    EarsMove 6 8 12
+    sleep 0.6
+    EarsMove 7 7 10
+    sleep 0.6
+end
+
+# Retour position neutre
+EarsReset
+
+# LED verte fin d’animation
+Leds 00FF00 000000 1 1 1000

@@ -1,0 +1,53 @@
+#!/bin/bash
+# Animation "La goutte qui fait déborder le vase" pour le Karotz
+# Oreilles qui s'abaissent progressivement, LED bleue qui s'intensifie
+
+# Inclusion des fichiers de configuration et des fonctions utilitaires
+source /usr/www/cgi-bin/setup.inc
+source /usr/www/cgi-bin/url.inc
+source /usr/www/cgi-bin/utils.inc
+source /usr/www/cgi-bin/ears.inc
+source /usr/www/cgi-bin/leds.inc
+
+# Vérifie si le lapin est en veille
+if [ -e "$CNF_DATADIR/Run/karotz.sleep" ]; then
+    DATA='{"return":"1","msg":"Unable to perform action, rabbit is sleeping."}'
+    SendResponse "$DATA"
+    exit 0
+fi
+
+# Vérifie si les oreilles sont désactivées
+if [ -e "$CNF_DATADIR/Run/ears.disabled" ]; then
+    DATA='{"return":"1","msg":"Unable to perform action, ears disabled."}'
+    SendResponse "$DATA"
+    exit 0
+fi
+
+# Position initiale - oreilles droites
+EarsReset
+# LED bleue claire pulsante
+Leds 0000FF 000000 1 1 1000
+sleep 1
+
+# Première goutte (1 seconde)
+# Oreilles légèrement baissées
+EarsMove 8 8 15
+# LED bleue plus intense
+Leds 0000FF 000000 1 1 800
+sleep 3
+
+# Deuxième goutte (5 secondes)
+# Oreilles très baissées
+EarsMove 4 4 15
+# LED bleue très intense
+Leds 0000FF 000000 1 1 400
+sleep 1
+
+# Retour à la position initiale
+EarsReset
+# LED verte fixe
+Leds 00FF00 000000 1 1 1000
+
+# Réponse JSON
+DATA='{"return":"0","msg":"Goutte animation completed."}'
+SendResponse "$DATA" 
