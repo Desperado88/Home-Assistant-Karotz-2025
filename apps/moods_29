@@ -1,6 +1,6 @@
 #!/bin/bash
-# Animation "Je suis pas d'accord !" pour le Karotz
-# Oreilles qui s'agitent rapidement en signe de désaccord
+# Animation "Hum ! Ça serait bien !" pour le Karotz
+# Oreilles qui s'agitent avec enthousiasme
 
 # Inclusion des fichiers de configuration et des fonctions utilitaires
 source /usr/www/cgi-bin/setup.inc
@@ -25,23 +25,28 @@ fi
 
 # Position initiale - oreilles droites
 EarsReset
-# LED jaune fixe
-Leds FFFF00 000000 1 1 1000
+# LED rose fixe
+Leds FF00FF 000000 1 1 1000
 sleep 0.5
 
-# Agitation rapide des oreilles
-EarsMove 8 8 75
-# LED rouge pulsante rapide
-Leds FF0000 000000 1 1 200
-sleep 1.5
+# Agitation des oreilles avec enthousiasme
+EarsMove 12 12 50
+# LED rose pulsante rapide
+Leds FF00FF 000000 1 1 300
+sleep 1
+
+# Mouvement d'approbation
+EarsMove 8 8 50
+# LED rose pulsante moyenne
+Leds FF00FF 000000 1 1 500
+sleep 1
 
 # Retour à la position initiale
 EarsReset
 # LED verte fixe
 Leds 00FF00 000000 1 1 1000
-sleep 1
+sleep 0.5
 
 # Réponse JSON
-DATA='{"return":"0","msg":"Pas d'accord animation completed."}'
-SendResponse "$DATA"
-
+DATA='{"return":"0","msg":"Enthousiasme animation completed."}'
+SendResponse "$DATA" 

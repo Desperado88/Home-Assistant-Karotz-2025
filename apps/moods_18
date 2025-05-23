@@ -1,26 +1,47 @@
 #!/bin/bash
-# Animation Mood 18 : Tada !! (2 secondes)
+# Animation "Je suis d'accord !" pour le Karotz
+# Oreilles qui s'agitent doucement en signe d'approbation
 
+# Inclusion des fichiers de configuration et des fonctions utilitaires
 source /usr/www/cgi-bin/setup.inc
 source /usr/www/cgi-bin/url.inc
 source /usr/www/cgi-bin/utils.inc
-source /usr/www/cgi-bin/leds.inc
 source /usr/www/cgi-bin/ears.inc
+source /usr/www/cgi-bin/leds.inc
 
-# LED rose + jaune, pulsation vive
-Leds FFC0CB FFFF00 1 1 300
+# Vérifie si le lapin est en veille
+if [ -e "$CNF_DATADIR/Run/karotz.sleep" ]; then
+    DATA='{"return":"1","msg":"Unable to perform action, rabbit is sleeping."}'
+    SendResponse "$DATA"
+    exit 0
+fi
 
-# Oreilles montent rapidement
-EarsMove 15 15 20
-sleep 0.5
+# Vérifie si les oreilles sont désactivées
+if [ -e "$CNF_DATADIR/Run/ears.disabled" ]; then
+    DATA='{"return":"1","msg":"Unable to perform action, ears disabled."}'
+    SendResponse "$DATA"
+    exit 0
+fi
 
-# Petit effet d’éclat : pivot léger
-EarsMove 13 17 18
-sleep 0.5
-
-# Retour à la normale
+# Position initiale - oreilles droites
 EarsReset
+# LED jaune fixe
+Leds FFFF00 000000 1 1 1000
+sleep 0.5
 
-# LED verte fin d'animation
+# Agitation douce des oreilles
+EarsMove 8 8 25
+# LED verte pulsante
+Leds 00FF00 000000 1 1 500
+sleep 1.5
+
+# Retour à la position initiale
+EarsReset
+# LED verte fixe
 Leds 00FF00 000000 1 1 1000
+sleep 1
+
+# Réponse JSON
+DATA='{"return":"0","msg":"D'accord animation completed."}'
+SendResponse "$DATA"
 

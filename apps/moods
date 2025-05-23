@@ -64,14 +64,22 @@ if [ ! -e "$CNF_DATADIR/Run/karotz.sleep" ]; then
       5)  /usr/www/cgi-bin/apps/moods_5 ;; # Je suis un lapin, je suis gentil. Ha ha ha ha
       8)  /usr/www/cgi-bin/apps/moods_8 ;; # Et vous, euh, vous en pensez quoi de la réforme sur les garennes ...
       15)  /usr/www/cgi-bin/apps/moods_15 ;; # Et alors, tu fais les mêmes mouvements que moi. Euh ! comme ça; 1 et 2, 1 et 2, respire, 1 et 2.
-      16) /usr/www/cgi-bin/apps/moods_16 ;; # Hummm ! Y a pas moyen d’être tranquille, hein !
+      16) /usr/www/cgi-bin/apps/moods_16 ;; # Hummm ! Y a pas moyen d'être tranquille, hein !
       17) /usr/www/cgi-bin/apps/moods_17 ;; # Hum ! J'ai faim ! Quand est-ce qu'on mange ?
       18) /usr/www/cgi-bin/apps/moods_18 ;; # Tada !!
       19) /usr/www/cgi-bin/apps/moods_19 ;; # Enhhh ! Mais qu'est-ce que c'est qu'cette lampe ?
       21) /usr/www/cgi-bin/apps/moods_21 ;; # Hum, hum, hum, humhum (chantonne en rythme, 10 secondes)
-      24) /usr/www/cgi-bin/apps/moods_24 ;; # Bien sûr, tout le monde devrait faire ça, c’est évident. (9s)
+      24) /usr/www/cgi-bin/apps/moods_24 ;; # Bien sûr, tout le monde devrait faire ça, c'est évident. (9s)
       25) /usr/www/cgi-bin/apps/moods_25 ;; # Être extravagant ? Mais pourquoi ? (4s)
       26) /usr/www/cgi-bin/apps/moods_26 ;; # Chuchotement (10s)
+      27) /usr/www/cgi-bin/apps/moods_27 ;; # La goutte qui fait déborder le vase (6s)
+      28) /usr/www/cgi-bin/apps/moods_28 ;; # Mais pourquoi y font ça ? (3s)
+      29) /usr/www/cgi-bin/apps/moods_29 ;; # Hum ! Ça serait bien ! (3s)
+      31) /usr/www/cgi-bin/apps/moods_31 ;; # Abracadabra ! (9s)
+      32) /usr/www/cgi-bin/apps/moods_32 ;; # Oui, mais euh, ça reste son ami quand même ! (4s)
+      33) /usr/www/cgi-bin/apps/moods_28 ;; # Comment ça s'écris déjà ? (3s)
+      34) /usr/www/cgi-bin/apps/moods_34 ;; # Euh, 5 et 6 onze, et 3 quatorze, non mais attend ça doit faire 15, euh, 15 oui. (10s)
+      73) /usr/www/cgi-bin/apps/moods_73 ;; # Vache dans l'étang et marseillaise (10s)
       *)  /usr/www/cgi-bin/apps/moods_default ;;
       esac
    fi

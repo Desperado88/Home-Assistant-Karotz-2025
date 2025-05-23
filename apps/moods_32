@@ -1,38 +1,13 @@
 #!/bin/bash
-# Animation Mood 24 : Bien sûr, tout le monde devrait faire ça, c'est évident. (9s)
+# Animation "Oui, mais euh, ça reste son ami quand même !" pour le Karotz
+# Oreilles qui hésitent puis s'affirment
 
+# Inclusion des fichiers de configuration et des fonctions utilitaires
 source /usr/www/cgi-bin/setup.inc
 source /usr/www/cgi-bin/url.inc
 source /usr/www/cgi-bin/utils.inc
-source /usr/www/cgi-bin/leds.inc
 source /usr/www/cgi-bin/ears.inc
-
-# LED jaune, stable et confiante
-Leds FFFF00 FFA500 1 1 800
-
-# Oreilles droites en position d'affirmation
-EarsMove 15 15 10
-sleep 0.8
-
-# Inclinaisons latérales en "je vous l'avais dit"
-for i in 1 2; do
-    EarsMove 13 9 12
-    sleep 0.7
-    EarsMove 9 13 12
-    sleep 0.7
-done
-
-# Petit hochement final
-EarsMove 12 12 10
-sleep 0.6
-EarsMove 14 14 10
-sleep 0.6
-
-# Retour position neutre
-EarsReset
-
-# LED verte pour signaler la fin
-Leds 00FF00 000000 1 1 1000
+source /usr/www/cgi-bin/leds.inc
 
 # Vérifie si le lapin est en veille
 if [ -e "$CNF_DATADIR/Run/karotz.sleep" ]; then
@@ -54,18 +29,26 @@ EarsReset
 Leds FFFF00 000000 1 1 1000
 sleep 0.5
 
-# Agitation douce des oreilles
-EarsMove 8 8 25
+# Hésitation (0.5-2s)
+# Oreilles qui s'inclinent
+EarsMove 10 6 15
+# LED orange pulsante
+Leds FF6600 000000 1 1 500
+sleep 1.5
+
+# Affirmation (2-3.5s)
+# Oreilles qui se redressent
+EarsMove 12 12 15
 # LED verte pulsante
-Leds 00FF00 000000 1 1 500
+Leds 00FF00 000000 1 1 400
 sleep 1.5
 
 # Retour à la position initiale
 EarsReset
 # LED verte fixe
 Leds 00FF00 000000 1 1 1000
-sleep 1
+sleep 0.5
 
 # Réponse JSON
-DATA='{"return":"0","msg":"D'accord animation completed."}'
-SendResponse "$DATA"
+DATA='{"return":"0","msg":"Ami animation completed."}'
+SendResponse "$DATA" 
