@@ -1,5 +1,5 @@
 #!/bin/bash
-# Animation Mood 17 : Hum ! J’ai faim ! Quand est-ce qu’on mange ? (4s)
+# Animation Mood 17 : Hum ! J'ai faim ! Quand est-ce qu'on mange ? (4s)
 
 source /usr/www/cgi-bin/setup.inc
 source /usr/www/cgi-bin/url.inc

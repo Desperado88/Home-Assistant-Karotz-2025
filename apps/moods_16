@@ -1,5 +1,5 @@
 #!/bin/bash
-# Animation Mood 16 : Hummm ! Y a pas moyen d’être tranquille, hein !
+# Animation Mood 16 : Hummm ! Y a pas moyen d'être tranquille, hein !
 
 source /usr/www/cgi-bin/setup.inc
 source /usr/www/cgi-bin/url.inc
@@ -7,7 +7,7 @@ source /usr/www/cgi-bin/utils.inc
 source /usr/www/cgi-bin/leds.inc
 source /usr/www/cgi-bin/ears.inc
 
-# LED rouge-orangée, pulsation rapide pour marquer l’agacement
+# LED rouge-orangée, pulsation rapide pour marquer l'agacement
 Leds FF0000 FFA500 1 1 800
 
 # Mouvement brusque des oreilles, comme un "grognement"

@@ -1,6 +1,6 @@
 #!/bin/bash
-# Animation "Je suis pas d'accord !" pour le Karotz
-# Oreilles qui s'agitent rapidement en signe de désaccord
+# Animation "Abracadabra !" pour le Karotz
+# Effet magique avec mouvements des oreilles et changements de couleurs
 
 # Inclusion des fichiers de configuration et des fonctions utilitaires
 source /usr/www/cgi-bin/setup.inc
@@ -25,22 +25,45 @@ fi
 
 # Position initiale - oreilles droites
 EarsReset
-# LED jaune fixe
-Leds FFFF00 000000 1 1 1000
-sleep 0.5
+# LED violette fixe
+Leds 9900FF 000000 1 1 1000
+sleep 1
 
-# Agitation rapide des oreilles
+# Première phase magique (1-3s)
+# Oreilles qui s'agitent
+EarsMove 12 12 50
+# LED violette pulsante rapide
+Leds 9900FF 000000 1 1 300
+sleep 2
+
+# Deuxième phase magique (3-5s)
+# Oreilles qui tournent
+EarsMove 4 12 50
+# LED bleue pulsante
+Leds 0000FF 000000 1 1 400
+sleep 2
+
+# Troisième phase magique (5-7s)
+# Oreilles qui tournent dans l'autre sens
+EarsMove 12 4 50
+# LED verte pulsante
+Leds 00FF00 000000 1 1 400
+sleep 2
+
+# Quatrième phase magique (7-8s)
+# Oreilles qui s'agitent rapidement
 EarsMove 8 8 75
-# LED rouge pulsante rapide
+# LED arc-en-ciel rapide
 Leds FF0000 000000 1 1 200
-sleep 1.5
+sleep 1
 
+# Final magique (8-9s)
 # Retour à la position initiale
 EarsReset
-# LED verte fixe
-Leds 00FF00 000000 1 1 1000
+# LED violette fixe
+Leds 9900FF 000000 1 1 1000
 sleep 1
 
 # Réponse JSON
-DATA='{"return":"0","msg":"Pas d'accord animation completed."}'
+DATA='{"return":"0","msg":"Abracadabra animation completed."}'
 SendResponse "$DATA" 
