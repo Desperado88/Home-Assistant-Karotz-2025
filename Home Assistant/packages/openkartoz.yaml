@@ -102,6 +102,11 @@ script:
     alias: Assigner un tag RFID
     sequence:
       - action: rest_command.karotz_rfid_assign
+# Appel le script tai-chi        
+  karotz_violet_tai_chi: 
+    alias: "Tai-Chi"
+    sequence:
+      - action: rest_command.karotz_violet_tai_chi
         
 # Interrupteur template pour contrôler l'état d'éveil
 switch:
@@ -157,13 +162,9 @@ rest_command:
 
 # rfid_assign_url : /cgi-bin/rfid_assign_url?tag=id du tag&url=url&name=nom de l'action
 # exemple : cgi-bin/rfid_assign_url?tag=D0021A3503xxxxxx&url=http://192.168.X.X/leds.cgi?led=3
-  karotz_play_tai_chi:
-    url: "http://{{ states('input_text.karotz_ip_address') }}/cgi-bin/sound?url=file:///usr/karotz/musiques/taichi.mp3" # url pour la musique du taichi
 # Apps du karotz
   karotz_tai_chi:
-    alias: "Tai-Chi"  # Fait faire du tai-chi au karotz
-    sequence:
-      - action: rest_command.karotz_tai_chi
+    url: "http://{{ states('input_text.karotz_ip_address') }}/cgi-bin/sound?url=file:///usr/karotz/musiques/taichi.mp3"
 # Annonce de l'heure
   karotz_clock:
     url: "http://{{ states('input_text.karotz_ip_address') }}/cgi-bin/apps/clock"
