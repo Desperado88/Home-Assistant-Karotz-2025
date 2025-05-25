@@ -161,7 +161,7 @@ rest_command:
 sensor:
   - platform: rest
     resource: http://192.168.1.xxx/cgi-bin/status
-    name: karotz_Sleep
+    name: karotz_sleep_sensor
     value_template: "{{ value_json.sleep }}"
 # tag RFID ------------------- en test
   - platform: rest
