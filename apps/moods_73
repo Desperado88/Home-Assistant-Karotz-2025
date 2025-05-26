@@ -2,22 +2,18 @@
 # Mood 73 - Vache dans l'étang et marseillaise 
 # Durée estimée : 10 secondes
 
-# Vérification si Karotz est en veille
-if [ "$(cat /usr/www/cgi-bin/karotz.sleep)" = "1" ]; then
-    exit 0
-fi
+# Inclusion des fichiers de configuration et fonctions
+source /usr/www/cgi-bin/setup.inc
+source /usr/www/cgi-bin/url.inc
+source /usr/www/cgi-bin/utils.inc
+source /usr/www/cgi-bin/ears.inc
+source /usr/www/cgi-bin/leds.inc
+
+# Position initiale
+EarsReset
 
 # LEDs : VIOLET et ORANGE en pulsation
 /usr/www/cgi-bin/karotz/Leds 660099 FFA500 1 1 800
-
-# Vérification si les oreilles sont désactivées
-if [ "$(cat /usr/www/cgi-bin/ears.disabled)" != "1" ]; then
-    # Premier mouvement expressif
-    /usr/www/cgi-bin/karotz/EarsMove 12 -12 300
-    sleep 1
-    /usr/www/cgi-bin/karotz/EarsMove -8 8 300
-    sleep 1
-fi
 
 # Mouvement final si oreilles actives
 if [ "$(cat /usr/www/cgi-bin/ears.disabled)" != "1" ]; then

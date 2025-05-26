@@ -8,20 +8,6 @@ source /usr/www/cgi-bin/utils.inc
 source /usr/www/cgi-bin/ears.inc
 source /usr/www/cgi-bin/leds.inc
 
-# Vérifie si le lapin est en veille
-if [ -e "$CNF_DATADIR/Run/karotz.sleep" ]; then
-    DATA='{"return":"1","msg":"Rabbit is sleeping."}'
-    SendResponse "$DATA"
-    exit 0
-fi
-
-# Vérifie si les oreilles sont désactivées
-if [ -e "$CNF_DATADIR/Run/ears.disabled" ]; then
-    DATA='{"return":"1","msg":"Ears disabled."}'
-    SendResponse "$DATA"
-    exit 0
-fi
-
 # Position initiale
 EarsReset
 Leds FFC0CB 000000 1 1 800  # LED rose douce

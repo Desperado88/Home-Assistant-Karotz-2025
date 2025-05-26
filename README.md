@@ -20,13 +20,13 @@ Ce dépôt contient une configuration Home Assistant permettant de contrôler un
 
 4. Réinitialise le karotz en le démarrant en maintenant le bouton de la tête jusqu'a ce que la led s'allume bleu et attendre le redémarrage
 
-5. Insère la clé dans ton Karotz et démarre-le. Il devrait se connecter automatiquement au Wi-Fi.
+5. Débrancher le karotz, Insère la clé USB dans ton Karotz et branche le (molette tournée sur on). Il va indiquer qu'il fait la mise a jour. Puis, redémarrer. Attendre la led verte, il devrait se connecter automatiquement au Wi-Fi. (ne pas encore retiré la clé usb)
 
-6. se connecter sur l'ip du karotz : http://[ip du karotz]/install
+6. Se connecter sur l'ip du karotz : http://[ip du karotz]/install
 
-7. installer Openkarotz et ssh depuis cette page
+7. Installer Openkarotz et ssh depuis cette page
 
-8. Redemmarer le karotz en le débranchant
+8. Redemmarer le karotz via la molette de réglage du volume
 
 9. Se connecter au karotz en ssh via la commande terminal "ssh karotz@[Ip du karotz]"
 
