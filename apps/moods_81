@@ -1,0 +1,52 @@
+#!/bin/bash
+# Animation mood 81 - "Pas la boîte !"
+
+# Inclusion des fichiers de configuration et fonctions
+source /usr/www/cgi-bin/setup.inc
+source /usr/www/cgi-bin/url.inc
+source /usr/www/cgi-bin/utils.inc
+source /usr/www/cgi-bin/ears.inc
+source /usr/www/cgi-bin/leds.inc
+
+# Vérifie si le lapin est en veille
+if [ -e "$CNF_DATADIR/Run/karotz.sleep" ]; then
+    DATA='{"return":"1","msg":"Rabbit is sleeping."}'
+    SendResponse "$DATA"
+    exit 0
+fi
+
+# Vérifie si les oreilles sont désactivées
+if [ -e "$CNF_DATADIR/Run/ears.disabled" ]; then
+    DATA='{"return":"1","msg":"Ears disabled."}'
+    SendResponse "$DATA"
+    exit 0
+fi
+
+# Position initiale
+EarsReset
+
+# LED rouge pulsante (alerte/panique)
+Leds FF0000 000000 1 1 500
+sleep 0.6
+
+# Mouvement 1 - oreilles qui reculent
+EarsMove -8 -8 300
+sleep 0.6
+
+# Mouvement 2 - oreilles opposées pour montrer l'agitation
+EarsMove 12 -12 300
+sleep 0.6
+
+# Mouvement 3 - rapide aller-retour horizontal
+EarsMove -6 6 200
+sleep 0.4
+EarsMove 6 -6 200
+sleep 0.4
+
+# Fin - retour au calme
+EarsReset
+Leds 00FF00 000000 1 1 1000
+sleep 1
+
+DATA='{"return":"0","msg":"Mood 81 animation complete."}'
+SendResponse "$DATA"

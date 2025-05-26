@@ -80,7 +80,12 @@ if [ ! -e "$CNF_DATADIR/Run/karotz.sleep" ]; then
       33) /usr/www/cgi-bin/apps/moods_28 ;; # Comment ça s'écris déjà ? (3s)
       34) /usr/www/cgi-bin/apps/moods_34 ;; # Euh, 5 et 6 onze, et 3 quatorze, non mais attend ça doit faire 15, euh, 15 oui. (10s)
       37) /usr/www/cgi-bin/apps/moods_37 ;; # Alors c'était quoi déjà euh ? (12s)
+      59) /usr/www/cgi-bin/apps/moods_59 ;; # Il parait que ça arrive tout le temps
+      60) /usr/www/cgi-bin/apps/moods_60 ;; # Dans l'ensemble parce que dans le détaille
+      61) /usr/www/cgi-bin/apps/moods_60 ;; # Dans l'ensemble parce que dans le détaille
+      65) /usr/www/cgi-bin/apps/moods_65 ;; # Haut les mains peau d'lapin...
       73) /usr/www/cgi-bin/apps/moods_73 ;; # Vache dans l'étang et marseillaise (10s)
+      81) /usr/www/cgi-bin/apps/moods_81 ;; # Ho non je ne veux pas retourner dans la boite !
       *)  /usr/www/cgi-bin/apps/moods_default ;;
       esac
    fi
