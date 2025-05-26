@@ -1,0 +1,79 @@
+type: vertical-stack
+cards:
+  - type: entities
+    title: Gestion des Tags RFID
+    entities:
+      - entity: input_boolean.karotz_mode_enregistrement_tag
+        name: Mode Enregistrement
+        icon: mdi:rfid
+
+  - type: horizontal-stack
+    cards:
+      - type: button
+        name: Démarrer Enregistrement
+        icon: mdi:play
+        tap_action:
+          action: call-service
+          service: input_boolean.turn_on
+          target:
+            entity_id: input_boolean.karotz_mode_enregistrement_tag
+
+      - type: button
+        name: Arrêter Enregistrement
+        icon: mdi:stop
+        tap_action:
+          action: call-service
+          service: input_boolean.turn_off
+          target:
+            entity_id: input_boolean.karotz_mode_enregistrement_tag
+
+  - type: horizontal-stack
+    cards:
+      - type: button
+        name: Rafraîchir Liste
+        icon: mdi:refresh
+        tap_action:
+          action: call-service
+          service: rest_command.karotz_rfid_list_ext
+
+  - type: entities
+    title: Configuration du Tag
+    entities:
+      - entity: input_text.karotz_rfid_id
+        name: ID du Tag
+      - entity: input_text.karotz_rfid_name
+        name: Nom de l'Action
+      - entity: input_text.karotz_rfid_url
+        name: URL à Appeler
+
+  - type: button
+    name: Assigner l'URL au Tag
+    icon: mdi:link
+    tap_action:
+      action: call-service
+      service: rest_command.karotz_rfid_assign
+
+  - type: button
+    name: Supprimer le Tag
+    icon: mdi:delete
+    tap_action:
+      action: call-service
+      service: rest_command.karotz_rfid_delete
+      data:
+        tag_id: "{{ states('input_text.karotz_rfid_id') }}"
+
+  - type: custom:auto-entities
+    card:
+      type: entities
+      title: Tags RFID Enregistrés
+      show_header_toggle: false
+    filter:
+      include:
+        - entity_id: sensor.karotz_rfid_tags
+          options:
+            type: custom:multiple-entity-row
+            name: Tags RFID
+            entities:
+              - attribute: tags
+                name: Détails
+                format: json 

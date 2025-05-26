@@ -1,72 +1,60 @@
-# Configuration des entrées textuelles pour le karotz 101 Salon
+# Configuration des entrées textuelles pour le karotz
 input_text:
   karotz_ip_address:
     name: karotz Ip Address
-    initial: "192.168.1.xxx"  # Adresse IP par défaut du karotz
+    initial: "192.168.1.xxx" # Adresse IP par défaut du karotz
   karotz_color_1:
     name: karotz Color 1
-    initial: "ffff00"  # Couleur primaire en hexadécimal (jaune)
+    initial: "ffff00" # Couleur primaire en hexadécimal (jaune)
   karotz_color_2:
     name: karotz Color 2
-    initial: "000000"  # Couleur secondaire en hexadécimal (noir)
-# ajout d'un interface pour les tag rfid
+    initial: "000000" # Couleur secondaire en hexadécimal (noir)
+# tag RFID ------------------- en test
   karotz_rfid_id:
-    name: ID du Tag RFID
+    name: ID du tag RFID
   karotz_rfid_name:
-    name: Nom de l'action
-
+    name: Nom du tag RFID
   karotz_rfid_url:
     name: URL à appeler
-
 
 # État d'éveil du karotz
 input_boolean:
   karotz_awake:
     initial: on
-# ajout pour l'automatisation courrier et colis
-  courrier_detecte:
-    name: Courrier déjà signalé
-    initial: false
-  colis_detecte:
-    name: Colis déjà signalé
-    initial: false
 # active ou désactive l'ajout d'un tag rfid
   karotz_mode_enregistrement_tag:
     name: Enregistrement Tag Karotz
 
-# Capteur pour surveiller l'état de sommeil
-sensor:
-  - platform: rest
-    resource: http://192.168.1.xxx/cgi-bin/status
-    name: karotzSleep
-    value_template: '{{ value_json.sleep }}'
+# tag RFID ------------------- en test
+input_button:
+  karotz_rfid_start_record:
+    name: Démarrer l'enregistrement RFID
+  karotz_rfid_stop_record:
+    name: Arrêter l'enregistrement RFID
+  karotz_rfid_refresh:
+    name: Rafraîchir la liste des tags
+  karotz_rfid_assign:
+    name: Assigner le tag à une URL
 
-# dernier tag enregistré
-  - platform: rest
-    name: Dernier Tag Karotz
-    resource: "http://192.168.1.xxx/cgi-bin/rfid_list"
-    value_template: "{{ value_json['tags'][-1]['id'] }}"
-    scan_interval: 5
-    
 # Configuration des contrôles numériques
 input_number:
   karotz_ear_left:
     name: karotz Ear Left
     initial: 0
     min: 0
-    max: 16  # Position maximale de l'oreille gauche
+    max: 16 # Position maximale de l'oreille gauche
     step: 1
   karotz_ear_right:
     name: karotz Ear Right
     initial: 0
     min: 0
-    max: 16  # Position maximale de l'oreille droite
+    max: 16 # Position maximale de l'oreille droite
     step: 1
   karotz_light_speed:
     name: karotz Light Speed
     initial: 700
     min: 0
-    max: 2000  # Vitesse maximale des effets lumineux
+    max: 2000 # Vitesse maximale des effets lumineux
     step: 100
 
 # Groupement des contrôles karotz
@@ -78,31 +66,33 @@ group:
 
 # Scripts de contrôle du karotz
 script:
-  karotz_moods: 
-    alias: "Talk!"  # Fait parler le karotz
+  karotz_moods:
+    alias: "Talk!" # Fait parler le karotz
     sequence:
       - action: rest_command.karotz_moods
-
   karotz_wakeup:
-    alias: "Wake Up"  # Réveille le karotz
+    alias: "Wake Up" # Réveille le karotz
     sequence:
-      - action: rest_command.karotz_ears_reset
       - action: rest_command.karotz_wakeup
       - action: rest_command.karotz_light
-
   karotz_sleep:
-    alias: "Sleep"  # Met le karotz en veille
+    alias: "Sleep" # Met le karotz en veille
     sequence:
       - action: rest_command.karotz_sleep
       - action: input_boolean.turn_off
         target:
           entity_id: input_boolean.karotz_awake
-# script pour envoyé la commande d'ajout d'un tag rfid
-  assign_tag_to_karotz:
+# Apps du karotz
+  karotz_tai_chi:
+    alias: "Tai-Chi" # Fait faire du tai-chi au karotz
+    sequence:
+      - action: rest_command.karotz_tai_chi
+# tag RFID ------------------- en test
+  karotz_assign_tag:
     alias: Assigner un tag RFID
     sequence:
-      - action: rest_command.karotz_rfid_assign
-        
+      - action: rest_command.karotz_assign_tag
+
 # Interrupteur template pour contrôler l'état d'éveil
 switch:
   - platform: template
@@ -147,52 +137,49 @@ rest_command:
   karotz_sound:
     url: "http://{{ states('input_text.karotz_ip_address') }}/cgi-bin/sound?id={{ sound }}" # jour un son près enregistré
 # sounds : bip1,bling,flush,install_ok,jet1,laser_15,ready,rfid_error,rfid_ok,saut1,start,twang_01,twang_04,return":"0"
-# Controle pour l'ajout des tag rfid
+  # Apps du karotz
+  karotz_tai_chi:
+    url: "http://{{ states('input_text.karotz_ip_address') }}/cgi-bin/sound?url=file:///usr/karotz/musiques/taichi.mp3"
+  # Annonce de l'heure
+  karotz_clock:
+    url: "http://{{ states('input_text.karotz_ip_address') }}/cgi-bin/apps/clock"
+# Controle pour l'ajout des tag rfid ------------------- en test
   karotz_rfid_record_start:
     url: "http://{{ states('input_text.karotz_ip_address') }}/cgi-bin/rfid_start_record" # ajouter un nouveau tag rfid
   karotz_rfid_record_stop:
     url: "http://{{ states('input_text.karotz_ip_address') }}/cgi-bin/rfid_stop_record" # arrêter l'ajout de tag rfid
   karotz_rfid_assign: # forge l'url pour l'ajout d'un tag rfid /cgi-bin/rfid_assign_url?tag=id du tag&url=url&name=nom de l'action
     url: "http://{{ states('input_text.karotz_ip_address') }}/cgi-bin/rfid_assign_url?tag={{ states('input_text.karotz_rfid_id') }}&url={{ states('input_text.karotz_rfid_url') | urlencode }}&name={{ states('input_text.karotz_rfid_name') | urlencode }}"
+  karotz_rfid_list:
+    url:  "http://{{ states('input_text.karotz_ip_address') }}/cgi-bin/rfid_list"
+  karotz_rfid_list_ext:
+    url:  "http://{{ states('input_text.karotz_ip_address') }}/cgi-bin/rfid_list_ext"
+  karotz_rfid_delete:
+    url: "http://{{ states('input_text.karotz_ip_address') }}/cgi-bin/rfid_delete?tag={{ tag_id }}"
 
-# rfid_assign_url : /cgi-bin/rfid_assign_url?tag=id du tag&url=url&name=nom de l'action
-# exemple : cgi-bin/rfid_assign_url?tag=D0021A3503xxxxxx&url=http://192.168.X.X/leds.cgi?led=3
-  karotz_play_tai_chi:
-    url: "http://{{ states('input_text.karotz_ip_address') }}/cgi-bin/sound?url=file:///usr/karotz/musiques/taichi.mp3" # url pour la musique du taichi
-# Apps du karotz
-  karotz_tai_chi:
-    alias: "Tai-Chi"  # Fait faire du tai-chi au karotz
-    sequence:
-      - action: rest_command.karotz_tai_chi
-# Annonce de l'heure
-  karotz_clock:
-    url: "http://{{ states('input_text.karotz_ip_address') }}/cgi-bin/apps/clock"
+# Capteur pour surveiller l'état de sommeil
+sensor:
+  - platform: rest
+    resource: http://192.168.1.xxx/cgi-bin/status
+    name: karotz_sleep_sensor
+    value_template: "{{ value_json.sleep }}"
+# tag RFID ------------------- en test
+  - platform: rest
+    name: karotz_rfid_tags
+    resource: "http://192.168.1.xxx/cgi-bin/rfid_list_ext"
+    scan_interval: 5
+    value_template: "{{ value_json.tags | to_json }}"
+    json_attributes:
+      - tags
+  - platform: rest
+    name: Premier Tag RFID
+    state: "{{ state_attr('sensor.karotz_rfid_tags', 'tags')[0].id }}"
 
-# ajout de la liste des sons
-# input_select:
-#   karotz_sound_selector:
-#     name: Son du karotz
-#     options:
-#       - bip1
-#       - bling
-#       - flush
-#       - install_ok
-#       - jet1
-#       - laser_15
-#       - ready
-#       - rfid_error
-#       - rfid_ok
-#       - saut1
-#       - start
-#       - twang_01
-#       - twang_04
-#     initial: ready
-
-    
 # Automatisations
 automation:
   # Gestion de l'état d'éveil
-  - alias: "karotz on"
+  - id: karotz_on_automation
+    alias: "karotz on"
     trigger:
       - trigger: state
         entity_id: sensor.karotz_sleep
@@ -201,15 +188,16 @@ automation:
       - action: input_boolean.turn_on
         target:
           entity_id: input_boolean.karotz_awake
-      - data:
+      - action: rest_command.karotz_say
+        data:
           text: Bonjour tous le monde !
-        action: rest_command.karotz_say
 
-  - alias: "karotz off"
+  - id: karotz_off_automation
+    alias: "karotz off"
     trigger:
       trigger: state
       entity_id: sensor.karotz_sleep
-      to: '1'
+      to: "1"
     actions:
       - action: rest_command.karotz_say
         data:
@@ -219,21 +207,24 @@ automation:
           entity_id: input_boolean.karotz_awake
 
   # Mise à jour des couleurs et effets lumineux
-  - alias: "Update karotz color 1"
+  - id: karotz_color_1_automation
+    alias: "Update karotz color 1"
     trigger:
-      trigger: state       
+      trigger: state
       entity_id: input_text.karotz_color_1
     actions:
       - action: rest_command.karotz_light
 
-  - alias: "Update karotz color 2"
+  - id: karotz_color_2_automation
+    alias: "Update karotz color 2"
     trigger:
       - trigger: state
         entity_id: input_text.karotz_color_2
     actions:
       - action: rest_command.karotz_light
 
-  - alias: "Update karotz light speed"
+  - id: karotz_light_speed_automation
+    alias: "Update karotz light speed"
     trigger:
       - trigger: state
         entity_id: input_number.karotz_light_speed
@@ -241,132 +232,28 @@ automation:
       - action: rest_command.karotz_light
 
   # Mise à jour de la position des oreilles
-  - alias: "Update karotz ear left"
+  - id: karotz_ear_left_automation
+    alias: "Update karotz ear left"
     trigger:
       - trigger: state
         entity_id: input_number.karotz_ear_left
     actions:
       - action: rest_command.karotz_ears
 
-  - alias: "Update karotz ear right"
+  - id: karotz_ear_right_automation
+    alias: "Update karotz ear right"
     trigger:
       - trigger: state
         entity_id: input_number.karotz_ear_right
     actions:
       - action: rest_command.karotz_ears
 
-# ajout des tag rfid
-  - alias: Démarrer enregistrement Karotz
-    trigger:
-      - trigger: state
-        entity_id: input_boolean.karotz_mode_enregistrement_tag
-        to: 'on'
-    action:
-      - action: rest_command.karotz_rfid_record_start
-
-  - alias: Arrêter enregistrement Karotz
-    trigger:
-      - trigger: state
-        entity_id: input_boolean.karotz_mode_enregistrement_tag
-        to: 'off'
-    action:
-      - action: rest_command.karotz_rfid_record_stop
-
-  - alias: Copier tag seulement si enregistrement actif
-    trigger:
-      - trigger: state
-        entity_id: sensor.dernier_tag_karotz
-    condition:
-      - condition: state
-        entity_id: input_boolean.karotz_mode_enregistrement_tag
-        state: 'on'
-    action:
-      - action: input_text.set_value
-        target:
-          entity_id: input_text.karotz_rfid_id
-        data:
-          value: "{{ states('sensor.dernier_tag_karotz') }}"
-
-# abaisser les oreilles en fonction du risque de pluie, clignoter plus ou moins vite en fonction de la vitesse du vent et avoir une couleur plus ou moins chaude en fonction de la température
-  - alias: karotz - Réaction météo complète
-    description: "Adapte les oreilles, la LED et le clignotement selon les conditions météo"
+  # Annonce de l'heure toutes les heures
+  - id: karotz_orloge_parlante_automation
+    alias: "Karotz bleu - Annonce de l'heure"
+    description: "Fait annoncer l'heure par le Karotz bleu toutes les heures"
     trigger:
       - trigger: time_pattern
-        minutes: "15"
-    condition:
-      - condition: time
-        after: "07:00:00"
-        before: "19:00:00"
-    actions:
-      - action: rest_command.karotz_ears_reset
-      - variables:
-          rain_chance: "{{ states('sensor.treillieres_rain_chance') | float(0) }}"
-          temp: "{{ states('sensor.pac_atom_temp_ext') | float(0) }}"
-          wind: "{{ states('sensor.weather_station_vitesse_moyenne_du_vent_km_h') | float(0) }}"
-
-          # Position des oreilles
-          ear_pos: >
-            {% set rain_chance = states('sensor.treillieres_rain_chance') | float(0) %}
-            {% if rain_chance < 5 %}
-              15
-            {% elif rain_chance > 60 %}
-              4
-            {% else %}
-              {{ 15 - ((rain_chance - 5) // 5) }}
-            {% endif %}
-
-          # Couleur LED
-          color_palette: [
-            'ADD8E6', '87CEFA', '00CED1', '40E0D0', '90EE90',
-            'ADFF2F', 'FFD700', 'FFA500', 'FF4500', 'FF0000'
-          ]
-          color_index: >
-            {% set index = ((temp + 10) // 5) | int %}
-            {% if index < 0 %}0{% elif index > 9 %}9{% else %}{{ index }}{% endif %}
-          led_color: "{{ color_palette[color_index] }}"
-
-          # Clignotement
-          blink_speed: >
-            {% set base = 2000 %}
-            {% set min_speed = 100 %}
-            {% set decrement = ((wind // 5) * 150) %}
-            {% set result = base - decrement %}
-            {% if result < min_speed %}{{ min_speed }}{% elif result > base %}{{ base }}{% else %}{{ result | int }}{% endif %}
-      - action: input_number.set_value
-        data:
-          entity_id: input_number.karotz_ear_left
-          value: "{{ ear_pos }}"
-      - action: input_number.set_value
-        data:
-          entity_id: input_number.karotz_ear_right
-          value: "{{ ear_pos }}"
-      - action: input_text.set_value
-        data:
-          entity_id: input_text.karotz_color_1
-          value: "{{ led_color }}"
-      - action: input_text.set_value
-        data:
-          entity_id: input_text.karotz_color_2
-          value: "000000"
-      - action: input_number.set_value
-        data:
-          entity_id: input_number.karotz_light_speed
-          value: "{{ blink_speed }}"
-      - action: rest_command.karotz_light
-      - action: rest_command.karotz_ears
-      - action: rest_command.karotz_say
-        data:
-          text: >-
-            Il fait {{ temp | round(0) }} degrés.
-            Le vent souffle à {{ wind | round(0) }} kilomètres par heure.
-            Le risque de pluie est de {{ rain_chance | round(0) }} pourcents.
-    mode: single
-
-  # Annonce de l'heure toutes les heures
-  - alias: "Karotz - Annonce de l'heure"
-    description: "Fait annoncer l'heure par le Karotz toutes les heures"
-    trigger:
-      - platform: time_pattern
         minutes: "0"
     condition:
       - condition: time
@@ -378,3 +265,52 @@ automation:
     action:
       - action: rest_command.karotz_clock
 
+# ajout des tag rfid ------------------- en test
+  - id: karotz_start_rfid_automation
+    alias: Démarrer enregistrement Karotz
+    trigger:
+      - trigger: state
+        entity_id: input_boolean.karotz_mode_enregistrement_tag
+        to: 'on'
+    action:
+      - action: rest_command.karotz_rfid_record_start
+
+  - id: karotz_stop_rfid_automation
+    alias: Arrêter enregistrement Karotz
+    trigger:
+      - trigger: state
+        entity_id: input_boolean.karotz_mode_enregistrement_tag
+        to: 'off'
+    action:
+      - action: rest_command.karotz_rfid_record_stop
+
+  - id: karotz_refrech_rfid_automation
+    alias: Rafraîchir la liste des tags
+    trigger:
+      - trigger: event
+        event_type: input_button.pressed
+        event_data:
+          entity_id: input_button.karotz_rfid_refresh
+    action:
+      - action: rest_command.karotz_rfid_list_ext
+
+  - id: karotz_asign_rfid_automation
+    alias: Assigner le tag RFID à l'URL
+    trigger:
+      - trigger: event
+        event_type: input_button.pressed
+        event_data:
+          entity_id: input_button.karotz_rfid_assign
+    action:
+      - action: rest_command.karotz_rfid_assign
+
+  - id: karotz_update_rfid_automation
+    alias: Mise à jour de l'ID du tag
+    trigger:
+      - platform: state
+        entity_id: sensor.karotz_rfid_tags
+    action:
+      - service: input_text.set_value
+        data_template:
+          entity_id: input_text.karotz_rfid_id
+          value: "{{ state_attr('sensor.karotz_rfid_tags', 'tags')[0].id if state_attr('sensor.karotz_rfid_tags', 'tags') | length > 0 else '' }}"
