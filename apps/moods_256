@@ -1,5 +1,5 @@
 #!/bin/bash
-# Animation par défaut : utilisée quand aucun ID de mood valide n'est fourni
+# Mood 256 - Oreille douloureuse
 
 source /usr/www/cgi-bin/setup.inc
 source /usr/www/cgi-bin/url.inc
@@ -21,28 +21,29 @@ if [ -e "$CNF_DATADIR/Run/ears.disabled" ]; then
     exit 0
 fi
 
-# LED cyan clignotante pour signal neutre/attente
-Leds 00FFFF 00CCCC 1 1 1000
+# LED rouge fixe pour signaler la "douleur"
+Leds FF0000 000000 1 1 1000
 
-# Mouvements d’oreilles légers synchrones sur 4 secondes
-EarsMove 8 8 15
+# Oreille droite immobile, gauche qui "grince"
+EarsMove 8 8 10
+sleep 0.5
+EarsMove 8 7 20
+sleep 0.7
+EarsMove 8 6 20
+sleep 0.7
+EarsMove 8 5 20
+sleep 0.7
+EarsMove 8 6 20
 sleep 0.6
-EarsMove 6 6 15
+EarsMove 8 7 20
 sleep 0.6
-EarsMove 7 7 15
+EarsMove 8 8 20
 sleep 0.6
-EarsMove 5 5 15
-sleep 0.6
-EarsMove 8 6 15
-sleep 0.6
-EarsMove 6 8 15
-sleep 0.6
-EarsMove 7 7 15
-sleep 0.4
 
-# Retour à la position de repos
+# LED orange pour signaler le retour au calme
+Leds FF9900 000000 1 1 1000
+
 EarsReset
 
-# LED verte pour indiquer que l’action est terminée
-Leds 00FF00 000000 1 1 1000
-
+DATA='{"return":"0","msg":"Mood 256 animation completed."}'
+SendResponse "$DATA"
