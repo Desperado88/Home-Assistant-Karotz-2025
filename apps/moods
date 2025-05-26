@@ -99,6 +99,8 @@ if [ ! -e "$CNF_DATADIR/Run/karotz.sleep" ]; then
       131) /usr/www/cgi-bin/apps/moods_130 ;; # "Pfiouf !" (ennui)
       144) /usr/www/cgi-bin/apps/moods_144 ;; # Oh ! J'crois que j'suis amoureuse.
       256) /usr/www/cgi-bin/apps/moods_256 ;; # Oreille douloureuse
+      268) /usr/www/cgi-bin/apps/moods_268 ;; # Aie, aie, aie, j'ai une crampe !
+      299) /usr/www/cgi-bin/apps/moods_130 ;; # "Pfiouf, qu'est ce qu'on s'ennui !" (ennui)
       *)  /usr/www/cgi-bin/apps/moods_default ;;
       esac
    fi
