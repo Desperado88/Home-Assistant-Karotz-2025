@@ -1,0 +1,51 @@
+#!/bin/bash
+# Animation mood 122 - "Un étirement"
+
+# Inclusion des fichiers de configuration et fonctions
+source /usr/www/cgi-bin/setup.inc
+source /usr/www/cgi-bin/url.inc
+source /usr/www/cgi-bin/utils.inc
+source /usr/www/cgi-bin/ears.inc
+source /usr/www/cgi-bin/leds.inc
+
+# Vérifie si le lapin est en veille
+if [ -e "$CNF_DATADIR/Run/karotz.sleep" ]; then
+    DATA='{"return":"1","msg":"Rabbit is sleeping."}'
+    SendResponse "$DATA"
+    exit 0
+fi
+
+# Vérifie si les oreilles sont désactivées
+if [ -e "$CNF_DATADIR/Run/ears.disabled" ]; then
+    DATA='{"return":"1","msg":"Ears disabled."}'
+    SendResponse "$DATA"
+    exit 0
+fi
+
+# Position de départ
+EarsReset
+Leds 00FFFF 000000 1 1 800  # LED cyan douce
+sleep 1
+
+# Étirement lent (phase 1)
+EarsMove 15 15 40           # Écartement maximal
+Leds FFFF00 000000 1 1 600  # Jaune relaxant
+sleep 2
+
+# Étirement relâché (phase 2)
+EarsMove 6 6 50             # Retour semi-replié
+Leds 00FFFF 000000 1 1 800
+sleep 2
+
+# Dernier étirement
+EarsMove 12 12 40
+Leds FFA500 000000 1 1 500  # LED orange chaude
+sleep 2
+
+# Reset final
+EarsReset
+Leds 00FF00 000000 1 1 1000  # LED verte fin calme
+sleep 1
+
+DATA='{"return":"0","msg":"Mood 122 animation complete."}'
+SendResponse "$DATA"

@@ -1,0 +1,63 @@
+#!/bin/bash
+# Animation mood 97 - J’ai mal à la tête
+
+# Inclusion des fichiers de configuration et fonctions
+source /usr/www/cgi-bin/setup.inc
+source /usr/www/cgi-bin/url.inc
+source /usr/www/cgi-bin/utils.inc
+source /usr/www/cgi-bin/ears.inc
+source /usr/www/cgi-bin/leds.inc
+
+# Vérifie si le lapin est en veille
+if [ -e "$CNF_DATADIR/Run/karotz.sleep" ]; then
+    DATA='{"return":"1","msg":"Rabbit is sleeping."}'
+    SendResponse "$DATA"
+    exit 0
+fi
+
+# Vérifie si les oreilles sont désactivées
+if [ -e "$CNF_DATADIR/Run/ears.disabled" ]; then
+    DATA='{"return":"1","msg":"Ears disabled."}'
+    SendResponse "$DATA"
+    exit 0
+fi
+
+# Réinitialisation des oreilles et LED fatiguée
+EarsReset
+Leds 660099 000000 1 1 1000 # violet doux
+sleep 1
+
+# Phase 1 (0-6s) : oreilles lourdes qui tombent lentement
+EarsMove 6 15 30
+Leds 660099 000000 1 1 700
+sleep 3
+EarsMove 4 13 30
+sleep 3
+
+# Phase 2 (6-14s) : tressautements légers comme un mal de tête
+Leds FF0000 000000 1 1 400 # rouge pulsant
+EarsMove 5 10 80
+sleep 1
+EarsMove 7 9 80
+sleep 1
+EarsMove 6 12 100
+sleep 1
+EarsMove 5 13 100
+sleep 1
+sleep 2
+
+# Phase 3 (14-20s) : oreille droite descend, puis gauche, comme lourdes
+EarsMove 6 15 60
+sleep 1.5
+EarsMove 15 15 60
+sleep 1.5
+EarsMove 6 6 60
+sleep 2
+
+# Fin (20-22s) : reset et LED verte
+EarsReset
+Leds 00FF00 000000 1 1 1000
+sleep 1
+
+DATA='{"return":"0","msg":"Mood 97 animation complete."}'
+SendResponse "$DATA"
