@@ -73,6 +73,11 @@ else
 fi
 
 # Copie des fichiers aux bon emplacement
-cp -f /mnt/usbkey/Sounds /usr/openkarotz/Sounds/
-cp -f /mnt/usbkey/scripts /usr/scripts/
-cp -f /mnt/usbkey/apps /www/cgi-bin/apps/
+[ ! -d "/usr/openkarotz/Sounds" ] && mkdir /usr/openkarotz/Sounds
+cp -f /mnt/usbkey/openkarotz/Sounds/* /usr/openkarotz/Sounds/
+[ ! -d "/usr/scripts" ] && mkdir /usr/scripts
+cp -f /mnt/usbkey/openkarotz/scripts/* /usr/scripts/
+chmod -R 755 /usr/scripts/
+[ ! -d "/www/cgi-bin/apps" ] && mkdir /www/cgi-bin/apps
+cp -f /mnt/usbkey/openkarotz/apps/* /www/cgi-bin/apps/
+chmod -R 755 /www/cgi-bin/apps/

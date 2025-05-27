@@ -1,0 +1,32 @@
+#!/bin/bash
+# Animation mood 130 - "Pfiouf !" (ennui)
+
+# Inclusion des fichiers de configuration et fonctions
+source /usr/www/cgi-bin/setup.inc
+source /usr/www/cgi-bin/url.inc
+source /usr/www/cgi-bin/utils.inc
+source /usr/www/cgi-bin/ears.inc
+source /usr/www/cgi-bin/leds.inc
+
+# Position initiale
+#EarsReset
+Leds 0000FF 000000 1 1 700  # LED bleue, symbole de lassitude
+sleep 1
+
+# Oreilles tombent doucement
+EarsMove 4 4 50
+Leds 660099 000000 1 1 600  # LED violet terne
+sleep 2
+
+# Léger frémissement de lassitude
+EarsMove 6 5 80
+Leds 0000FF 000000 1 1 500
+sleep 2
+
+# Retour au calme
+EarsReset
+Leds 00FF00 000000 1 1 1000  # LED verte stable
+sleep 1
+
+DATA='{"return":"0","msg":"Mood 130 animation complete."}'
+SendResponse "$DATA"

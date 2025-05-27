@@ -1,0 +1,52 @@
+#!/bin/bash
+# Animation "Calcul mental" pour le Karotz
+# Oreilles qui bougent en rythme avec les calculs
+
+# Inclusion des fichiers de configuration et des fonctions utilitaires
+source /usr/www/cgi-bin/setup.inc
+source /usr/www/cgi-bin/url.inc
+source /usr/www/cgi-bin/utils.inc
+source /usr/www/cgi-bin/ears.inc
+source /usr/www/cgi-bin/leds.inc
+
+# LED jaune fixe
+Leds FFFF00 000000 1 1 1000
+sleep 1
+
+# Premier calcul (1-3s)
+# Oreilles qui s'inclinent
+EarsMove 10 6 50
+# LED orange pulsante
+Leds FF6600 000000 1 1 500
+sleep 2
+
+# Deuxième calcul (3-5s)
+# Oreilles qui se redressent
+EarsMove 12 12 50
+# LED bleue pulsante
+Leds 0000FF 000000 1 1 400
+sleep 2
+
+# Troisième calcul (5-7s)
+# Oreilles qui s'inclinent de l'autre côté
+EarsMove 6 10 50
+# LED violette pulsante
+Leds 9900FF 000000 1 1 400
+sleep 2
+
+# Dernier calcul (7-9s)
+# Oreilles qui s'agitent
+EarsMove 8 8 75
+# LED verte pulsante rapide
+Leds 00FF00 000000 1 1 300
+sleep 2
+
+# Retour à la position initiale
+EarsReset
+# LED verte fixe
+Leds 00FF00 000000 1 1 1000
+sleep 1
+
+# Réponse JSON
+DATA='{"return":"0","msg":"Calcul mental animation completed."}'
+SendResponse "$DATA" 

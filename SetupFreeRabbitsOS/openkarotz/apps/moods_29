@@ -1,0 +1,36 @@
+#!/bin/bash
+# Animation "Hum ! Ça serait bien !" pour le Karotz
+# Oreilles qui s'agitent avec enthousiasme
+
+# Inclusion des fichiers de configuration et des fonctions utilitaires
+source /usr/www/cgi-bin/setup.inc
+source /usr/www/cgi-bin/url.inc
+source /usr/www/cgi-bin/utils.inc
+source /usr/www/cgi-bin/ears.inc
+source /usr/www/cgi-bin/leds.inc
+
+# LED rose fixe
+Leds FF00FF 000000 1 1 1000
+sleep 0.5
+
+# Agitation des oreilles avec enthousiasme
+EarsMove 12 12 50
+# LED rose pulsante rapide
+Leds FF00FF 000000 1 1 300
+sleep 1
+
+# Mouvement d'approbation
+EarsMove 8 8 50
+# LED rose pulsante moyenne
+Leds FF00FF 000000 1 1 500
+sleep 1
+
+# Retour à la position initiale
+EarsReset
+# LED verte fixe
+Leds 00FF00 000000 1 1 1000
+sleep 0.5
+
+# Réponse JSON
+DATA='{"return":"0","msg":"Enthousiasme animation completed."}'
+SendResponse "$DATA" 
