@@ -9,7 +9,7 @@ source /usr/www/cgi-bin/ears.inc
 source /usr/www/cgi-bin/leds.inc
 
 # Position de départ
-EarsReset
+#EarsReset
 Leds 00FFFF 000000 1 1 800  # LED cyan douce
 sleep 1
 

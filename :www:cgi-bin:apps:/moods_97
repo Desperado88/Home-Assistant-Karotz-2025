@@ -9,7 +9,7 @@ source /usr/www/cgi-bin/ears.inc
 source /usr/www/cgi-bin/leds.inc
 
 # Réinitialisation des oreilles et LED fatiguée
-EarsReset
+#EarsReset
 Leds 660099 000000 1 1 1000 # violet doux
 sleep 1
 

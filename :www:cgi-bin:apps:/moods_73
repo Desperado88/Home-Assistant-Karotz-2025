@@ -9,9 +9,6 @@ source /usr/www/cgi-bin/utils.inc
 source /usr/www/cgi-bin/ears.inc
 source /usr/www/cgi-bin/leds.inc
 
-# Position initiale
-EarsReset
-
 # LEDs : VIOLET et ORANGE en pulsation
 /usr/www/cgi-bin/karotz/Leds 660099 FFA500 1 1 800
 

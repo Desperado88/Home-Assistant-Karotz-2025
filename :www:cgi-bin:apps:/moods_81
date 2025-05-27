@@ -8,9 +8,6 @@ source /usr/www/cgi-bin/utils.inc
 source /usr/www/cgi-bin/ears.inc
 source /usr/www/cgi-bin/leds.inc
 
-# Position initiale
-EarsReset
-
 # LED rouge pulsante (alerte/panique)
 Leds FF0000 000000 1 1 500
 sleep 0.6

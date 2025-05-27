@@ -8,9 +8,6 @@ source /usr/www/cgi-bin/utils.inc
 source /usr/www/cgi-bin/ears.inc
 source /usr/www/cgi-bin/leds.inc
 
-# Position neutre
-EarsReset
-
 # LEDs orange/rose en pulsation
 Leds FFA500 FFC0CB 1 1 900
 sleep 0.8

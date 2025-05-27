@@ -8,9 +8,6 @@ source /usr/www/cgi-bin/utils.inc
 source /usr/www/cgi-bin/ears.inc
 source /usr/www/cgi-bin/leds.inc
 
-# Position initiale
-EarsReset
-
 # LEDs rose et jaune (espièglerie)
 Leds FFC0CB FFFF00 1 1 800
 sleep 0.8

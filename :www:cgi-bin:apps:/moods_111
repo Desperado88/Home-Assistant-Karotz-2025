@@ -9,7 +9,7 @@ source /usr/www/cgi-bin/ears.inc
 source /usr/www/cgi-bin/leds.inc
 
 # Position initiale
-EarsReset
+#EarsReset
 Leds FFC0CB 000000 1 1 800  # LED rose douce
 sleep 1
 

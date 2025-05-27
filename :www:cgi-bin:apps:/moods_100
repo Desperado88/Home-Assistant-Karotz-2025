@@ -9,7 +9,7 @@ source /usr/www/cgi-bin/ears.inc
 source /usr/www/cgi-bin/leds.inc
 
 # Initialisation
-EarsReset
+#EarsReset
 Leds 00FFFF 000000 1 1 700  # LED cyan pulsante pour confusion légère
 sleep 1
 

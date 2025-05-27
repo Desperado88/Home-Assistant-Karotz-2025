@@ -9,7 +9,7 @@ source /usr/www/cgi-bin/ears.inc
 source /usr/www/cgi-bin/leds.inc
 
 # Réinitialisation des oreilles et LED rose (ton mignon et plaintif)
-EarsReset
+#EarsReset
 Leds FFC0CB 000000 1 1 700 # rose pulsant
 sleep 1
 

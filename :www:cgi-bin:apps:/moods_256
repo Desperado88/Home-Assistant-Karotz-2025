@@ -7,9 +7,6 @@ source /usr/www/cgi-bin/utils.inc
 source /usr/www/cgi-bin/leds.inc
 source /usr/www/cgi-bin/ears.inc
 
-# Position initiale
-EarsReset
-
 # LED rouge fixe pour signaler la "douleur"
 Leds FF0000 000000 1 1 1000
 

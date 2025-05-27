@@ -9,7 +9,7 @@ source /usr/www/cgi-bin/ears.inc
 source /usr/www/cgi-bin/leds.inc
 
 # Position initiale
-EarsReset
+#EarsReset
 Leds FF9900 000000 1 1 800  # LED orange trouble
 sleep 1
 

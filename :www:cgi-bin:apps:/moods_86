@@ -8,9 +8,6 @@ source /usr/www/cgi-bin/utils.inc
 source /usr/www/cgi-bin/ears.inc
 source /usr/www/cgi-bin/leds.inc
 
-# Position initiale
-EarsReset
-
 # LED orange fixe, un peu inquiétante
 Leds FFA500 000000 0 1 1000
 sleep 1

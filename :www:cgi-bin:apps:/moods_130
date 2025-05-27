@@ -9,7 +9,7 @@ source /usr/www/cgi-bin/ears.inc
 source /usr/www/cgi-bin/leds.inc
 
 # Position initiale
-EarsReset
+#EarsReset
 Leds 0000FF 000000 1 1 700  # LED bleue, symbole de lassitude
 sleep 1
 

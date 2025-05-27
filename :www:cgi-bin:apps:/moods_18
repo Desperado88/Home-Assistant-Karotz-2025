@@ -9,8 +9,6 @@ source /usr/www/cgi-bin/utils.inc
 source /usr/www/cgi-bin/ears.inc
 source /usr/www/cgi-bin/leds.inc
 
-# Position initiale - oreilles droites
-EarsReset
 # LED jaune fixe
 Leds FFFF00 000000 1 1 1000
 sleep 0.5

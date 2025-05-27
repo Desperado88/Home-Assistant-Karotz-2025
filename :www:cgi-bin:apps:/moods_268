@@ -9,7 +9,7 @@ source /usr/www/cgi-bin/ears.inc
 source /usr/www/cgi-bin/leds.inc
 
 # Position initiale
-EarsReset
+#EarsReset
 Leds FF0000 000000 1 1 400  # LED rouge douleur
 sleep 0.5
 
