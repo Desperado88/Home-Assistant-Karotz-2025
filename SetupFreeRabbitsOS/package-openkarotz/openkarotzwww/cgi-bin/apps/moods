@@ -52,6 +52,10 @@ if [ ! -e "$CNF_DATADIR/Run/karotz.sleep" ]; then
    if [ ! -e "$CNF_DATADIR/Moods/fr/${MOODS}.mp3" ]; then
       DATA='{"return":"1","msg":"File not found."}'
    else
+      # Joue le son de l'humeur et prépare la réponse JSON de succès
+      PlaySound $CNF_DATADIR/Moods/fr/${MOODS}.mp3 1 &
+      DATA='{"moods":"'$MOODS'","return":"0"}'
+      Log "[MOODS]"  "Moods $MOODS played"
       # Annimation en fonction du son
       case "$MOODS" in
       1)  /usr/www/cgi-bin/apps/moods_1 ;; # Romfle, baisse les oreilles, led bleu
@@ -99,10 +103,6 @@ if [ ! -e "$CNF_DATADIR/Run/karotz.sleep" ]; then
       299) /usr/www/cgi-bin/apps/moods_130 ;; # "Pfiouf, qu'est ce qu'on s'ennui !" (ennui)
       *)  /usr/www/cgi-bin/apps/moods_default ;;
       esac
-      # Joue le son de l'humeur et prépare la réponse JSON de succès
-      PlaySound $CNF_DATADIR/Moods/fr/${MOODS}.mp3 1 &
-      DATA='{"moods":"'$MOODS'","return":"0"}'
-      Log "[MOODS]"  "Moods $MOODS played"
    fi
 else
    # Si le lapin est en veille, retourne une erreur JSON
