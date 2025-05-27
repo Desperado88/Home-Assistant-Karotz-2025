@@ -14,7 +14,7 @@ Ce projet permet d'intégrer votre Karotz à Home Assistant, offrant un contrôl
    - Le **SSID** de ton Wi-Fi
    - Le **mot de passe** correspondant
 
-3. Réinitialise le karotz en le branchant en maintenant le bouton de la tête jusqu'a ce que la led s'allume bleu et attendre le redémarrage
+3. Réinitialise le karotz en le branchant en maintenant le bouton de la tête jusqu'a ce que la led s'allume bleu, relacher le bouton et attendre que la led devienne cyan fixe
 
 4. Débrancher le karotz, Insère la clé USB dans ton Karotz et branche le (molette tournée sur on). Il va indiquer qu'il fait la mise a jour. Puis, redémarrer. Attendre la led verte, il devrait se connecter automatiquement au Wi-Fi. (ne pas encore retiré la clé usb)
 
