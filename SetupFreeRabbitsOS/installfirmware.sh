@@ -71,3 +71,8 @@ else
     echo -e "22 stream tcp nowait root /sbin/dropbear dropbear -i -B -R\n" >>/usr/etc/inetd.conf
     echo "Patching finished!"
 fi
+
+# Copie des fichiers aux bon emplacement
+cp -f /mnt/usbkey/Sounds /usr/openkarotz/Sounds/
+cp -f /mnt/usbkey/scripts /usr/scripts/
+cp -f /mnt/usbkey/apps /www/cgi-bin/apps/
