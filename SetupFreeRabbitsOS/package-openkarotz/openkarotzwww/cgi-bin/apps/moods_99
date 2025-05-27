@@ -1,0 +1,39 @@
+#!/bin/bash
+# Animation mood 99 - "Tu veux pas m'changer mes oreilles ?"
+
+# Inclusion des fichiers de configuration et fonctions
+source /usr/www/cgi-bin/setup.inc
+source /usr/www/cgi-bin/url.inc
+source /usr/www/cgi-bin/utils.inc
+source /usr/www/cgi-bin/ears.inc
+source /usr/www/cgi-bin/leds.inc
+
+# Réinitialisation des oreilles et LED rose (ton mignon et plaintif)
+#EarsReset
+Leds FFC0CB 000000 1 1 700 # rose pulsant
+sleep 1
+
+# Phase 1 (0-3s) - bouge les oreilles de manière hésitante
+EarsMove 6 10 60
+sleep 1
+EarsMove 10 6 60
+sleep 1
+EarsMove 8 8 60
+sleep 1
+
+# Phase 2 (3-7s) - simule "les oreilles pèsent lourd"
+Leds FF0000 000000 1 1 500 # rouge léger pour le stress
+EarsMove 15 15 40
+sleep 1
+EarsMove 6 15 40
+sleep 1
+EarsMove 12 6 40
+sleep 1
+
+# Fin (7-9s) - reset doux et vert
+EarsReset
+Leds 00FF00 000000 1 1 1000
+sleep 1
+
+DATA='{"return":"0","msg":"Mood 99 animation complete."}'
+SendResponse "$DATA"

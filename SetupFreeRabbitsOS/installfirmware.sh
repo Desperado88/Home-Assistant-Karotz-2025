@@ -56,8 +56,13 @@ chmod -R 755 /usr/www/cgi-bin
 cp -f /usr/www/cgi-bin/dbus_events /usr/scripts/dbus_watcher
 ln -s /usr/openkarotz/Snapshots /usr/www/snapshots
 ln -s /usr/openkarotz/Tmp /usr/www/ttscache
-LOG "Install OpenRabbit OK"
 
+# Copie des fichiers aux bon emplacements
+[ ! -d "/usr/openkarotz/Sounds" ] && mkdir /usr/openkarotz/Sounds
+cp -f /mnt/usbkey/openkarotz/Sounds/* /usr/openkarotz/Sounds/ && LOG "Sounds OK"
+[ ! -d "/usr/scripts" ] && mkdir /usr/scripts
+cp -f /mnt/usbkey/openkarotz/scripts/* /usr/scripts/ && LOG "Scripts OK"
+chmod -R 755 /usr/scripts/
 
 # Install SSH
 if grep -q "dropbear" "/usr/etc/inetd.conf"; then
@@ -68,12 +73,3 @@ else
     LOG "Patching finished!"
 fi
 
-# Copie des fichiers aux bon emplacement
-[ ! -d "/usr/openkarotz/Sounds" ] && mkdir /usr/openkarotz/Sounds
-cp -f /mnt/usbkey/openkarotz/Sounds/* /usr/openkarotz/Sounds/ && LOG "Sounds OK"
-[ ! -d "/usr/scripts" ] && mkdir /usr/scripts
-cp -f /mnt/usbkey/openkarotz/scripts/* /usr/scripts/ && LOG "Scripts OK"
-chmod -R 755 /usr/scripts/
-[ ! -d "/www/cgi-bin/apps" ] && mkdir /www/cgi-bin/apps
-cp -f /mnt/usbkey/openkarotz/apps/* /www/cgi-bin/apps/ && LOG "Apps OK"
-chmod -R 755 /www/cgi-bin/apps/

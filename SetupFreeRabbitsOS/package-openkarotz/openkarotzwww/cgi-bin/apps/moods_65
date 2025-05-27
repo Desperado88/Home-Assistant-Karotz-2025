@@ -1,0 +1,29 @@
+#!/bin/bash
+# Animation mood 65 - "Haut les mains peau d'lapin..."
+
+# Inclusion des fichiers de configuration et fonctions
+source /usr/www/cgi-bin/setup.inc
+source /usr/www/cgi-bin/url.inc
+source /usr/www/cgi-bin/utils.inc
+source /usr/www/cgi-bin/ears.inc
+source /usr/www/cgi-bin/leds.inc
+
+# LEDs rose et jaune (espièglerie)
+Leds FFC0CB FFFF00 1 1 800
+sleep 0.8
+
+# Mouvement 1 - oreilles vers l'extérieur (surprise)
+EarsMove -6 6 500
+sleep 0.6
+
+# Mouvement 2 - oreilles croisées comme un "X"
+EarsMove 10 -10 500
+sleep 0.6
+
+# Fin
+EarsReset
+Leds 00FF00 000000 1 1 1000
+sleep 1
+
+DATA='{"return":"0","msg":"Mood 65 animation complete."}'
+SendResponse "$DATA"

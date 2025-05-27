@@ -1,0 +1,32 @@
+#!/bin/bash
+# Animation mood 144 - "Oh ! J'crois que j'suis amoureuse."
+
+# Inclusion des fichiers de configuration et fonctions
+source /usr/www/cgi-bin/setup.inc
+source /usr/www/cgi-bin/url.inc
+source /usr/www/cgi-bin/utils.inc
+source /usr/www/cgi-bin/ears.inc
+source /usr/www/cgi-bin/leds.inc
+
+# Position initiale
+#EarsReset
+Leds FFC0CB 000000 1 1 700  # LED rose doux (émotion tendre)
+sleep 1
+
+# Petit mouvement timide d’oreilles
+EarsMove 7 5 50
+Leds FFA500 000000 1 1 500  # LED orange pulsée, chaleur
+sleep 2
+
+# Oreilles qui se rapprochent légèrement
+EarsMove 6 6 40
+Leds FF0000 000000 1 1 400  # LED rouge passion
+sleep 2
+
+# Retour à la position neutre
+EarsReset
+Leds 00FF00 000000 1 1 1000  # LED verte finale
+sleep 1
+
+DATA='{"return":"0","msg":"Mood 144 animation complete."}'
+SendResponse "$DATA"
