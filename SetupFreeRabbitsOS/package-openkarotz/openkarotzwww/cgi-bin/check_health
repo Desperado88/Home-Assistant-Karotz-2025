@@ -1,0 +1,21 @@
+#!/bin/bash
+
+source /www/cgi-bin/setup.inc
+source /www/cgi-bin/utils.inc
+source /www/cgi-bin/leds.inc
+
+# /usr/openkarotz/Run/karotz.check
+IP_TEST=$(ip route | awk '/default/ { print $3 }')
+if [ -e  "$CNF_DATADIR/Run/karotz.check" ]; then
+	if [ ! -e "$CNF_DATADIR/Run/karotz.sleep" ]; then
+   		ping $IP_TEST -c 3 -q  >>/dev/null 2>>/dev/null
+   		if [ ! $? -eq 0 ]; then
+     			Leds FF0000 0000FF 1 1 100 
+     			Log "[SYSTEM]"  "Check Network Health - Reboot " 1
+     			/sbin/reboot     
+  		else
+			LedsRestore
+     			Log "[SYSTEM]"  "Check Network Health ($IP_TEST) - OK"
+ 	 	fi
+	fi
+fi

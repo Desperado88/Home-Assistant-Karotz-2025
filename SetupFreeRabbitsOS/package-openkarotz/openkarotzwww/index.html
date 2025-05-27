@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Open Karotz</title>
+<meta charset="utf-8">
+<link rel="icon" type="image/png" href="/favicon.png" />
+<script src="/js/jquery-1.9.1.min.js"></script>
+<script src="/js/jquery-ui.min.js"></script>
+<script>
+
+function isMobile() {
+ try {
+    if(/Android|webOS|iPhone|iPad|iPod|pocket|psp|kindle|avantgo|blazer|midori|Tablet|Palm|maemo|plucker|phone|BlackBerry|symbian|IEMobile|mobile|ZuneWP7|Windows Phone|Opera Mini/i.test(navigator.userAgent)) {
+     return true;
+    };
+    return false;
+ } catch(e){ return false; }
+}
+
+		$.getJSON("/cgi-bin/get_version", function(data) 
+		{
+			if ( parseInt(data.return) == 0)
+			{
+				$("#about_version").text( "Version : " + data.patch_version);
+			}
+			else
+			{
+			}
+		});	
+
+
+$(document).ready(function() {
+    
+	$("#logo").on('click', function ()
+	{
+		/*
+		if ( !isMobile() )
+		*/
+		window.location="/api.html"
+		/*
+		else
+		window.location="/mui/index.html"
+		*/
+	});
+	
+	$("#mobile").on('click', function () { window.location="/mui/index.html" });
+	$("#web").on('click', function () { window.location="/api.html" });
+	$('#mobile').button();
+	$('#web').button();
+	
+}); 
+
+</script>
+
+</head>
+<body>
+<font face="Arial Black">
+<center>
+<noscript><H1><B>JavaScript Must be enabled !</B></H1></noscript> 
+<P>
+</font>
+<font face="Arial">
+<table border="0">
+<tr>
+	<td colspan="2">
+	<IMG style="cursor:pointer" SRC='/images/OpenKarotz.png' id="logo"></IMG>
+	</td>
+</tr>
+
+<tr>
+	<td colspan="2" align="center">
+    <B><font color="4E82C4">
+	<div id="about_version" width="100%"></div>
+    </font>
+    </B>
+	</td>
+</tr>
+<tr>
+	<td colspan="2" align="center">
+    <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+<input type="hidden" name="cmd" value="_s-xclick">
+<input type="hidden" name="hosted_button_id" value="JQB5QFW5EPFYN">
+<input type="image" src="https://www.paypalobjects.com/fr_FR/FR/i/btn/btn_donate_SM.gif" border="0" name="submit" alt="PayPal - la solution de paiement en ligne la plus simple et la plus sécurisée !">
+<img alt="" border="0" src="https://www.paypalobjects.com/fr_FR/i/scr/pixel.gif" width="1" height="1">
+</form>
+    </td>
+</tr>
+</table>
+<BR>
+
+<B><font color="4E82C4">Mass</font>alia 20<font color="4E82C4">14</font></B>
+<BR>
+<A HREF="wtfpl.txt"><IMG border="0" SRC=wtfpl-badge-1.png></A>
+</font>
+
+
+</center> 
+</body>
+</html>
+

@@ -1,0 +1,60 @@
+@CHARSET "UTF-8";
+
+html,
+body {
+  height: 100%;
+  /* The html and body elements cannot have any padding or margin. */
+}
+
+#alert {
+  display: box;
+  margin: 0 -150px 0 -150px;
+  position: absolute;
+  top: 60px;
+  left: 50%;
+  width: 300px;
+  z-index: 9999;
+}
+
+.snapshot {
+    background-color: #fff;
+    border: solid 1px #ddd;
+    margin-bottom: 10px;
+    padding: 5px;
+}
+
+#snapshotimg {
+  /* 640x480 snap, 160x120 thumb */
+  background-color: #fff;
+  background-image: url('../img/camera.png');
+  background-repeat: no-repeat;
+  background-position: center center;
+  height: 130px;
+  margin: 5px;
+  padding: 5px;
+  width: 170px;
+}
+
+.earbtn {
+  height: 40px;
+  width: 40px;
+  margin: 5px;
+}
+
+.radiobtn {
+  height: 116px;
+  width: auto;
+  margin-bottom: 10px;
+}
+
+.radiologo {
+  height: auto;
+  width: 80px;
+}
+
+.color_square {
+  border: solid 1px #ccc;
+  height: 45px !important;
+  margin: 5px;
+  width: 45px !important;
+}

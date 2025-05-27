@@ -1,0 +1,96 @@
+<script>
+   $("#accuupdate").accordion({ active: false, collapsible: true,heightStyle: "content"});
+
+    $("#btn_install_update" ).button({
+        text: false,
+        icons: {
+        primary: "ui-icon-play"
+        }
+    });
+
+    $("#btn_install_rupdate" ).button({
+        text: false,
+        icons: {
+        primary: "ui-icon-play"
+        }
+    });
+
+
+    $("#btn_install_patch" ).button({
+        text: false,
+        icons: {
+        primary: "ui-icon-play"
+        }
+    });
+
+    $("#btn_refresh_update" ).button({
+        text: false,
+        icons: {
+        primary: "ui-icon-arrowrefresh-1-w"
+        }
+    });
+
+    $("#btn_refresh_rupdate" ).button({
+        text: false,
+        icons: {
+        primary: "ui-icon-arrowrefresh-1-w"
+        }
+    });
+
+
+    $("#btn_refresh_patch" ).button({
+        text: false,
+        icons: {
+        primary: "ui-icon-arrowrefresh-1-w"
+        }
+    });
+
+    // $('#update_notification').badger('Update Available');
+
+    $("#btn_install_update").on('click', function ()
+    {
+        var obj = jQuery.parseJSON( $('#cbx_update').val() );
+        SendCommand ("read_update?id=" + obj.id +"&file=" + obj.file, "Applying Update ...");
+    });
+
+    $("#btn_install_patch").on('click', function ()
+    {
+        var obj = jQuery.parseJSON( $('#cbx_patch').val() );
+        SendCommand ("read_patch?id=" + obj.id +"&file=" + obj.file, "Applying Patch ...");
+    });
+
+    $("#btn_install_rupdate").on('click', function ()
+    {
+        $("#dlg_flash_upate").dialog( "open" );
+    });
+
+
+
+    $("#btn_refresh_update").on('click', function ()
+    {
+        CheckUpdate();
+    });
+
+    $("#btn_refresh_rupdate").on('click', function ()
+    {
+        CheckFirmware();
+    });
+
+
+    $("#btn_refresh_patch").on('click', function ()
+    {
+        CheckPatch();
+    });
+</script>
+<p>&nbsp;</p>
+<div id="accuupdate">
+    <h3>About</h3>
+    <div>
+        <p>This section was modified in December 2016 by FreeRabbits.nl. For maintenance, go to <a href="http://www.freerabbits.nl">www.freerabbits.nl</a>.</p>
+    </div>
+    <h3>Update</h3>
+    <div>
+        <p>This version of OpenKarotz is running in Free Rabbits OS.</p>
+        <p>Updates are no longer needed, this version is newer than Open Karotz.</p>
+    </div>
+</div>

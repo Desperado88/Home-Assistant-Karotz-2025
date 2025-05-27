@@ -1,0 +1,14 @@
+bip1.mp3
+bling.mp3
+flush.mp3
+getsounds.sh
+jet1.mp3
+laser_15.mp3
+merde.mp3
+ready.mp3
+rfid_error.mp3
+rfid_ok.mp3
+saut1.mp3
+start.mp3
+twang_01.mp3
+twang_04.mp3

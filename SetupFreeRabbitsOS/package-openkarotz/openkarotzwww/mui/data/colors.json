@@ -1,0 +1,30 @@
+{
+	"colors": [
+		{ "code": "000000", "name": "Noir" },
+		{ "code": "FFFFFF", "name": "Blanc", "real": "4FFF68" },
+		{ "code": "FF0000", "name": "Rouge" },
+		{ "code": "FF4000" },
+		{ "code": "FF8000", "name": "Orange", "real": "FFA500" },
+		{ "code": "FFBF00" },
+		{ "code": "FFFF00", "name": "Jaune", "real": "75FF00" },
+		{ "code": "BFFF00" },
+		{ "code": "80FF00", "name": "Vert clair" },
+		{ "code": "40FF00" },
+		{ "code": "00FF00", "name": "Vert" },
+		{ "code": "00FF40" },
+		{ "code": "00FF80", "name": "Vert printemps" },
+		{ "code": "00FFBF" },
+		{ "code": "00FFFF", "name": "Cyan", "real": "00FF9F" },
+		{ "code": "00BFFF" },
+		{ "code": "0080FF", "name": "Bleu royal" },
+		{ "code": "0040FF" },
+		{ "code": "0000FF", "name": "Bleu" },
+		{ "code": "4000FF" },
+		{ "code": "8000FF", "name": "Violet", "real": "9F00FF" },
+		{ "code": "BF00FF" },
+		{ "code": "FF00FF", "name": "Fuchsia" },
+		{ "code": "FF00BF" },
+		{ "code": "FF0080", "name": "Rose", "real": "FFCFAF" },
+		{ "code": "FF0040" }
+	]
+}

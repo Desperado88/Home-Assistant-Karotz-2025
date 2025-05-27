@@ -1,0 +1,131 @@
+<script>
+
+	//
+	//   AJOUTER CORRECTION COULEUR
+	//
+	//
+	
+	var trueColor = function(color)
+{
+if (color.length != 6 ) return color
+var r = color.substring(0,2);
+var g = color.substring(2,4);
+var b = color.substring(4,6);
+
+r = parseInt(r,16);
+b = parseInt(b,16);
+
+r = Math.floor(r*0.3);
+b = Math.floor(b*0.4);
+
+r = r.toString(16);
+b = b.toString(16);
+
+if (r.length == 1) r = "0"+r;
+if (b.length == 1) b = "0"+b;
+
+return r + g + b;
+} 
+	
+
+	$("#accleds1").accordion({ active: false, collapsible: true,heightStyle: "content"});  
+	$( "#led_speed_slider" ).slider({ range: "min",min: 0,max: 2000,value: 700,
+		slide: function( event, ui ) {$( "#led_speed" ).val( ui.value );}
+	});
+	$( "#led_speed" ).val( $( "#led_speed_slider" ).slider( "value" ) );	
+	$('#coin-slider').coinslider({ width: 480, navigation: true, links : false });
+
+
+	$("#colorpickerField1").ColorPicker({
+		onSubmit: function(hsb, hex, rgb, el) {
+		$(el).val(hex);
+		$(el).ColorPickerHide();
+		},
+		
+		onBeforeShow: function () {
+		$(this).ColorPickerSetColor(this.value);
+		}
+		})
+		
+		.bind('keyup', function(){
+		$(this).ColorPickerSetColor(this.value);
+	});
+	
+	$("#colorpickerField2").ColorPicker({
+		onSubmit: function(hsb, hex, rgb, el) {
+		$(el).val(hex);
+		$(el).ColorPickerHide();
+		},
+		
+		onBeforeShow: function () {
+		$(this).ColorPickerSetColor(this.value);
+		}
+		})
+		
+		.bind('keyup', function(){
+		$(this).ColorPickerSetColor(this.value);
+	});
+	
+	$("#colorSelector").on('click', function () { $("#colorpickerField1").ColorPickerShow(); });
+	
+	$("#btn_fixed_led").on('click', function () { SendCommand ("leds?color=" + $("#colorpickerField1").val() , "Changing led color ...");});
+	$("#btn_off_led").on('click', function () { SendCommand ("leds?color=000000", "Turning led off ...");});
+	$("#btn_pulse_led").on('click', function () { SendCommand ("leds?pulse=1&color=" + $("#colorpickerField1").val()  +"&speed=" + $("#led_speed_slider").slider("value") + "&color2=" + $("#colorpickerField2").val() , "Changing led color ...");});
+
+$("#tips_leds_1").on('click', function () 	{ $("#dlg_clipboard").data('tips', '/cgi-bin/leds?color=' + $("#colorpickerField1").val() ).dialog( "open" ); });
+
+$("#tips_leds_2").on('click', function () 	{ $("#dlg_clipboard").data('tips', '/cgi-bin/leds?color=000000').dialog( "open" ); });	
+
+$("#tips_leds_3").on('click', function () 	{ $("#dlg_clipboard").data('tips', '/cgi-bin/leds?pulse=1&color=' + $("#colorpickerField1").val()  +"&speed=" + $("#led_speed_slider").slider("value") + "&color2=" + $("#colorpickerField2").val()).dialog( "open" ); });	
+
+	
+</script>
+<table width="20%">
+<tr>
+<td  width="50%">
+Main color :&nbsp;
+</td>
+<td>
+<div id="customWidget">
+<input class="colorSelector" type="text" maxlength="6" size="6" id="colorpickerField1" value="00FF00" readonly />
+</div>
+</td>
+</tr>
+<tr>
+<td  width="50%">
+Secondary color :&nbsp;
+</td>
+<td>
+<input class="colorSelector" type="text" maxlength="6" size="6" id="colorpickerField2" value="000000" readonly />
+</td>
+</tr>
+</table>
+<P>    
+<div id="accleds1">
+    <h3>Fixed</h3>
+    <div>   
+        <P>
+        <table>
+        <tr>
+        <td>
+        <button id="btn_fixed_led" title="Set led Color">Fixed Led</button>&nbsp;<IMG SRC="/images/api.jpg" width=20 id="tips_leds_1" title="/cgi-bin/leds?color= ...">
+        </td>
+        <td>
+        <button id="btn_off_led" title="Set led Off">Led Off</button>&nbsp;<IMG SRC="/images/api.jpg" id="tips_leds_2" width=20 title="/cgi-bin/leds?color=000000">
+        </td>
+        </tr>
+        </table>
+    </div>
+
+    <h3>Pulse</h3>
+    <div>   
+        <P>
+        <label for="led_speed" title="Choose led Speed">Speed:</label>
+        <input type="text" id="led_speed" style="border: 0; align: left;" title="Click to select color"/>
+        <div id="led_speed_slider" style="width: 200px;"></div>
+        <P>
+        <button id="btn_pulse_led" title="Set led Color">Pulse Led</button>&nbsp;
+        <IMG SRC="/images/api.jpg" id='tips_leds_3' width=20 title="/cgi-bin/leds?color= ...">
+        <P>
+    </div>    
+</div>

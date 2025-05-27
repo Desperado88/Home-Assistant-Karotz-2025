@@ -11,8 +11,6 @@ LOG "Copy USB files to tmp"
 cp -f /mnt/usbkey/zImage /tmp
 cp -f /mnt/usbkey/rootfs.fros001.img.gz /tmp
 cp -f /mnt/usbkey/yaffs-12.07.19.00.tar.gz /tmp
-# copie de openkarrotz
-cp -f /mnt/usbkey/package-openkarotz.zip /tmp/package-openkarotz.zip
 
 # Flash zImage
 if [ "87056626645e6f383a0db0b92e830317" = $(/bin/md5sum /tmp/zImage | cut -d ' ' -f1) ]; then
@@ -47,37 +45,35 @@ rm -f /usr/yaffs*
 [ -f "/usr/.install_yaffs_start" ] && rm -f /usr/.install_yaffs_start
 
 # Install OpenRabbit
-if [ "4451ee36a7b423adfd21b39fde14d9db" = $(/bin/md5sum /tmp/package-openkarotz.zip | cut -d ' ' -f1) ]; then
-    LOG "Install OpenRabbit"
-    /bin/unzip -oq /tmp/package-openkarotz.zip -d /tmp # Extracting the packagefile
-    [ ! -d "/usr/openkarotz" ] && mkdir /usr/openkarotz # Start Install OpenKarotz
-    /bin/unzip -oq /tmp/openkarotzusr.zip -d /usr/openkarotz
-    [ ! -d "/usr/www" ] && mkdir /usr/www # Start Install WWW
-    /bin/unzip -oq /tmp/openkarotzwww.zip -d /usr/www
-    chmod -R 755 /usr/www/cgi-bin
-    cp -f /usr/www/cgi-bin/dbus_events /usr/scripts/dbus_watcher
-    ln -s /usr/openkarotz/Snapshots /usr/www/snapshots
-    ln -s /usr/openkarotz/Tmp /usr/www/ttscache
-else
-    ERROR "MD5 Checksum Error in OpenKarotz"
-    exit 1
-fi
+LOG "Install OpenRabbit"
+[ ! -d "/usr/openkarotz" ] && mkdir /usr/openkarotz # Start Install OpenKarotz
+# copie de openkarrotz
+cp -Rf /mnt/usbkey/package-openkarotz/openkarotzusr/* /usr/openkarotz/ 
+[ ! -d "/usr/www" ] && mkdir /usr/www # Start Install WWW
+# copie de openkarrotz
+cp -Rf /mnt/usbkey/package-openkarotz/openkarotzwww/* /usr/www/ 
+chmod -R 755 /usr/www/cgi-bin
+cp -f /usr/www/cgi-bin/dbus_events /usr/scripts/dbus_watcher
+ln -s /usr/openkarotz/Snapshots /usr/www/snapshots
+ln -s /usr/openkarotz/Tmp /usr/www/ttscache
+LOG "Install OpenRabbit OK"
+
 
 # Install SSH
 if grep -q "dropbear" "/usr/etc/inetd.conf"; then
-    echo "Dropbear is already in inetd.conf!"
+    LOG "Dropbear is already in inetd.conf!"
 else
-    echo "Patching file /usr/etc/inetd.conf, please wait..."
+    LOG "Patching file /usr/etc/inetd.conf, please wait..."
     echo -e "22 stream tcp nowait root /sbin/dropbear dropbear -i -B -R\n" >>/usr/etc/inetd.conf
-    echo "Patching finished!"
+    LOG "Patching finished!"
 fi
 
 # Copie des fichiers aux bon emplacement
 [ ! -d "/usr/openkarotz/Sounds" ] && mkdir /usr/openkarotz/Sounds
-cp -f /mnt/usbkey/openkarotz/Sounds/* /usr/openkarotz/Sounds/
+cp -f /mnt/usbkey/openkarotz/Sounds/* /usr/openkarotz/Sounds/ && LOG "Sounds OK"
 [ ! -d "/usr/scripts" ] && mkdir /usr/scripts
-cp -f /mnt/usbkey/openkarotz/scripts/* /usr/scripts/
+cp -f /mnt/usbkey/openkarotz/scripts/* /usr/scripts/ && LOG "Scripts OK"
 chmod -R 755 /usr/scripts/
 [ ! -d "/www/cgi-bin/apps" ] && mkdir /www/cgi-bin/apps
-cp -f /mnt/usbkey/openkarotz/apps/* /www/cgi-bin/apps/
+cp -f /mnt/usbkey/openkarotz/apps/* /www/cgi-bin/apps/ && LOG "Apps OK"
 chmod -R 755 /www/cgi-bin/apps/

@@ -1,0 +1,68 @@
+#!/bin/bash
+
+source /usr/www/cgi-bin/setup.inc
+source /usr/www/cgi-bin/url.inc
+source /usr/www/cgi-bin/utils.inc
+source /usr/www/cgi-bin/leds.inc
+
+KillProcess LEDS
+ReadUrlParam
+
+LED_SPEED=0
+LED_PULSE=0
+LED_BLINK=0
+
+if [ ! -e "$CNF_DATADIR/Run" ]; then
+    DATA='{"return":"1","msg":"Run directory not found."}'
+    SendResponse "$DATA"
+    exit 0
+fi
+ 
+if [ ! -e "$CNF_DATADIR/Run/karotz.sleep" ]; then
+       LED_COLOR=${URLParam[color]}
+       LED_NOMEMORY=${URLParam[nomemory]}
+       LED_PULSE=${URLParam[pulse]}
+       LED_BLINK=${URLParam[blink]}
+       LED_PULSE2=${URLParam[color2]}
+       LED_SPEED=${URLParam[speed]}
+ 
+       if [ ! "$LED_PULSE" = "" ] && [ ! "$LED_BLINK" == "" ]; then
+           DATA='{"return":"1","msg":"You cannot use BLINK and PULSE parameters at the same time."}'
+           SendResponse "$DATA"
+           exit 0
+       fi 
+        
+       if [ "$LED_NOMEMORY" = "" ]; then                 
+           LED_NOMEMORY=0                           
+       fi     
+       
+       if [ "$LED_SPEED" == "" ]; then
+           LED_SPEED=700
+       fi
+       
+       if [ "$LED_PULSE2" = "" ]; then
+         LED_PULSE2=000000
+       fi
+       
+       if [ "$LED_COLOR" = "" ]; then
+          if [ ! -e "$CNF_DATADIR/Run/led.color" ]; then
+             LED_COLOR=00FF00
+          else
+             LED_COLOR=`cat $CNF_DATADIR/Run/led.color`  
+          fi
+      fi
+      if [ "$LED_PULSE" = "" ]; then
+          if [ ! -e "$CNF_DATADIR/Run/led.pulse" ]; then
+              LED_PULSE=0
+          fi                         
+      fi
+      Leds $LED_COLOR $LED_PULSE2 $LED_PULSE $LED_NOMEMORY $LED_SPEED
+      DATA='{"color":"'$LED_COLOR'","secondary_color":"'$LED_PULSE2'","pulse":"'$LED_PULSE'","no_memory":"'$LED_NOMEMORY'","speed":"'$LED_SPEED'","return":"0"}'
+else
+      DATA='{"return":"1","msg":"Unable to perform action, rabbit is sleeping."}'	      
+fi
+
+SendResponse "$DATA"
+
+
+

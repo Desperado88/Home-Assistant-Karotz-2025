@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>OPEN-KAROTZ</title>
+
+<link rel="icon" type="image/png" href="/favicon.png" />
+
+<link rel="stylesheet" href="/jquery-ui.css" />
+<link rel="stylesheet" href="/badger.css" type="text/css" />
+<link rel="stylesheet" media="screen" type="text/css" href="/colorpicker.css" />
+<link rel="stylesheet" href="/coin-slider-styles.css" type="text/css" />
+<link rel="stylesheet" href="/openkarotz.css" type="text/css" />
+<link rel="stylesheet" type="text/css" href="/jquery.fancybox.css?v=2.1.5" media="screen" />
+<link rel="stylesheet" href="/slick.grid.css" type="text/css" />
+<link rel="stylesheet" href="/ui.jqgrid.css" type="text/css" />
+
+<script src="/js/jquery-1.9.1.min.js"></script>
+<script src="/js/jquery-ui.min.js"></script>
+<script src="/js/jquery.blockUI.min.js"></script>
+<script src="/js/chili-1.7.pack.js"></script>
+<script type="text/javascript" src="/js/colorpicker.js"></script>
+<script type="text/javascript" src="/js/badger.js"></script>
+<script type="text/javascript" src="/js/coin-slider.min.js"></script>
+<script type="text/javascript" src="/js/api.js"></script>
+<script type="text/javascript" src="/js/dialog.js"></script>
+<script type="text/javascript" src="/js/functions.js"></script>
+<script type="text/javascript" src="/js/jqxcore.js"></script>
+<script type="text/javascript" src="/js/jqxchart.js"></script>
+<script type="text/javascript" src="/js/jqxgauge.js"></script>
+<script type="text/javascript" src="/js/jquery.fancybox.js?v=2.1.5"></script>
+<script type="text/javascript" src="/js/jquery.event.drag-2.2.js"></script>
+<script type="text/javascript" src="/js/slick.core.js"></script>
+<script type="text/javascript" src="/js/slick.grid.js"></script>
+<script type="text/javascript" src="/js/jquery.base64.min.js"></script>
+<script type="text/javascript" src="/js/jquery.jqGrid.min.js"></script>
+
+<style type="text/css">
+#gaugeValue {
+	background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #fafafa), color-stop(100%, #f3f3f3));
+	background-image: -webkit-linear-gradient(#fafafa, #f3f3f3);
+	background-image: -moz-linear-gradient(#fafafa, #f3f3f3);
+	background-image: -o-linear-gradient(#fafafa, #f3f3f3);
+	background-image: -ms-linear-gradient(#fafafa, #f3f3f3);
+	background-image: linear-gradient(#fafafa, #f3f3f3);
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	-ms-border-radius: 3px;
+	-o-border-radius: 3px;
+	border-radius: 3px;
+	-webkit-box-shadow: 0 0 50px rgba(0, 0, 0, 0.2);
+	-moz-box-shadow: 0 0 50px rgba(0, 0, 0, 0.2);
+	box-shadow: 0 0 50px rgba(0, 0, 0, 0.2);
+	padding: 10px;
+}
+</style>
+
+</head>
+<body>
+
+<H1><B><font color="4E82C4">OPEN</font> KAROTZ</B></H1>
+
+<div id="tabs">
+    <ul>
+    <li><a href="#Infos">Informations</a></li>
+    <li><a href="#State">State</a></li>
+    <li><a href="#Leds">Leds</a></li>
+    <li><a href="#Ears">Ears</a></li>
+    <li><a href="#Rfid">RFID</a></li>
+    <li><a href="#TTS">TTS</a></li>
+    <li><a href="#Pictures">Picture</a></li>
+    <li><a href="#Sounds">Sounds</a></li>
+	<li><a href="#Apps">Apps</a></li>
+<!--
+    <li><a href="#Setup">Setup</a></li>
+-->
+    <li><a href="#Update">Update</a></li>
+    <li><a href="#Docs">About</a></li>
+    </ul>
+
+    <div id="Infos"></div>   
+    <div id="State"></div>    
+    <div id="Leds"></div>
+	<div id="Rfid"></div>  
+    <div id="TTS"></div>
+	<div id="Pictures"></div>
+    <div id="Sounds"></div>
+    <div id="Ears"></div>
+	<div id="Apps"></div>
+<!--    
+    <div id="Setup"></div>
+-->    
+    <div id="Update"></div>        
+    <div id="Docs"></div>
+    
+    <div id="Dialog"></div>
+</div>
+    
+<P>
+<div>
+<A title="Show JSON reply for selected API action (Click to clear)" id="json_title"><B>API Return value</B></A>
+<textarea rows="6" id="json_result" style="width:100%"></textarea>
+</div>
+</body>
+</html>

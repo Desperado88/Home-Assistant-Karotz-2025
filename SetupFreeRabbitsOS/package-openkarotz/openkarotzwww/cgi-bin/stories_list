@@ -1,0 +1,19 @@
+#!/bin/bash
+
+source /www/cgi-bin/setup.inc
+source /www/cgi-bin/url.inc
+source /www/cgi-bin/utils.inc
+
+if [ ! -d "$CNF_DATADIR/Apps/Story/Data" ]; then
+  DATA='{"return":"1","msg":"Stories directory missing"}'
+  SendResponse "$DATA"
+  exit
+fi       
+ 
+if [ -e "$CNF_DATADIR/Apps/Story/story.json" ]; then
+  TG=`cat $CNF_DATADIR/Apps/Story/story.json`
+else
+  TG="{ "streams": [], "return":"0" }
+fi
+
+SendResponse "$TG"

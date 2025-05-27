@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<title>OpenKarotz</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+<link rel="shortcut icon" type="image/x-icon" href="favicon.ico" />
+<link rel="apple-touch-icon" type="image/png" href="img/icons/60.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="img/icons/76.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="img/icons/120.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="152x152" href="img/icons/152.png" />
+
+<link rel="stylesheet" type="text/css" href="lib/bootstrap/css/bootstrap.min.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="lib/fancybox/jquery.fancybox.css?v=2.1.5" media="screen" />
+<link rel="stylesheet" type="text/css" href="lib/fancybox/helpers/jquery.fancybox-thumbs.css?v=2.1.5" media="screen" />
+<link rel="stylesheet" type="text/css" href="css/mui.css" media="screen" />
+</head>
+<body>
+
+	<!-- Wrap -->
+	<div id="wrap" class="container">
+
+		<!-- Navbar -->
+		<nav id="mainnav" class="navbar navbar-default" role="navigation">
+			<!-- Brand and toggle get grouped for better mobile display -->
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+					<span class="sr-only">Navigation</span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand" href="#">Karotz</a>
+			</div>
+
+			<!-- Collect the nav links, forms, and other content for toggling -->
+			<div class="collapse navbar-collapse">
+				<ul class="nav navbar-nav">
+					<li class="active"><a href="#kontrol" data-toggle="tab" data-target="#kontrol">Apparence</a></li>
+					<li><a href="#photos" data-toggle="tab" data-target="#photos">Photos</a></li>
+					<li><a href="#radio" data-toggle="tab" data-target="#radio">Radio</a></li>
+					<li><a href="#story" data-toggle="tab" data-target="#story">Histoires</a></li>
+					<li><a href="#state" data-toggle="tab" data-target="#state">&Eacute;tat</a></li>
+				</ul>
+			</div>
+		</nav>
+		<!-- /Navbar -->
+
+		<div id="toolbar" class="panel panel-default">
+			<div class="panel-body">
+				<div class="pull-right">
+					<button id="radiobutton" class="btn btn-default">
+						<span class="glyphicon glyphicon-bullhorn"></span>
+					</button>
+					<button id="snapshotqbutton" class="btn btn-default">
+						<span class="glyphicon glyphicon-camera"></span>
+					</button>
+					<div class="btn-group">
+						<!-- <button id="soundplaybutton" class="btn btn-default"><span class="glyphicon glyphicon-play"></span></button> -->
+						<button id="soundpausebutton" class="btn btn-default">
+							<span class="glyphicon glyphicon-pause"></span>
+						</button>
+						<button id="soundstopbutton" class="btn btn-default">
+							<span class="glyphicon glyphicon-stop"></span>
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Tabcontent -->
+		<div id="tabcontent" class="tab-content">
+
+			<!-- Kontrol -->
+			<div id="kontrol" class="tab-pane fade active in">
+
+				<!-- Accordion 3 -->
+				<div class="panel-group" id="accordion3">
+
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							<h4 class="panel-title">
+								<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion3" href="#a-leds">Couleur</a>
+							</h4>
+						</div>
+						<div id="a-leds" class="panel-collapse collapse">
+							<div class="panel-body" id="ledspanel">
+								<!-- Led color buttons -->
+							</div>
+						</div>
+					</div>
+
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							<h4 class="panel-title">
+								<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion3" href="#a-ears">Oreilles</a>
+							</h4>
+						</div>
+						<div id="a-ears" class="panel-collapse collapse">
+							<div class="panel-body">
+								<div class="text-center">
+									<button id="earsrandombutton" class="btn btn-default">
+										<span class="glyphicon glyphicon-random"></span> Aléatoire
+									</button>
+									<button id="earsresetbutton" class="btn btn-default">
+										<span class="glyphicon glyphicon-refresh"></span> Réinitialiser
+									</button>
+								</div>
+								<div id="earspanel" class="text-center">
+									<!-- Ear positions -->
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							<h4 class="panel-title">
+								<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion3" href="#a-tts">Voix</a>
+							</h4>
+						</div>
+						<div id="a-tts" class="panel-collapse collapse">
+							<div class="panel-body">
+								<div class="input-group">
+									<input type="text" id="voicetext" class="form-control" placeholder="Citation..."> <span
+										class="input-group-btn"><button id="ttsspeakbutton" class="btn btn-default">
+											<span class="glyphicon glyphicon-play"></span> Parler
+										</button></span>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							<h4 class="panel-title">
+								<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion3" href="#a-moods">Humeurs</a>
+							</h4>
+						</div>
+						<div id="a-moods" class="panel-collapse collapse">
+							<div class="panel-body">
+								<div class="text-center">
+									<button id="moodrandombutton" class="btn btn-default">
+										<span class="glyphicon glyphicon-random"></span> Aléatoire
+									</button>
+								</div>
+								<div id="moodlist">
+									<!-- List of moods -->
+								</div>
+							</div>
+						</div>
+					</div>
+
+				</div>
+				<!-- /Accordion 3 -->
+			</div>
+			<!-- /Kontrol -->
+
+			<!-- Photos -->
+			<div id="photos" class="tab-pane fade">
+				<!-- Accordion 4 -->
+				<div class="panel-group" id="photoaccordion">
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							<h4 class="panel-title">
+								<a class="accordion-toggle" data-toggle="collapse" data-parent="#photoaccordion" href="#a-snapshot">Capture</a>
+							</h4>
+						</div>
+						<div id="a-snapshot" class="panel-collapse collapse in">
+							<div class="panel-body text-center">
+								<div class="text-center">
+									<button id="snapshotbutton" class="btn btn-default">
+										<span class="glyphicon glyphicon-camera"></span> Prendre une Photo
+									</button>
+								</div>
+								<div id="snapshotdiv">
+									<a id="snapshotlink" class="fancybox fancybox.image" href="javascript:;"><img id="snapshotimg" /></a>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							<h4 class="panel-title">
+								<a id="snaplistlink" class="accordion-toggle" data-toggle="collapse" data-parent="#photoaccordion" href="#a-snaplist">Album</a>
+							</h4>
+						</div>
+						<div id="a-snaplist" class="panel-collapse collapse">
+							<div class="panel-body">
+								<!-- Snapshot list -->
+								<ul id="snapshotlist" class="list-unstyled list-inline"></ul>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- /Accordion 4 -->
+			</div>
+			<!-- /Photos -->
+
+			<!-- Radio -->
+			<div id="radio" class="tab-pane fade">
+				<div class="panel-group" id="radioaccordion">
+					<!-- Radio lists in accordion -->
+				</div>
+			</div>
+			<!-- /Radio -->
+
+			<!-- Story -->
+			<div id="story" class="tab-pane fade">
+				<div class="panel-group" id="storyaccordion">
+					<!-- Story lists in accordion -->
+				</div>
+				<p style="margin-top: 1.5em">
+					<small>Source: <a href="http://www.litteratureaudio.com">litteratureaudio.com</a></small>
+				</p>
+			</div>
+			<!-- /Story -->
+
+			<!-- State -->
+			<div id="state" class="tab-pane fade">
+
+				<!-- Accordion 5 -->
+				<div class="panel-group" id="stateaccordion">
+
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							<h4 class="panel-title">
+								<a class="accordion-toggle" data-toggle="collapse" data-parent="#stateaccordion" href="#a-info">Informations</a>
+							</h4>
+						</div>
+						<div id="a-info" class="panel-collapse collapse">
+							<div class="panel-body"></div>
+							<table class="table">
+								<tbody>
+									<tr>
+										<th>OpenKarotz</th>
+										<td>Version : <span id="ok-info-version"></span></td>
+									</tr>
+									<tr>
+										<th>MAC Ethernet</th>
+										<td><span id="ok-info-ethmac"></span></td>
+									</tr>
+									<tr>
+										<th>MAC WLAN</th>
+										<td><span id="ok-info-wlanmac"></span></td>
+									</tr>
+									<tr>
+										<th>Mémoire interne</th>
+										<td>Libre : <span id="ok-info-intfreemem"></span><br />
+											<div class="progress">
+												<div id="ok-info-intfreemem-bar" class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
+													<span id="ok-info-intfreemem-sr" class="sr-only">0%</span>
+												</div>
+											</div>
+										</td>
+									</tr>
+									<tr>
+										<th>Mémoire USB</th>
+										<td>Libre : <span id="ok-info-usbfreemem"></span><br />
+											<div class="progress">
+												<div id="ok-info-usbfreemem-bar" class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
+													<span id="ok-info-usbfreemem-sr" class="sr-only">0%</span>
+												</div>
+											</div>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							<h4 class="panel-title">
+								<a class="accordion-toggle" data-toggle="collapse" data-parent="#stateaccordion" href="#a-sleep">Sommeil</a>
+							</h4>
+						</div>
+						<div id="a-sleep" class="panel-collapse collapse">
+							<div class="panel-body text-center"></div>
+							<table class="table">
+								<tbody>
+									<tr>
+										<td>
+											<strong>Réveiller le Karotz</strong><br />
+											Toutes les fonctions sont disponibles.
+										</td>
+										<td>
+											<button id="wakeupbutton" class="btn btn-block btn-success">Réveiller</button>
+										</td>
+									</tr>
+									<tr>
+										<td>
+											<strong>Endormir le Karotz</strong><br />
+											Seules les fonctions "Photos" et "&Eacute;tat" sont disponibles.
+										</td>
+										<td>
+											<button id="sleepbutton" class="btn btn-block btn-primary">Endormir</button>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+
+					<div class="panel panel-danger">
+						<div class="panel-heading">
+							<h4 class="panel-title">
+								<a class="accordion-toggle" data-toggle="collapse" data-parent="#stateaccordion" href="#a-advanced">Avancé</a>
+							</h4>
+						</div>
+						<div id="a-advanced" class="panel-collapse collapse">
+							<div class="panel-body">
+								<div class="alert alert-danger">
+									<p>
+										<strong>Attention !</strong><br />
+										Les commandes suivantes sont dangereuses et réservées à l'administrateur.
+									</p>
+								</div>
+							</div>
+							<table class="table">
+								<tbody>
+									<tr>
+										<td>Effacer les photos sauvegardées sur le Karotz</td>
+										<td>
+											<button id="clearsnapshotsbutton" class="btn btn-block btn-danger">Effacer</button>
+										</td>
+									</tr>
+									<tr>
+										<td>Nettoyer le cache TTS</td>
+										<td>
+											<button id="clearcachebutton" class="btn btn-block btn-danger">Nettoyer</button>
+										</td>
+									</tr>
+									<tr>
+										<td>Redémarrer le Karotz</td>
+										<td>
+											<button id="rebootbutton" class="btn btn-block btn-danger">Redémarrer</button>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+
+				</div>
+				<!-- /Accordion 5 -->
+			</div>
+			<!-- /State -->
+
+		</div>
+		<!-- /Tabcontent -->
+
+	</div>
+	<!-- /Wrap -->
+
+	<!-- Alert -->
+	<div id="alert" class="alert alert-warning in">
+		<button type="button" class="close">&times;</button>
+		<div id="alert-msg"></div>
+	</div>
+	<!-- /Alert -->
+
+	<!-- JavaScript libraries -->
+	<script src="lib/jquery/jquery-2.0.3.min.js"></script>
+	<script src="lib/fancybox/jquery.fancybox.pack.js"></script>
+	<script src="lib/fancybox/helpers/jquery.fancybox-thumbs.js"></script>
+	<script src="lib/bootstrap/js/bootstrap.min.js"></script>
+	<script src="lib/openkarotz/openkarotz-0.4.0.min.js"></script>
+	<script src="js/openkarotz-mui.js"></script>
+</body>
+</html>

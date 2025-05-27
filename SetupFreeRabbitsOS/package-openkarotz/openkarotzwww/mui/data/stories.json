@@ -1,0 +1,131 @@
+{
+	"lafontaine": {
+		"name": "Fables de Jean de La Fontaine",
+		"stories": [
+			{ "id": "a1", "name": "L'Ours et les deux compagnons", "url": "http://sd-36232.dedibox.fr/Jean_de_La_Fontaine_-_L_Ours_et_les_deux_Compagnons_V2.mp3" },
+			{ "id": "a2", "name": "La Cigale et la fourmi", "url": "http://sd-36232.dedibox.fr/Jean_de_La_Fontaine_-_La_Cigale_et_la_Fourmi_V2.mp3" },
+			{ "id": "a3", "name": "La Grenouille qui se veut faire aussi grosse que le boeuf", "url": "http://sd-36232.dedibox.fr/Jean_de_La_Fontaine_-_La_Grenouille_qui_se_veut_faire_aussi_grosse_que_le_Boeuf_V2.mp3" },
+			{ "id": "a4", "name": "La Laitière et le pot au lait", "url": "http://sd-36232.dedibox.fr/Jean_de_La_Fontaine_-_La_Laitiere_et_le_Pot_au_lait_V2.mp3" },
+			{ "id": "a5", "name": "La Poule aux œufs d'or", "url": "http://sd-36232.dedibox.fr/Jean_de_La_Fontaine_-_La_Poule_aux_Oeufs_d_Or_V2.mp3" },
+			{ "id": "a6", "name": "La Tortue et les deux canards", "url": "http://sd-36232.dedibox.fr/Jean_de_La_Fontaine_-_La_Tortue_et_les_deux_Canards_V2.mp3" },
+			{ "id": "a7", "name": "Le Chêne et le roseau", "url": "http://sd-36232.dedibox.fr/Jean_de_La_Fontaine_-_Le_Chene_et_le_Roseau_V2.mp3" },
+			{ "id": "a8", "name": "Le Coche et la mouche", "url": "http://sd-36232.dedibox.fr/Jean_de_La_Fontaine_-_Le_Coche_et_la_Mouche_V2.mp3" },
+			{ "id": "a9", "name": "Le Corbeau et le renard", "url": "http://sd-36232.dedibox.fr/Jean_de_La_Fontaine_-_Le_Corbeau_et_le_Renard_V2.mp3" },
+			{ "id": "a10", "name": "Le Héron", "url": "http://sd-36232.dedibox.fr/Jean_de_La_Fontaine_-_Le_Heron_V2.mp3" },
+			{ "id": "a11", "name": "Le Laboureur et ses enfants", "url": "http://sd-36232.dedibox.fr/Jean_de_La_Fontaine_-_Le_Laboureur_et_ses_Enfants_V2.mp3" },
+			{ "id": "a12", "name": "Le Lièvre et la tortue", "url": "http://sd-36232.dedibox.fr/Jean_de_La_Fontaine_-_Le_Lievre_et_la_Tortue_V2.mp3" },
+			{ "id": "a13", "name": "Le Lion et le rat", "url": "http://sd-36232.dedibox.fr/Jean_de_La_Fontaine_-_Le_Lion_et_le_Rat_V2.mp3" },
+			{ "id": "a14", "name": "Le Loup et l'agneau", "url": "http://sd-36232.dedibox.fr/Jean_de_La_Fontaine_-_Le_Loup_et_l_Agneau_V2.mp3" },
+			{ "id": "a15", "name": "Le Rat des villes et le rat des champs", "url": "http://sd-36232.dedibox.fr/Jean_de_La_Fontaine_-_Le_Rat_de_Ville_et_le_Rat_des_Champs_V2.mp3" },
+			{ "id": "a16", "name": "Le Renard et la cigogne", "url": "http://sd-36232.dedibox.fr/Jean_de_La_Fontaine_-_Le_Renard_et_la_Cigogne_V2.mp3" },
+			{ "id": "a17", "name": "Le Savetier et le financier", "url": "http://sd-36232.dedibox.fr/Jean_de_La_Fontaine_-_Le_Savetier_et_le_Financier_V2.mp3" }
+		]
+	},
+	"grimm": {
+		"name": "Contes des Frères Grimm",
+		"stories": [
+			{ "id": "b1", "name": "Blanche-Neige", "url": "http://sd-35759.dedibox.fr/Les_freres_Grimm_-_Blanche_Neige.mp3" },
+			{ "id": "b2", "name": "Cendrillon", "url": "http://sd-35759.dedibox.fr/Les_freres_Grimm_-_Cendrillon.mp3" },
+			{ "id": "b3", "name": "Le Loup et les sept chevreaux", "url": "http://sd-35759.dedibox.fr/Les_freres_Grimm_-_Le_loup_et_les_sept_chevreaux.mp3" },
+			{ "id": "b4", "name": "Le Petit chaperon rouge", "url": "http://sd-35759.dedibox.fr/Les_freres_Grimm_-_Le_petit_chaperon_rouge.mp3" },
+			{ "id": "b5", "name": "Tom Pouce", "url": "http://sd-35759.dedibox.fr/Les_freres_Grimm_-_Tom_Pouce.mp3" },
+			{ "id": "b6", "name": "Petit frère, petite soeur", "url": "http://sd-35759.dedibox.fr/Jacob_et_Wilhelm_Grimm_-_Petit_Frere_Petite_Soeur.mp3" },
+			{ "id": "b7", "name": "Hansel et Gretel", "url": "http://sd-35759.dedibox.fr/Jacob_et_Wilhelm_Grimm_-_Hansel_et_Gretel.mp3" },
+			{ "id": "b8", "name": "Le Diable aux trois cheveux d'or", "url": "http://sd-35759.dedibox.fr/Contes_de_Grimm_-_Le_diable_aux_trois_cheveux_d_or.mp3" },
+			{ "id": "b9", "name": "L'Eau de la vie", "url": "http://sd-35759.dedibox.fr/Jacob_et_Wilhelm_Grimm_-_l_eau_de_la_vie.mp3" },
+			{ "id": "b10", "name": "Le Fidèle Jean", "url": "http://sd-35759.dedibox.fr/Jacob_et_Wilhelm_Grimm_-_Le_fidele_Jean.mp3" },
+			{ "id": "b11", "name": "La Gardeuse d'oies", "url": "http://sd-35759.dedibox.fr/Jacob_et_Wilhelm_Grimm_-_La_gardeuse_d_oies_.mp3" },
+			{ "id": "b12", "name": "Raiponse", "url": "http://sd-36232.dedibox.fr/Jacob_et_Wilhelm_Grimm_-_Raiponce.mp3" },
+			{ "id": "b13", "name": "Les Musiciens de Brême", "url": "http://sd-36232.dedibox.fr/Grimm_-_Les_musiciens_de_la_ville_de_Breme_.mp3" }
+		]
+	},
+	"perrault": {
+		"name": "Contes De Ma Mère L’Oye, Charles Perrault",
+		"stories": [
+			{ "id": "f1", "name": "La Belle au bois dormant", "url": "http://sd-35759.dedibox.fr/Charles_Perrault_-_La_Belle_au_Bois_Dormant.mp3" },
+			{ "id": "f2", "name": "Le petit chaperon rouge", "url": "http://sd-35759.dedibox.fr/Charles_Perrault_-_Le_petit_chaperon_rouge.mp3" },
+			{ "id": "f3", "name": "Cendrillon ou la petite pantoufle de vair", "url": "http://sd-35759.dedibox.fr/Charles_Perrault_-_Cendrillon_ou_la_petite_pantoufle_de_vair.mp3" },
+			{ "id": "f4", "name": "Les Fées", "url": "http://sd-35759.dedibox.fr/Charles_Perrault_-_Les_fees.mp3" },
+			{ "id": "f5", "name": "Le Petit poucet", "url": "http://sd-35759.dedibox.fr/Charles_Perrault_-_Le_petit_poucet.mp3" },
+			{ "id": "f6", "name": "Le Maître chat ou le chat botté", "url": "http://sd-35759.dedibox.fr/Charles_Perrault_-_Le_maitre_chat_ou_le_chat_botte.mp3" },
+			{ "id": "f7", "name": "La Barbe bleue", "url": "http://sd-36232.dedibox.fr/Charles_Perrault_-_La_Barbe_Bleue.mp3" },
+			{ "id": "f8", "name": "Riquet à la houppe", "url": "http://sd-35759.dedibox.fr/Charles_Perrault_-_Riquet_a_la_houppe.mp3" },
+			{ "id": "f9", "name": "Les Souhaits ridicules", "url": "http://sd-36232.dedibox.fr/Charles_Perrault_-_Les_souhaits_ridicules.mp3" },
+			{ "id": "f10", "name": "Peau D’Âne (Partie 1)", "url": "http://sd-36232.dedibox.fr/Charles_Perrault_-_Peau_d_Ane_partie1.mp3" },
+			{ "id": "f11", "name": "Peau D’Âne (Partie 1)", "url": "http://sd-36232.dedibox.fr/Charles_Perrault_-_Peau_d_Ane_partie2.mp3" }
+		]
+	},
+	"andersen": {
+		"name": "Contes d’Andersen",
+		"stories": [
+			{ "id": "g1", "url": "http://sd-35759.dedibox.fr/Hans_Christian_Andersen_-_L_Ange.mp3", "name": "L'Ange" },
+			{ "id": "g2", "url": "http://sd-35759.dedibox.fr/Hans_Christian_Andersen_-_L_Intrepide_Soldat_de_plomb.mp3", "name": "L'Intrépide soldat de plomb" },
+			{ "id": "g3", "url": "http://sd-35759.dedibox.fr/Hans_Christian_Andersen_-_La_Bergere_et_le_Ramoneur.mp3", "name": "La Bergère et le ramoneur" },
+			{ "id": "g4", "url": "http://sd-35759.dedibox.fr/Hans_Christian_Andersen_-_La_Grosse_Aiguille.mp3", "name": "La Grosse aiguille" },
+			{ "id": "g5", "url": "http://sd-35759.dedibox.fr/Hans_Christian_Andersen_-_La_Paquerette.mp3", "name": "La Pâquerette" },
+			{ "id": "g6", "url": "http://sd-35759.dedibox.fr/Hans_Christian_Andersen_-_La_Petite_Fille_et_les_Allumettes.mp3", "name": "La Petite fille et les allumettes" },
+			{ "id": "g7", "url": "http://sd-35759.dedibox.fr/Hans_Christian_Andersen_-_La_Petite_Poucette.mp3", "name": "La Petite Poucette" },
+			{ "id": "g8", "url": "http://sd-35759.dedibox.fr/Hans_Christian_Andersen_-_La_Petite_Sirene.mp3", "name": "La Petite sirène" },
+			{ "id": "g9", "url": "http://sd-35759.dedibox.fr/Hans_Christian_Andersen_-_La_Princesse_sur_un_pois.mp3", "name": "La Princesse sur un pois" },
+			{ "id": "g10", "url": "http://sd-35759.dedibox.fr/Hans_Christian_Andersen_-_La_Vieille_Maison.mp3", "name": "La Vieille maison" },
+			{ "id": "g11", "url": "http://sd-35759.dedibox.fr/Hans_Christian_Andersen_-_Le_Briquet.mp3", "name": "Le Briquet" },
+			{ "id": "g12", "url": "http://sd-35759.dedibox.fr/Hans_Christian_Andersen_-_Le_Chanvre.mp3", "name": "Le Chanvre" },
+			{ "id": "g13", "url": "http://sd-35759.dedibox.fr/Hans_Christian_Andersen_-_Le_Coffre_volant.mp3", "name": "Le Coffre volant" },
+			{ "id": "g14", "url": "http://sd-35759.dedibox.fr/Hans_Christian_Andersen_-_Le_Vilain_Petit_Canard.mp3", "name": "Le Vilain petit canard" },
+			{ "id": "g15", "url": "http://sd-35759.dedibox.fr/Hans_Christian_Andersen_-_Les_Cygnes_sauvages.mp3", "name": "Les Cygnes sauvages" },
+			{ "id": "g16", "url": "http://sd-35759.dedibox.fr/Hans_Christian_Andersen_-_Les_Fleurs_de_la_petite_Ida.mp3", "name": "Les Fleurs de la petite Ida" },
+			{ "id": "g17", "url": "http://sd-35759.dedibox.fr/Hans_Christian_Andersen_-_Les_Habits_neufs_du_grand_duc.mp3", "name": "Les Habits neufs du grand duc" },
+			{ "id": "g18", "url": "http://sd-35759.dedibox.fr/Hans_Christian_Andersen_-_Petit_Claus_et_Grand_Claus.mp3", "name": "Petit Claus et Grand Claus" }
+		]
+	},
+	"fenelon": {
+		"name": "Fables de Fénelon",
+		"stories": [
+			{ "id": "c1", "url": "http://sd-36232.dedibox.fr/Fenelon_-_Le_hibou.mp3", "name": "Le Hibou" },
+			{ "id": "c2", "url": "http://sd-36232.dedibox.fr/Fenelon_-_L_abeille_et_la_mouche.mp3", "name": "L'Abeille et la mouche" },
+			{ "id": "c3", "url": "http://sd-36232.dedibox.fr/Fenelon_-_Le_chat_et_les_lapins.mp3", "name": "Le Chat et les lapins" },
+			{ "id": "c4", "url": "http://sd-36232.dedibox.fr/Fenelon_-_Le_jeune_Bacchus_et_le_faune.mp3", "name": "Le Jeune Bacchus et le faune" },
+			{ "id": "c5", "url": "http://sd-36232.dedibox.fr/Fenelon_-_Le_lievre_qui_fait_le_brave.mp3", "name": "Le Lièvre qui fait le brave" },
+			{ "id": "c6", "url": "http://sd-36232.dedibox.fr/Fenelon_-_Le_loup_t_le_jeune_mouton.mp3", "name": "Le Loup et le jeune mouton" },
+			{ "id": "c7", "url": "http://sd-36232.dedibox.fr/Fenelon_-_Le_pigeon_puni_de_son_inquietude.mp3", "name": "Le Pigeon puni de son inquiétude" },
+			{ "id": "c8", "url": "http://sd-36232.dedibox.fr/Fenelon_-_Le_rosignol_et_la_fauvette.mp3", "name": "Le Rossignol et la fauvette" },
+			{ "id": "c9", "url": "http://sd-36232.dedibox.fr/Fenelon_-_Le_singe.mp3", "name": "Le Singe" },
+			{ "id": "c10", "url": "http://sd-36232.dedibox.fr/Fenelon_-_Les_abeilles.mp3", "name": "Les Abeilles" }
+		]
+	},
+	"leprincedebeaumont": {
+		"name": "Contes de Madame Leprince de Beaumont",
+		"stories": [
+			{ "id": "d1", "url": "http://sd-36232.dedibox.fr/Jeanne_Marie_Leprince_de_Beaumont_-_Contes_du_magasin_des_enfants_Aurore_et_Aimee.mp3", "name": "Aurore et Aimée" },
+			{ "id": "d2", "url": "http://sd-36232.dedibox.fr/Jeanne_Marie_Leprince_de_Beaumont_-_Contes_du_magasin_des_enfants_Conte_des_trois_souhaits.mp3", "name": "Conte des trois souhaits" },
+			{ "id": "d3", "url": "http://sd-36232.dedibox.fr/Jeanne_Marie_Leprince_de_Beaumont_-_Contes_du_magasin_des_enfants_Le_prince_Desir.mp3", "name": "Le Prince Désir" },
+			{ "id": "d4", "url": "http://sd-36232.dedibox.fr/Jeanne_Marie_Leprince_de_Beaumont_-_Contes_du_magasin_des_enfants_Le_prince_Fatal_et_le_prince_Fortune.mp3", "name": "Le Prince Fatal et le prince Fortune" },
+			{ "id": "d5", "url": "http://sd-36232.dedibox.fr/Jeanne_Marie_Leprince_de_Beaumont_-_Contes_du_magasin_des_enfants_Le_prince_Spirituel.mp3", "name": "Le Prince Spirituel" },
+			{ "id": "d6", "url": "http://sd-36232.dedibox.fr/Jeanne_Marie_Leprince_de_Beaumont_-_Contes_du_magasin_des_enfants_La_veuve_et_ses_deux_filles.mp3", "name": "La Veuve et ses deux filles" },
+			{ "id": "d7", "url": "http://sd-36232.dedibox.fr/Jeanne_Marie_Leprince_de_Beaumont_-_Contes_pour_le_magasin_des_enfants_Le_prince_Charmant.mp3", "name": "Le Prince Charmant" }
+		]
+	},
+	"bazin": {
+		"name": "Contes de Bonne Perette, René Bazin",
+		"stories": [
+			{ "id": "e1", "url": "http://sd-36232.dedibox.fr/Rene_Bazin_-_Contes_de_bonne_Perette_01_Avertissement.mp3", "name": "Avertissement de l'auteur" },
+			{ "id": "e2", "url": "http://sd-36232.dedibox.fr/Rene_Bazin_-_Contes_de_bonne_Perette_02_Le_Moulin_qui_ne_tourne_plus.mp3", "name": "Le Moulin qui ne tourne plus" },
+			{ "id": "e3", "url": "http://sd-36232.dedibox.fr/Rene_Bazin_-_Contes_de_bonne_Perette_03_La_Jument_Bleue.mp3", "name": "La Jument bleue" },
+			{ "id": "e4", "url": "http://sd-36232.dedibox.fr/Rene_Bazin_-_Contes_de_bonne_Perette_04_Le_pois_fleuri.mp3", "name": "Le Pois fleuri" },
+			{ "id": "e5", "url": "http://sd-36232.dedibox.fr/Rene_Bazin_-_Contes_de_bonne_Perette_05_Les_chardonnerets_de_Galillee.mp3", "name": "Les Chardonnerets de Galilée" },
+			{ "id": "e6", "url": "http://sd-36232.dedibox.fr/Rene_Bazin_-_Contes_de_bonne_Perette_06_Les_deux_chagrins.mp3", "name": "Les Deux chagrins" },
+			{ "id": "e7", "url": "http://sd-36232.dedibox.fr/Rene_Bazin_-_Contes_de_bonne_Perette_07_Le_brin_de_lavande.mp3", "name": "Le Brin de lavande" },
+			{ "id": "e8", "url": "http://sd-36232.dedibox.fr/Rene_Bazin_-_Contes_de_bonne_Perette_08_La_boite_aux_lettres.mp3", "name": "La Boîte aux lettres" },
+			{ "id": "e9", "url": "http://sd-36232.dedibox.fr/Rene_Bazin_-_Contes_de_bonne_Perette_09_La_reponse_du_vent.mp3", "name": "La Réponse du vent" },
+			{ "id": "e10", "url": "http://sd-36232.dedibox.fr/Rene_Bazin_-_Contes_de_bonne_Perette_10_Le_Grenadier_de_la_Belle_Neuvieme_Chap_01.mp3", "name": "Le Grenadier de la belle neuvième (Chapitre 1)" },
+			{ "id": "e11", "url": "http://sd-36232.dedibox.fr/Rene_Bazin_-_Contes_de_bonne_Perette_11_Le_Grenadier_de_la_Belle_Neuvieme_Chap_02.mp3", "name": "Le Grenadier de la belle neuvième (Chapitre 2)" },
+			{ "id": "e12", "url": "http://sd-36232.dedibox.fr/Rene_Bazin_-_Contes_de_bonne_Perette_12_Le_Grenadier_de_la_Belle_Neuvieme_Chap_03.mp3", "name": "Le Grenadier de la belle neuvième (Chapitre 3)" },
+			{ "id": "e13", "url": "http://sd-36232.dedibox.fr/Rene_Bazin_-_Contes_de_bonne_Perette_13_Souvenir_d_artiste.mp3", "name": "Souvenir d'artiste" },
+			{ "id": "e14", "url": "http://sd-36232.dedibox.fr/Rene_Bazin_-_Contes_de_bonne_Perette_14_La_Veuve_du_Loup.mp3", "name": "La Veuve du loup" },
+			{ "id": "e15", "url": "http://sd-36232.dedibox.fr/Rene_Bazin_-_Contes_de_bonne_Perette_15_Le_quatrieme_pauvre.mp3", "name": "Le Quatrième pauvre" },
+			{ "id": "e16", "url": "http://sd-36232.dedibox.fr/Rene_Bazin_-_Contes_de_bonne_Perette_16_Celui_qui_menait_la_riviere.mp3", "name": "Celui qui menait la rivière" },
+			{ "id": "e17", "url": "http://sd-36232.dedibox.fr/Rene_Bazin_-_Contes_de_bonne_Perette_17_Le_retour_Chap01.mp3", "name": "Le Retour (Chapitre 1)" },
+			{ "id": "e18", "url": "http://sd-36232.dedibox.fr/Rene_Bazin_-_Contes_de_bonne_Perette_18_Le_retour_Chap02.mp3", "name": "Le Retour (Chapitre 2)" }
+		]
+	}
+}
