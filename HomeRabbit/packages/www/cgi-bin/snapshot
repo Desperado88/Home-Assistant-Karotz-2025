@@ -1,0 +1,45 @@
+#!/bin/bash
+
+source /www/cgi-bin/setup.inc
+source /www/cgi-bin/url.inc
+source /www/cgi-bin/utils.inc
+source /www/cgi-bin/leds.inc
+source /www/cgi-bin/ears.inc
+source /www/cgi-bin/webcam.inc
+
+KillProcess LEDS
+
+ReadUrlParam
+TDIR=$CNF_DATADIR"/Snapshots/"
+
+
+if [ ! -e $TDIR ]; then
+    DATA='{"return":"1","msg":"Snapshot directory not found."}'
+    SendResponse "$DATA"
+    exit 0
+fi
+            
+SILENT=${URLParam[silent]}
+
+
+FN="snapshot"_`date +'%Y_%m_%d_%H_%M_%S'`
+TakeSnapshot
+
+if [ ! -e "$CNF_DATADIR/Run/karotz.sleep" ]; then
+  LedsRestore
+  if [ "$SILENT" == "" ]; then
+    PlaySound /usr/karotz/res/sounds/webcam.mp3
+  fi
+fi
+
+if [ ! -e "/tmp/picture.jpg" ]; then
+    DATA='{"return":"1","msg":"Unable to take snapshot."}'
+    SendResponse "$DATA"
+    exit 0
+fi
+            
+mv /tmp/picture.jpg $TDIR$FN.jpg
+/usr/bin/arm-linux-djpeg -gif -scale 1/4 -outfile $TDIR$FN.thumb.gif $TDIR$FN.jpg
+
+DATA='{"filename":"'$FN'.jpg","thumb":"'$FN'.thumb.gif","return":"0"}'
+SendResponse "$DATA"

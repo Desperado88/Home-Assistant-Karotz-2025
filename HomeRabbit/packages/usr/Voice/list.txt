@@ -1,0 +1,10 @@
+Rfid_Object_inconnu.mp3
+Rfid_Start_Delete.mp3
+Rfid_Start_Record.mp3
+Rfid_Stop_Delete.mp3
+Rfid_Stop_record.mp3
+Rfid_objet_deja_enregistre.mp3
+Rfid_objet_enregistre.mp3
+Rfid_objet_pas_action.mp3
+Rfid_objet_supprime.mp3
+install_ok.mp3

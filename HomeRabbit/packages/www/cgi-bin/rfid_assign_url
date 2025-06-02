@@ -1,0 +1,48 @@
+#!/bin/bash
+
+source /www/cgi-bin/setup.inc
+source /www/cgi-bin/url.inc
+source /www/cgi-bin/url_ext.inc
+source /www/cgi-bin/utils.inc
+
+cgi_getvars BOTH ALL
+
+TAG_ID=$tag
+URL=$url
+RAW_PARAM=$param
+NAME=$name
+USR=$user
+PASS=$password
+
+CheckMandatoryParameter "$TAG_ID" tag
+CheckMandatoryParameter "$URL" url
+
+if [ ! -e "$CNF_DATADIR/Rfid/$TAG_ID.rfid" ]; then
+   DATA='{"return":"1","msg":"Tag ID not found."}'
+   SendResponse "$DATA"
+   exit 0
+fi
+
+# Clear existing information
+rm -f $CNF_DATADIR/Rfid/$TAG_ID.cmd >>/dev/null 2>>/dev/null
+rm -f $CNF_DATADIR/Rfid/$TAG_ID.var>>/dev/null 2>>/dev/null
+rm -f $CNF_DATADIR/Rfid/$TAG_ID.action >>/dev/null 2>>/dev/null
+rm -f $CNF_DATADIR/Rfid/$TAG_ID.name >>/dev/null 2>>/dev/null
+
+if [ "$TAG_ID" != "" ]; then
+  echo $TYPE_URL > $CNF_DATADIR/Rfid/$TAG_ID.cmd          
+  echo "-1" > $CNF_DATADIR/Rfid/$TAG_ID.var
+
+   if [ "$NAME" != "" ]; then                          
+     echo $( echo "$NAME" | UrlDecode) > $CNF_DATADIR/Rfid/$TAG_ID.name
+   fi 
+ 
+   PARAM=$(echo "$RAW_PARAM" | busybox base64 -d )
+   URL=$(BuildUrl "$URL" "$PARAM" "$USR" "$PASS")
+   echo $(echo "$URL" | busybox base64) > $CNF_DATADIR/Rfid/$TAG_ID.action
+fi
+
+DATA='{"return":"0"}'
+SendResponse "$DATA"
+
+

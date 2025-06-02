@@ -1,0 +1,12 @@
+#!/bin/bash
+
+source /usr/www/cgi-bin/setup.inc
+source /usr/www/cgi-bin/url.inc
+source /usr/www/cgi-bin/utils.inc
+source /usr/www/cgi-bin/ears.inc
+
+Log "[MOODS]" "Obsolete Moods Function Called"
+
+DATA='{"moods":"'$MOODS'","msg":"Obsolete, Moods is now an Application. Use /cgi-bin/apps/moods now.","return":"1"}'
+SendResponse "$DATA"
+

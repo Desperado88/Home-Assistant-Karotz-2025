@@ -1,0 +1,36 @@
+#!/bin/bash
+# Animation mood 268 - "Aie, aie, aie, j'ai une crampe !"
+
+# Inclusion des fichiers de configuration et fonctions
+source /usr/www/cgi-bin/setup.inc
+source /usr/www/cgi-bin/url.inc
+source /usr/www/cgi-bin/utils.inc
+source /usr/www/cgi-bin/ears.inc
+source /usr/www/cgi-bin/leds.inc
+
+# Position initiale
+#EarsReset
+Leds FF0000 000000 1 1 400  # LED rouge douleur
+sleep 0.5
+
+# Mouvements rapides et irréguliers (crampe)
+EarsMove 12 4 50
+sleep 0.5
+EarsMove 5 12 50
+Leds FFFF00 000000 1 1 300  # LED jaune (réaction)
+sleep 0.6
+EarsMove 6 6 30
+sleep 0.3
+EarsMove 9 3 40
+sleep 0.4
+EarsMove 8 8 30
+Leds FF9900 000000 1 1 500  # LED orange (retour progressif)
+sleep 0.5
+
+# Retour au calme
+EarsReset
+Leds 00FF00 000000 1 1 1000  # LED verte (ça va mieux)
+sleep 1
+
+DATA='{"return":"0","msg":"Mood 268 animation complete."}'
+SendResponse "$DATA"

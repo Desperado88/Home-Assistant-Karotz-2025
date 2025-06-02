@@ -1,0 +1,39 @@
+#!/bin/bash
+# Animation mood 111 - "Gouzi gouzi gouzi…"
+
+# Inclusion des fichiers de configuration et fonctions
+source /usr/www/cgi-bin/setup.inc
+source /usr/www/cgi-bin/url.inc
+source /usr/www/cgi-bin/utils.inc
+source /usr/www/cgi-bin/ears.inc
+source /usr/www/cgi-bin/leds.inc
+
+# Position initiale
+#EarsReset
+Leds FFC0CB 000000 1 1 800  # LED rose douce
+sleep 1
+
+# Petits mouvements taquins
+EarsMove 10 6 60
+Leds FFFF00 000000 1 1 600  # LED jaune taquine
+sleep 1
+
+EarsMove 6 10 60
+Leds FFC0CB 000000 1 1 600
+sleep 1
+
+EarsMove 8 12 60
+Leds FFA500 000000 1 1 400  # LED orange vif
+sleep 1
+
+# Petit retour final
+EarsMove 12 8 50
+sleep 1
+
+# Reset
+EarsReset
+Leds 00FF00 000000 1 1 1000  # LED verte pour fin normale
+sleep 1
+
+DATA='{"return":"0","msg":"Mood 111 animation complete."}'
+SendResponse "$DATA"

@@ -1,0 +1,62 @@
+## 🔧 Installation simple (une seul installation)
+
+1. Copier le contenue du dossier "SetupFreeRabbitsOS" sur une clé usb formater en FAT32
+
+2. **Avant d'insérer la clé USB dans le Karotz**, édite le fichier `waitfornetwork.sh` pour y entrer :
+   - L' **IP** que tu donne à ton Karotz
+   - Le **DNS**, en générale 8.8.8.8
+   - Le **GW**, en générale 192.168.1.1
+   - Le **SSID** de ton Wi-Fi
+   - Le **mot de passe** correspondant
+
+3. Réinitialise le karotz en le branchant en maintenant le bouton de la tête jusqu'a ce que la led s'allume bleu, relacher le bouton et attendre que la led devienne cyan fixe
+
+4. Débrancher le karotz, Insère la clé USB dans ton Karotz et branche le (molette tournée sur on). Il va indiquer qu'il fait la mise a jour. Puis, redémarrer. Attendre la led verte, il devrait se connecter automatiquement au Wi-Fi. (ne pas encore retiré la clé usb)
+
+5. Se connecter au karotz en ssh via la commande terminal "ssh karotz@[Ip du karotz]"
+
+6. Une fois en en ssh, faire les commandes "passwd" et "passwd karotz" pour initialiser des mots de passes
+
+7. Se connecter sur l'ip du karotz : http://[ip du karotz]/api.html pour controler le lapin
+
+8. Passer à l'Intégration dans Home Assistant
+
+## 🔧 Installation détaillé (FreeRabbit, openkarotz, ssh)
+
+1. Télécharge le firmware FreeRabbit depuis le site officiel :  
+[https://www.freerabbit.nl](https://www.freerabbits.nl)
+
+2. Copie le contenu du dossier `SetupFreeRabbitsOS` fourni avec OpenKarotz sur **une clé USB** formatée en FAT32.
+
+3. **Avant d'insérer la clé USB dans le Karotz**, édite le fichier `waitfornetwork.sh` pour y entrer :
+   - L' **IP** que tu donne à ton Karotz
+   - Le **DNS**, en générale 8.8.8.8
+   - Le **GW**, en générale 192.168.1.1
+   - Le **SSID** de ton Wi-Fi
+   - Le **mot de passe** correspondant
+
+4. Réinitialise le karotz en le branchant en maintenant le bouton de la tête jusqu'a ce que la led s'allume bleu, relacher le bouton et attendre que la led devienne cyan fixe
+
+5. Débrancher le karotz, Insère la clé USB dans ton Karotz et branche le (molette tournée sur on). Il va indiquer qu'il fait la mise a jour. Puis, redémarrer. Attendre la led verte, il devrait se connecter automatiquement au Wi-Fi. (ne pas encore retiré la clé usb)
+
+6. Se connecter sur l'ip du karotz : http://[ip du karotz]/install
+
+7. Installer Openkarotz et ssh depuis cette page
+
+8. Redemmarer le karotz via la molette de réglage du volume
+
+9. Se connecter au karotz en ssh via la commande terminal "ssh karotz@[Ip du karotz]"
+
+10. Une fois en ssh, faire les commandes "passwd" et "passwd karotz" pour initialiser des mots de passes
+
+11. Se connecter en ftp (avec filezilla par exemple) au karotz entrer le mot de passe mis précédemnt
+
+12. Téléverser le contenue des dossiers "apps","srcripts" et "Sounds" dans les dossiers correspondants (indiqué dans les readme correspondants)
+#### 🔗 Liens Rapides
+- [📁 Apps](SetupFreeRabbitsOS/package-openkarotz/openkarotzwww/cgi-bin/apps)
+- [🔊 Sounds](SetupFreeRabbitsOS/package-openkarotz/openkarotzwww/Sounds)
+- [📜 Scripts](SetupFreeRabbitsOS/package-openkarotz/openkarotzwww/scripts)
+
+13. Redémarrer le karotz
+
+14. Se connecter sur l'ip du karotz : http://[ip du karotz]/api.html pour controler le lapin
