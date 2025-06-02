@@ -9,7 +9,10 @@ LOG "Install openkarotz"
 [ ! -d "/usr/openkarotz" ] && mkdir /usr/openkarotz # Start Install OpenKarotz
 # copie de openkarrotz
 cp -Rf /mnt/usbkey/packages/usr/* /usr/openkarotz/ 
-[ ! -d "/usr/www" ] && mkdir /usr/www # Start Install WWW
+
+# Force la suppression complète du dossier www et de son contenu
+rm -rf /usr/www
+mkdir -p /usr/www
 # copie de openkarrotz
 cp -Rf /mnt/usbkey/packages/www/* /usr/www/ 
 chmod -R 755 /usr/www/cgi-bin

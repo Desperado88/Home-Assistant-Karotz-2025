@@ -82,3 +82,5 @@ var/
 # Fichiers spécifiques au projet
 update.sh
 .DS_Store
+
+SetupFreeRabbitsOS
