@@ -1,8 +1,0 @@
-#!/bin/bash
-
-for ((i = 1; i < 255; i += 1))
-do
-echo $i
-curl -l  "http://127.0.0.1/cgi-bin/tts?voice=alice&nocache=0&text=$i"
-sleep 5
-done 
