@@ -1,7 +1,0 @@
-#!/bin/bash
-
-source /www/cgi-bin/setup.inc
-source /www/cgi-bin/utils.inc
-
-  DATA='{"return":"1","msg":"Obsolete, use rfid_list instead."}'
-  SendResponse "$DATA"

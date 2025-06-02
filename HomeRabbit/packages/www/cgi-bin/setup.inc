@@ -26,7 +26,7 @@ CNF_GENDER=F
 CNF_VERSION="210"
 
 # Root URL
-CNF_ROOT_URL="http://karotz.filippi.org"
+#CNF_ROOT_URL="http://karotz.filippi.org"
 
 # Base URL
 CNF_BASE_URL="$CNF_ROOT_URL/$CNF_VERSION"
