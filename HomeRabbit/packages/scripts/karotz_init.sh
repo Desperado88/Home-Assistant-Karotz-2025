@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# commenter afin de ne pas installer le site web a chaque démarrage
 # if [ ! -d "/usr/www/install" ]; then
 #     logger -s "[INIT] Creating www install, welcome and cgi"
 #     /bin/mkdir -p /usr/www/install
