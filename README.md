@@ -82,6 +82,6 @@ Lecture de sons intégrés
 Intégration avec capteurs et automatisations Home Assistant
 
 ## Sources
-www.freerabbits.nl
-https://github.com/ClementNoiville/Home-Assistant-Karotz
-www.openkarotz.org
+   - www.freerabbits.nl
+   - https://github.com/ClementNoiville/Home-Assistant-Karotz
+   - www.openkarotz.org
