@@ -1,81 +1,64 @@
 # carte lovelace pour la gestion des tags RFID
+# Remarques :
+# Le dernier bloc utilise custom:auto-entities et custom:multiple-entity-row, donc assure-toi d’avoir installé ces deux cartes personnalisées via HACS :
+# auto-entities : https://github.com/thomasloven/lovelace-auto-entities
+# multiple-entity-row : https://github.com/benct/lovelace-multiple-entity-row
+
 type: vertical-stack
 cards:
   - type: entities
-    title: Gestion des Tags RFID
+    title: Karotz RFID
+    show_header_toggle: false
     entities:
       - entity: input_boolean.karotz_bleu_mode_enregistrement_tag
         name: Mode Enregistrement
         icon: mdi:rfid
-
-  - type: horizontal-stack
+  - type: grid
+    columns: 3
+    square: false
     cards:
       - type: button
-        name: Démarrer Enregistrement
-        icon: mdi:play
+        name: ▶️ Enregistrer
         tap_action:
           action: call-service
           service: input_boolean.turn_on
           target:
             entity_id: input_boolean.karotz_bleu_mode_enregistrement_tag
-
       - type: button
-        name: Arrêter Enregistrement
-        icon: mdi:stop
+        name: ⏹️ Stop
         tap_action:
           action: call-service
           service: input_boolean.turn_off
           target:
             entity_id: input_boolean.karotz_bleu_mode_enregistrement_tag
-
-  - type: horizontal-stack
-    cards:
       - type: button
-        name: Rafraîchir Liste
-        icon: mdi:refresh
+        name: 🔄 Rafraîchir
         tap_action:
           action: call-service
           service: rest_command.karotz_bleu_rfid_list_ext
-
   - type: entities
-    title: Configuration du Tag
+    show_header_toggle: false
     entities:
       - entity: input_text.karotz_bleu_rfid_id
-        name: ID du Tag
-        secondary_info: entity-id
+        name: ID
       - entity: input_text.karotz_bleu_rfid_name
-        name: Nom de l'Action
+        name: Nom
       - entity: input_text.karotz_bleu_rfid_url
-        name: URL à Appeler
+        name: URL
+  - type: grid
+    columns: 2
+    square: false
+    cards:
+      - type: button
+        name: ✅ Assigner
+        tap_action:
+          action: call-service
+          service: rest_command.karotz_bleu_rfid_assign
+      - type: button
+        name: 🗑️ Supprimer
+        tap_action:
+          action: call-service
+          service: rest_command.karotz_bleu_rfid_delete
+          data:
+            tag_id: "{{ states('input_text.karotz_bleu_rfid_id') }}"
 
-  - type: button
-    name: Assigner l'URL au Tag
-    icon: mdi:link
-    tap_action:
-      action: call-service
-      service: rest_command.karotz_bleu_rfid_assign
-
-  - type: button
-    name: Supprimer le Tag
-    icon: mdi:delete
-    tap_action:
-      action: call-service
-      service: rest_command.karotz_bleu_rfid_delete
-      data:
-        tag_id: "{{ states('input_text.karotz_bleu_rfid_id') }}"
-
-  - type: custom:auto-entities
-    card:
-      type: entities
-      title: Tags RFID Enregistrés
-      show_header_toggle: false
-    filter:
-      include:
-        - entity_id: sensor.karotz_bleu_rfid_tags
-          options:
-            type: custom:multiple-entity-row
-            name: Tags RFID
-            entities:
-              - attribute: tags
-                name: Détails
-                format: json
