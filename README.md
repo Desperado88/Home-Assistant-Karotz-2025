@@ -29,6 +29,17 @@ Ce projet permet d'intégrer votre Karotz à Home Assistant, offrant un contrôl
 
 9. Passer à l'Intégration dans Home Assistant
 
+## 🏠 Intégration dans Home Assistant
+
+- Copie le fichier openkarotz.yaml dans un dossier nommé packages dans ton dossier de configuration Home Assistant :
+/config/packages/openkarotz.yaml
+
+- Dans ton fichier configuration.yaml, ajoute (ou complète) la section suivante :
+homeassistant:
+  packages: !include_dir_named packages
+  
+- Redémarre Home Assistant depuis Paramètres → Système → Redémarrer.
+
 ## 🔧 Installation détaillé (FreeRabbit, openkarotz, ssh)
 
 1. Télécharge le firmware FreeRabbit depuis le site officiel :  
@@ -57,7 +68,7 @@ Ce projet permet d'intégrer votre Karotz à Home Assistant, offrant un contrôl
 
 10. Se connecter en ssh et faire les commandes "passwd" et "passwd karotz" pour initialiser des mots de passes
 
-🏠 Intégration dans Home Assistant
+## 🏠 Intégration dans Home Assistant
 
 - Copie le fichier openkarotz.yaml dans un dossier nommé packages dans ton dossier de configuration Home Assistant :
 /config/packages/openkarotz.yaml
