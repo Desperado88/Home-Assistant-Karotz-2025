@@ -139,7 +139,7 @@ rest_command:
 # sounds : bip1,bling,flush,install_ok,jet1,laser_15,ready,rfid_error,rfid_ok,saut1,start,twang_01,twang_04,return":"0"
   # Apps du karotz
   karotz_tai_chi:
-    url: "http://{{ states('input_text.karotz_ip_address') }}/cgi-bin/sound?url=file:///usr/karotz/musiques/taichi.mp3"
+    url: "http://{{ states('input_text.karotz_ip_address') }}/cgi-bin/apps/tai-chi"
   # Annonce de l'heure
   karotz_clock:
     url: "http://{{ states('input_text.karotz_ip_address') }}/cgi-bin/apps/clock"
