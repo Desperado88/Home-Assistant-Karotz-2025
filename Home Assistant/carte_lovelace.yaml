@@ -1,9 +1,10 @@
+# carte lovelace pour la gestion des tags RFID
 type: vertical-stack
 cards:
   - type: entities
     title: Gestion des Tags RFID
     entities:
-      - entity: input_boolean.karotz_mode_enregistrement_tag
+      - entity: input_boolean.karotz_bleu_mode_enregistrement_tag
         name: Mode Enregistrement
         icon: mdi:rfid
 
@@ -16,7 +17,7 @@ cards:
           action: call-service
           service: input_boolean.turn_on
           target:
-            entity_id: input_boolean.karotz_mode_enregistrement_tag
+            entity_id: input_boolean.karotz_bleu_mode_enregistrement_tag
 
       - type: button
         name: Arrêter Enregistrement
@@ -25,7 +26,7 @@ cards:
           action: call-service
           service: input_boolean.turn_off
           target:
-            entity_id: input_boolean.karotz_mode_enregistrement_tag
+            entity_id: input_boolean.karotz_bleu_mode_enregistrement_tag
 
   - type: horizontal-stack
     cards:
@@ -34,16 +35,17 @@ cards:
         icon: mdi:refresh
         tap_action:
           action: call-service
-          service: rest_command.karotz_rfid_list_ext
+          service: rest_command.karotz_bleu_rfid_list_ext
 
   - type: entities
     title: Configuration du Tag
     entities:
-      - entity: input_text.karotz_rfid_id
+      - entity: input_text.karotz_bleu_rfid_id
         name: ID du Tag
-      - entity: input_text.karotz_rfid_name
+        secondary_info: entity-id
+      - entity: input_text.karotz_bleu_rfid_name
         name: Nom de l'Action
-      - entity: input_text.karotz_rfid_url
+      - entity: input_text.karotz_bleu_rfid_url
         name: URL à Appeler
 
   - type: button
@@ -51,16 +53,16 @@ cards:
     icon: mdi:link
     tap_action:
       action: call-service
-      service: rest_command.karotz_rfid_assign
+      service: rest_command.karotz_bleu_rfid_assign
 
   - type: button
     name: Supprimer le Tag
     icon: mdi:delete
     tap_action:
       action: call-service
-      service: rest_command.karotz_rfid_delete
+      service: rest_command.karotz_bleu_rfid_delete
       data:
-        tag_id: "{{ states('input_text.karotz_rfid_id') }}"
+        tag_id: "{{ states('input_text.karotz_bleu_rfid_id') }}"
 
   - type: custom:auto-entities
     card:
@@ -69,11 +71,11 @@ cards:
       show_header_toggle: false
     filter:
       include:
-        - entity_id: sensor.karotz_rfid_tags
+        - entity_id: sensor.karotz_bleu_rfid_tags
           options:
             type: custom:multiple-entity-row
             name: Tags RFID
             entities:
               - attribute: tags
                 name: Détails
-                format: json 
+                format: json
