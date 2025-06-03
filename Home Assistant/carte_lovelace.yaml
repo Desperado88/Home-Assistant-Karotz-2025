@@ -10,7 +10,7 @@ cards:
     title: Karotz RFID
     show_header_toggle: false
     entities:
-      - entity: input_boolean.karotz_bleu_mode_enregistrement_tag
+      - entity: input_boolean.karotz_mode_enregistrement_tag
         name: Mode Enregistrement
         icon: mdi:rfid
   - type: grid
@@ -23,27 +23,27 @@ cards:
           action: call-service
           service: input_boolean.turn_on
           target:
-            entity_id: input_boolean.karotz_bleu_mode_enregistrement_tag
+            entity_id: input_boolean.karotz_mode_enregistrement_tag
       - type: button
         name: ⏹️ Stop
         tap_action:
           action: call-service
           service: input_boolean.turn_off
           target:
-            entity_id: input_boolean.karotz_bleu_mode_enregistrement_tag
+            entity_id: input_boolean.karotz_mode_enregistrement_tag
       - type: button
         name: 🔄 Rafraîchir
         tap_action:
           action: call-service
-          service: rest_command.karotz_bleu_rfid_list_ext
+          service: rest_command.karotz_rfid_list_ext
   - type: entities
     show_header_toggle: false
     entities:
-      - entity: input_text.karotz_bleu_rfid_id
+      - entity: input_text.karotz_rfid_id
         name: ID
-      - entity: input_text.karotz_bleu_rfid_name
+      - entity: input_text.karotz_rfid_name
         name: Nom
-      - entity: input_text.karotz_bleu_rfid_url
+      - entity: input_text.karotz_rfid_url
         name: URL
   - type: grid
     columns: 2
@@ -53,12 +53,12 @@ cards:
         name: ✅ Assigner
         tap_action:
           action: call-service
-          service: rest_command.karotz_bleu_rfid_assign
+          service: rest_command.karotz_rfid_assign
       - type: button
         name: 🗑️ Supprimer
         tap_action:
           action: call-service
-          service: rest_command.karotz_bleu_rfid_delete
+          service: rest_command.karotz_rfid_delete
           data:
-            tag_id: "{{ states('input_text.karotz_bleu_rfid_id') }}"
+            tag_id: "{{ states('input_text.karotz_rfid_id') }}"
 
