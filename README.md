@@ -74,12 +74,12 @@ Tu peux consulter l'ensemble des commandes disponibles via l'API OpenKarotz ici 
 
 ## ✅ Fonctionnalités incluses
 
-Contrôle des oreilles (position, aléatoire)
-Contrôle des lumières LED (couleurs, pulsations)
-Contrôle du sommeil/réveil
-Text-to-Speech (TTS)
-Lecture de sons intégrés
-Intégration avec capteurs et automatisations Home Assistant
+   - Contrôle des oreilles (position, aléatoire)
+   - Contrôle des lumières LED (couleurs, pulsations)
+   - Contrôle du sommeil/réveil
+   - Text-to-Speech (TTS)
+   - Lecture de sons intégrés
+   - Intégration avec capteurs et automatisations Home Assistant
 
 ## Sources
    - www.freerabbits.nl
