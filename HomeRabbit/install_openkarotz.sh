@@ -24,17 +24,13 @@ ln -s /usr/openkarotz/Tmp /usr/www/ttscache
 [ ! -d "/usr/packages/Sounds" ] && mkdir /usr/openkarotz/Sounds
 cp -f /mnt/usbkey/packages/Sounds/* /usr/openkarotz/Sounds/ && LOG "Sounds OK"
 [ ! -d "/usr/scripts" ] && mkdir /usr/scripts
-cp -f /mnt/usbkey/packages/scripts/* /usr/scripts/ && LOG "Scripts OK"
+cp -f /mnt/usbkey/packages/scripts/dbus_watcher /usr/scripts/ && LOG "Scripts OK"
 chmod -R 755 /usr/scripts/
+[ ! -d "/karotz/scripts/" ] && mkdir /karotz/scripts/
+cp -f /mnt/usbkey/packages/scripts/karotz_init.sh /karotz/scripts/karotz_init.sh && LOG "Init OK"
+chmod -R 755 /karotz/scripts/
 [ ! -d "/usr/etc/conf" ] && mkdir /usr/etc/conf
 cp -f /mnt/usbkey/packages/conf/karotz.conf /usr/etc/conf/ && LOG "Karotz OK"
-
-# Install SSH
-if grep -q "dropbear" "/usr/etc/inetd.conf"; then
-    LOG "Dropbear is already in inetd.conf!"
-else
-    LOG "Patching file /usr/etc/inetd.conf, please wait..."
-    #echo -e "22 stream tcp nowait root /sbin/dropbear dropbear -i -B -R\n" >>/usr/etc/inetd.conf
-    cp -f /mnt/usbkey/packages/conf/inetd.conf /usr/etc/ && LOG "InetD OK"
-    LOG "Patching finished!"
-fi 
+# Install SSH et désactive telnet
+cp -f /mnt/usbkey/packages/conf/inetd.conf /usr/etc/ && LOG "InetD OK"
+LOG "Patching finished!"

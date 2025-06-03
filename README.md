@@ -29,6 +29,17 @@ Ce projet permet d'intégrer votre Karotz à Home Assistant, offrant un contrôl
 
 9. Passer à l'Intégration dans Home Assistant
 
+## 🏠 Intégration dans Home Assistant
+
+- Copie le fichier openkarotz.yaml dans un dossier nommé packages dans ton dossier de configuration Home Assistant :
+/config/packages/openkarotz.yaml
+
+- Dans ton fichier configuration.yaml, ajoute (ou complète) la section suivante :
+homeassistant:
+  packages: !include_dir_named packages
+  
+- Redémarre Home Assistant depuis Paramètres → Système → Redémarrer.
+
 ## 🔧 Installation détaillé (FreeRabbit, openkarotz, ssh)
 
 1. Télécharge le firmware FreeRabbit depuis le site officiel :  
@@ -57,7 +68,7 @@ Ce projet permet d'intégrer votre Karotz à Home Assistant, offrant un contrôl
 
 10. Se connecter en ssh et faire les commandes "passwd" et "passwd karotz" pour initialiser des mots de passes
 
-🏠 Intégration dans Home Assistant
+## 🏠 Intégration dans Home Assistant
 
 - Copie le fichier openkarotz.yaml dans un dossier nommé packages dans ton dossier de configuration Home Assistant :
 /config/packages/openkarotz.yaml
@@ -68,63 +79,20 @@ homeassistant:
   
 - Redémarre Home Assistant depuis Paramètres → Système → Redémarrer.
 
-🧠 API Karotz
+## 🧠 API Karotz
 Tu peux consulter l'ensemble des commandes disponibles via l'API OpenKarotz ici :
 👉 [Documentation API OpenKarotz](https://www.openkarotz.org/api/)
 
-✅ Fonctionnalités incluses
+## ✅ Fonctionnalités incluses
 
-Contrôle des oreilles (position, aléatoire)
-Contrôle des lumières LED (couleurs, pulsations)
-Contrôle du sommeil/réveil
-Text-to-Speech (TTS)
-Lecture de sons intégrés
-Intégration avec capteurs et automatisations Home Assistant
+   - Contrôle des oreilles (position, aléatoire)
+   - Contrôle des lumières LED (couleurs, pulsations)
+   - Contrôle du sommeil/réveil
+   - Text-to-Speech (TTS)
+   - Lecture de sons intégrés
+   - Intégration avec capteurs et automatisations Home Assistant
 
-💬 Questions / Suggestions
-
-N'hésite pas à ouvrir une issue ou une pull request si tu souhaites contribuer ou signaler un bug.
-
-## Conseils & Astuces
-
-### Configuration du WiFi
-- Si vous ne souhaitez pas entrer votre vrai mot de passe WiFi, vous pouvez utiliser un mot de passe temporaire
-- Modifiez ensuite le fichier `waitfornetwork.sh` avec un éditeur de texte compatible Linux (comme Notepad++)
-- Recherchez la ligne commençant par "PWD" et modifiez le mot de passe entre guillemets
-- Assurez-vous d'enregistrer le fichier au format Linux (terminaisons de ligne Linux)
-
-### Configuration réseau
-- Pour les problèmes DNS, utilisez l'adresse IP 8.8.8.8 (DNS public de Google)
-- En cas de problèmes de connexion WiFi, utilisez notre outil WIFI-Diagnostics
-- Pour mettre à jour les paramètres réseau, suivez la procédure d'installation sans réinitialiser le Karotz
-
-## Problèmes connus
-
-### Limitations techniques
-- Seules les adresses IP statiques sont prises en charge (pas de DHCP)
-- Seuls les cryptages WPA/WPA2 sont supportés (pas de WEP)
-
-### Installation Ethernet
-1. Ne débranchez pas la clé USB après l'installation
-2. Attendez que la LED devienne rouge (échec de connexion)
-3. Éteignez le Karotz
-4. Débranchez la clé USB
-5. Branchez l'adaptateur Ethernet
-6. Rallumez le Karotz
-7. La LED devrait devenir verte (connexion réussie)
-
-### Compatibilité
-- Les bornes WiFi Cisco Meraki MR18 peuvent causer des problèmes de téléchargement
-- Solutions :
-  - Connectez-vous à un autre point d'accès
-  - Ajoutez www.freerabbits.nl à la whiteliste de votre borne Cisco
-
-## Clause de non-responsabilité
-
-Ce logiciel est fourni "tel quel", sans garantie d'aucune sorte. Free Rabbits décline toute responsabilité pour tout dommage pouvant résulter de l'utilisation de ce système d'exploitation.
-
-### Conditions d'utilisation
-- Usage non commercial uniquement
-- Autorisation requise pour toute utilisation commerciale
-- Interdiction de reproduction, vente, location, prêt ou distribution
-- Utilisation à vos propres risques
+## Sources
+   - www.freerabbits.nl
+   - https://github.com/ClementNoiville/Home-Assistant-Karotz
+   - www.openkarotz.org
