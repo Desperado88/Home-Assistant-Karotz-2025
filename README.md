@@ -2,6 +2,15 @@
 
 Ce projet permet d'intégrer votre Karotz à Home Assistant, offrant un contrôle complet de votre lapin connecté via l'interface Home Assistant.
 
+## ✅ Fonctionnalités incluses
+
+   - Contrôle des oreilles (position, aléatoire)
+   - Contrôle des lumières LED (couleurs, pulsations)
+   - Contrôle du sommeil/réveil
+   - Text-to-Speech (TTS)
+   - Lecture de sons intégrés
+   - Intégration avec capteurs et automatisations Home Assistant
+
 ---
 ## 🔧 Installation simple (une seul installation)
 
@@ -79,18 +88,30 @@ homeassistant:
   
 - Redémarre Home Assistant depuis Paramètres → Système → Redémarrer.
 
+## 🐳 TTS Local avec Docker
+
+Pour les utilisateurs souhaitant héberger leur propre service TTS, un conteneur Docker est disponible :
+
+1. Copiez le dossier `karotz-tts-docker` sur votre serveur Docker
+
+2. Modifiez la ligne 49 du script Python dans `/www/cgi-bin/tts` :
+   ```python
+   baseUrl = "http://[IP_DE_VOTRE_SERVEUR_TTS]:5000/service/KarotzRvTTS"
+   ```
+
+3. Sur votre serveur Docker, exécutez les commandes suivantes :
+   ```bash
+   docker build -t karotz-tts .
+   docker run -d -p 5000:5000 --name karotz karotz-tts
+   ```
+## karotz TTS via home assistant
+
+un Addon est disponible pour faire du tts localement via Home Assistant, pour plus d'informations :
+https://github.com/Desperado88/karotz-tts-addon
+
 ## 🧠 API Karotz
 Tu peux consulter l'ensemble des commandes disponibles via l'API OpenKarotz ici :
 👉 [Documentation API OpenKarotz](https://www.openkarotz.org/api/)
-
-## ✅ Fonctionnalités incluses
-
-   - Contrôle des oreilles (position, aléatoire)
-   - Contrôle des lumières LED (couleurs, pulsations)
-   - Contrôle du sommeil/réveil
-   - Text-to-Speech (TTS)
-   - Lecture de sons intégrés
-   - Intégration avec capteurs et automatisations Home Assistant
 
 ## Sources
    - www.freerabbits.nl
