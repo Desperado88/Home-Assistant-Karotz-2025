@@ -49,6 +49,11 @@ homeassistant:
   
 - Redémarre Home Assistant depuis Paramètres → Système → Redémarrer.
 
+## karotz TTS via home assistant
+
+un Addon est disponible pour faire du tts localement via Home Assistant, pour plus d'informations :
+https://github.com/Desperado88/karotz-tts-addon
+
 ## 🔧 Installation détaillé (FreeRabbit, openkarotz, ssh)
 
 1. Télécharge le firmware FreeRabbit depuis le site officiel :  
@@ -104,10 +109,6 @@ Pour les utilisateurs souhaitant héberger leur propre service TTS, un conteneur
    docker build -t karotz-tts .
    docker run -d -p 5000:5000 --name karotz karotz-tts
    ```
-## karotz TTS via home assistant
-
-un Addon est disponible pour faire du tts localement via Home Assistant, pour plus d'informations :
-https://github.com/Desperado88/karotz-tts-addon
 
 ## 🧠 API Karotz
 Tu peux consulter l'ensemble des commandes disponibles via l'API OpenKarotz ici :
