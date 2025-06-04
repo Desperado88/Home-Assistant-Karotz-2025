@@ -166,14 +166,18 @@ sensor:
 # tag RFID ------------------- en test
   - platform: rest
     name: karotz_rfid_tags
-    resource: "http://192.168.1.xxx/cgi-bin/rfid_list_ext"
+    resource: "http://192.168.1.104/cgi-bin/rfid_list_ext"
     scan_interval: 5
     value_template: "{{ value_json.tags | to_json }}"
     json_attributes:
       - tags
-  - platform: rest
-    name: Premier Tag RFID
-    state: "{{ state_attr('sensor.karotz_rfid_tags', 'tags')[0].id }}"
+
+template:
+  - sensor:
+      - name: "Premier Tag RFID"
+        state: >
+          {% set tags = state_attr('sensor.karotz_rfid_tags', 'tags') %}
+          {{ tags[0].id if tags is iterable and tags|length > 0 else 'inconnu' }}
 
 # Automatisations
 automation:

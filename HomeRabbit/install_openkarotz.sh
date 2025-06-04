@@ -10,6 +10,9 @@ LOG "Install openkarotz"
 # copie de openkarrotz
 cp -Rf /mnt/usbkey/packages/usr/* /usr/openkarotz/ 
 
+# suppression du dev_tools
+rm -rf /usr/devtools
+
 # Force la suppression complète du dossier www et de son contenu
 rm -rf /usr/www
 mkdir -p /usr/www
