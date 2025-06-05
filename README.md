@@ -34,9 +34,7 @@ Ce projet permet d'intégrer votre Karotz à Home Assistant, offrant un contrôl
 
 7. Une fois en en ssh, faire les commandes "passwd" et "passwd karotz" pour initialiser des mots de passes
 
-8. Se connecter sur l'ip du karotz : http://[ip du karotz]/api.html pour controler le lapin
-
-9. Passer à l'Intégration dans Home Assistant
+8. Passer à l'Intégration dans Home Assistant
 
 ## 🏠 Intégration dans Home Assistant
 
@@ -44,8 +42,10 @@ Ce projet permet d'intégrer votre Karotz à Home Assistant, offrant un contrôl
 /config/packages/openkarotz.yaml
 
 - Dans ton fichier configuration.yaml, ajoute (ou complète) la section suivante :
+```yaml
 homeassistant:
   packages: !include_dir_named packages
+```
   
 - Redémarre Home Assistant depuis Paramètres → Système → Redémarrer.
 
@@ -88,8 +88,10 @@ https://github.com/Desperado88/karotz-tts-addon
 /config/packages/openkarotz.yaml
 
 - Dans ton fichier configuration.yaml, ajoute (ou complète) la section suivante :
+```yaml
 homeassistant:
   packages: !include_dir_named packages
+```
   
 - Redémarre Home Assistant depuis Paramètres → Système → Redémarrer.
 
