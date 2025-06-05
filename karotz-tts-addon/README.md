@@ -6,7 +6,7 @@ Ce dépôt permet d'ajouter un service TTS local pour Karotz à Home Assistant.
 
 1. Ajouter ce dépôt dans Home Assistant via `Paramètres > Modules complémentaires > ⚙️ Réglages > Dépôts` :
    ```
-   https://github.com/ton-utilisateur/karotz-tts-addon
+   https://github.com/Desperado88/Home-Assistant-Karotz-2025/tree/dev/karotz-tts-addon
    ```
 
 2. Installer l’add-on "Karotz TTS"
