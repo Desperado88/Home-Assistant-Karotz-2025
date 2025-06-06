@@ -14,6 +14,7 @@ cp -Rf /mnt/usbkey/packages/usr/* /usr/openkarotz/
 rm -rf /usr/devtools
 
 # copie de openkarrotz
+[ ! -d "/usr/www" ] && mkdir /usr/www
 cp -Rf /mnt/usbkey/packages/www/* /usr/www/ 
 chmod -R 755 /usr/www/cgi-bin
 cp -f /usr/www/cgi-bin/dbus_events /usr/scripts/dbus_watcher
