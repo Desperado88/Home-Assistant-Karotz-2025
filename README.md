@@ -12,88 +12,88 @@ Ce projet permet d'intégrer votre Karotz à Home Assistant, offrant un contrôl
    - Intégration avec capteurs et automatisations Home Assistant
 
 ---
-## 🔧 Installation simple (une seul installation)
+## 🔧 Installation simple (une seule installation)
 
-1. Télécharge le firmware FreeRabbit depuis le site officiel et le mettre sur une clé usb au format FAT32 :  
+1. Téléchargez le firmware FreeRabbit depuis le site officiel et mettez-le sur une clé USB au format FAT32 :  
 [https://www.freerabbit.nl](https://www.freerabbits.nl)
 
-2. **Avant d'insérer la clé USB dans le Karotz**, édite le fichier `waitfornetwork.sh` pour y entrer :
-   - L' **IP** que tu donne à ton Karotz
-   - Le **DNS**, en générale 8.8.8.8
-   - Le **GW**, en générale 192.168.1.1
-   - Le **SSID** de ton Wi-Fi
+2. **Avant d'insérer la clé USB dans le Karotz**, éditez le fichier `waitfornetwork.sh` pour y entrer :
+   - L' **IP** que vous donnez à votre Karotz
+   - Le **DNS**, en général 8.8.8.8
+   - Le **GW**, en général 192.168.1.1
+   - Le **SSID** de votre Wi-Fi
    - Le **mot de passe** correspondant
 
-3. Copier le contenu du dossier "HomeRabbit" sur la clé USB 
+3. Copiez le contenu du dossier "HomeRabbit" sur la clé USB 
 
-4. Réinitialise le karotz en le branchant en maintenant le bouton de la tête jusqu'a ce que la led s'allume bleu, relacher le bouton et attendre que la led devienne cyan fixe
+4. Réinitialisez le karotz en le branchant en maintenant le bouton de la tête jusqu'à ce que la led s'allume bleu, relâchez le bouton et attendez que la led devienne cyan fixe
 
-5. Débrancher le karotz, Insère la clé USB dans ton Karotz et branche le (molette tournée sur on). Il va indiquer qu'il fait la mise a jour. Puis, redémarrer. Attendre la led verte, il devrait se connecter automatiquement au Wi-Fi. (ne pas encore retiré la clé usb)
+5. Débranchez le karotz, Insérez la clé USB dans votre Karotz et branchez-le (molette tournée sur on). Il va indiquer qu'il fait la mise à jour. Puis, redémarrez. Attendez la led verte, il devrait se connecter automatiquement au Wi-Fi. (ne pas encore retirer la clé USB)
 
-6. Se connecter au karotz en ssh via la commande terminal "ssh karotz@[Ip du karotz]"
+6. Connectez-vous au karotz en ssh via la commande terminal "ssh karotz@[Ip du karotz]"
 
-7. Une fois en en ssh, faire les commandes "passwd" et "passwd karotz" pour initialiser des mots de passes
+7. Une fois en ssh, faites les commandes "passwd" et "passwd karotz" pour initialiser des mots de passe
 
-8. Passer à l'Intégration dans Home Assistant
+8. Passez à l'Intégration dans Home Assistant
 
 ## 🏠 Intégration dans Home Assistant
 
-- Copie le fichier openkarotz.yaml dans un dossier nommé packages dans ton dossier de configuration Home Assistant :
+- Copiez le fichier openkarotz.yaml dans un dossier nommé packages dans votre dossier de configuration Home Assistant :
 /config/packages/openkarotz.yaml
 
-- Dans ton fichier configuration.yaml, ajoute (ou complète) la section suivante :
+- Dans votre fichier configuration.yaml, ajoutez (ou complétez) la section suivante :
 ```yaml
 homeassistant:
   packages: !include_dir_named packages
 ```
   
-- Redémarre Home Assistant depuis Paramètres → Système → Redémarrer.
+- Redémarrez Home Assistant depuis Paramètres → Système → Redémarrer.
 
 ## karotz TTS via home assistant
 
 un Addon est disponible pour faire du tts localement via Home Assistant, pour plus d'informations :
 https://github.com/Desperado88/karotz-tts-addon
 
-## 🔧 Installation détaillé (FreeRabbit, openkarotz, ssh)
+## 🔧 Installation détaillée (FreeRabbit, openkarotz, ssh)
 
-1. Télécharge le firmware FreeRabbit depuis le site officiel :  
+1. Téléchargez le firmware FreeRabbit depuis le site officiel :  
 [https://www.freerabbit.nl](https://www.freerabbits.nl)
 
-2. Copie le contenu du dossier `SetupFreeRabbitsOS` fourni avec OpenKarotz sur **une clé USB** formatée en FAT32.
+2. Copiez le contenu du dossier `SetupFreeRabbitsOS` fourni avec OpenKarotz sur **une clé USB** formatée en FAT32.
 
-3. **Avant d'insérer la clé USB dans le Karotz**, édite le fichier `waitfornetwork.sh` pour y entrer :
-   - L' **IP** que tu donne à ton Karotz
-   - Le **DNS**, en générale 8.8.8.8
-   - Le **GW**, en générale 192.168.1.1
-   - Le **SSID** de ton Wi-Fi
+3. **Avant d'insérer la clé USB dans le Karotz**, éditez le fichier `waitfornetwork.sh` pour y entrer :
+   - L' **IP** que vous donnez à votre Karotz
+   - Le **DNS**, en général 8.8.8.8
+   - Le **GW**, en général 192.168.1.1
+   - Le **SSID** de votre Wi-Fi
    - Le **mot de passe** correspondant
 
-4. Réinitialise le karotz en le branchant en maintenant le bouton de la tête jusqu'a ce que la led s'allume bleu et attendre le redémarrage
+4. Réinitialisez le karotz en le branchant en maintenant le bouton de la tête jusqu'à ce que la led s'allume bleu et attendez le redémarrage
 
-5. Débrancher le karotz, Insère la clé USB dans ton Karotz et branche le (molette tournée sur on). Il va indiquer qu'il fait la mise a jour. Puis, redémarrer. Attendre la led verte, il devrait se connecter automatiquement au Wi-Fi. (ne pas encore retiré la clé usb)
+5. Débranchez le karotz, Insérez la clé USB dans votre Karotz et branchez-le (molette tournée sur on). Il va indiquer qu'il fait la mise à jour. Puis, redémarrez. Attendez la led verte, il devrait se connecter automatiquement au Wi-Fi. (ne pas encore retirer la clé USB)
 
-6. Se connecter sur l'ip du karotz : http://[ip du karotz]/install
+6. Connectez-vous sur l'ip du karotz : http://[ip du karotz]/install
 
-7. Installer Openkarotz et ssh depuis cette page
+7. Installez Openkarotz et ssh depuis cette page
 
-8. Redemmarer le karotz via la molette de réglage du volume
+8. Redémarrez le karotz via la molette de réglage du volume
 
-9. Se connecter au karotz en ssh via la commande terminal "ssh karotz@[Ip du karotz]"
+9. Connectez-vous au karotz en ssh via la commande terminal "ssh karotz@[Ip du karotz]"
 
-10. Se connecter en ssh et faire les commandes "passwd" et "passwd karotz" pour initialiser des mots de passes
+10. Connectez-vous en ssh et faites les commandes "passwd" et "passwd karotz" pour initialiser des mots de passe
 
 ## 🏠 Intégration dans Home Assistant
 
-- Copie le fichier openkarotz.yaml dans un dossier nommé packages dans ton dossier de configuration Home Assistant :
+- Copiez le fichier openkarotz.yaml dans un dossier nommé packages dans votre dossier de configuration Home Assistant :
 /config/packages/openkarotz.yaml
 
-- Dans ton fichier configuration.yaml, ajoute (ou complète) la section suivante :
+- Dans votre fichier configuration.yaml, ajoutez (ou complétez) la section suivante :
 ```yaml
 homeassistant:
   packages: !include_dir_named packages
 ```
   
-- Redémarre Home Assistant depuis Paramètres → Système → Redémarrer.
+- Redémarrez Home Assistant depuis Paramètres → Système → Redémarrer.
 
 ## 🐳 TTS Local avec Docker
 
@@ -113,7 +113,7 @@ Pour les utilisateurs souhaitant héberger leur propre service TTS, un conteneur
    ```
 
 ## 🧠 API Karotz
-Tu peux consulter l'ensemble des commandes disponibles via l'API OpenKarotz ici :
+Vous pouvez consulter l'ensemble des commandes disponibles via l'API OpenKarotz ici :
 👉 [Documentation API OpenKarotz](https://www.openkarotz.org/api/)
 
 ## Sources

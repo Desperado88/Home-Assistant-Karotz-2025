@@ -29,9 +29,10 @@ cp -f /mnt/usbkey/packages/Sounds/* /usr/openkarotz/Sounds/ && LOG "Sounds OK"
 [ ! -d "/usr/scripts" ] && mkdir /usr/scripts
 cp -f /mnt/usbkey/packages/scripts/dbus_watcher /usr/scripts/ && LOG "Scripts OK"
 chmod -R 755 /usr/scripts/
-[ ! -d "/karotz/scripts/" ] && mkdir /karotz/scripts/
-cp -f /mnt/usbkey/packages/scripts/karotz_init.sh /karotz/scripts/karotz_init.sh && LOG "Init OK"
-chmod -R 755 /karotz/scripts/
+# ne fonctionne pas, le script est en lecture seul
+# [ ! -d "/karotz/scripts/" ] && mkdir /karotz/scripts/
+# cp -f /mnt/usbkey/packages/scripts/karotz_init.sh /karotz/scripts/karotz_init.sh && LOG "Init OK"
+# chmod -R 755 /karotz/scripts/
 [ ! -d "/usr/etc/conf" ] && mkdir /usr/etc/conf
 cp -f /mnt/usbkey/packages/conf/karotz.conf /usr/etc/conf/ && LOG "Karotz OK"
 # Install SSH et désactive telnet
