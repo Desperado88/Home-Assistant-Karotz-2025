@@ -46,6 +46,7 @@ if "text" in fields:
     cached = os.path.isfile(mp3FileName)
     if not cached:
         params = urllib.urlencode({"language": voicelanguage, "gender": voicegender, "text": text})
+        #baseUrl = "http://[IP_DE_VOTRE_SERVEUR_TTS]:5000/service/KarotzRvTTS" # indiquer ici l'ip de votre serveur HA
         baseUrl = "http://www.freerabbits.nl/service/KarotzRvTTS"
         cmd = "wget -q -O %(mp3)s \"%(url)s?%(params)s\"" % { "mp3": mp3FileName, "url": baseUrl, "params": params }
         result = RunCommand(cmd)
