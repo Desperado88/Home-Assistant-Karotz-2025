@@ -49,7 +49,7 @@ homeassistant:
   
 - Redémarrez Home Assistant depuis Paramètres → Système → Redémarrer.
 
-## karotz TTS via home assistant
+## 🔊 karotz TTS via home assistant
 
 un Addon est disponible pour faire du tts localement via Home Assistant, pour plus d'informations :
 https://github.com/Desperado88/karotz-tts-addon
@@ -98,6 +98,7 @@ homeassistant:
 ## 🐳 TTS Local avec Docker
 
 Pour les utilisateurs souhaitant héberger leur propre service TTS, un conteneur Docker est disponible :
+⚠️ Cette configuration modifie la voix et le style de parole du Karotz
 
 1. Copiez le dossier `karotz-tts-docker` sur votre serveur Docker
 

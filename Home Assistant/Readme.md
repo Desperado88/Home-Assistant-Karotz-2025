@@ -11,7 +11,7 @@ Cette carte Lovelace pour Home Assistant permet de gérer facilement les tags RF
 
 ## Installation
 
-1. Copiez le code de la carte Lovelace dans votre configuration Home Assistant
+1. Copiez le code de la carte tag-rfid.yaml dans votre configuration de nouvelle carte
 2. Remplacez les noms des entités par ceux de votre configuration
 3. Redémarrez Home Assistant
 
