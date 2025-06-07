@@ -8,7 +8,7 @@ source /mnt/usbkey/functions.sh
 LOG "Install openkarotz"
 [ ! -d "/usr/openkarotz" ] && mkdir /usr/openkarotz # Start Install OpenKarotz
 # copie de openkarrotz
-cp -Rf /mnt/usbkey/packages/usr/* /usr/openkarotz/ 
+cp -Rf /mnt/usbkey/packages/usr/* /usr/openkarotz/ && LOG "User OK"
 
 # suppression du dev_tools
 rm -rf /usr/devtools
@@ -17,7 +17,7 @@ rm -rf /usr/devtools
 [ ! -d "/usr/www" ] && mkdir /usr/www
 cp -Rf /mnt/usbkey/packages/www/* /usr/www/ 
 chmod -R 755 /usr/www/cgi-bin
-cp -f /usr/www/cgi-bin/dbus_events /usr/scripts/dbus_watcher
+cp -f /usr/www/cgi-bin/dbus_events /usr/scripts/dbus_watcher && LOG "WWW OK"
 ln -s /usr/openkarotz/Snapshots /usr/www/snapshots
 ln -s /usr/openkarotz/Tmp /usr/www/ttscache
 
