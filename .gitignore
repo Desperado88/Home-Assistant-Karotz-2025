@@ -1,5 +1,4 @@
 # Fichiers de configuration Home Assistant
-*.yaml
 !example.yaml
 !carte_lovelace.yaml
 !openkartoz.yaml

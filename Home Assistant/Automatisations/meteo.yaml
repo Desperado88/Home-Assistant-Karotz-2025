@@ -1,0 +1,88 @@
+# abaisser les oreilles en fonction du risque de pluie, clignoter plus ou moins vite en fonction de la vitesse du vent et avoir une couleur plus ou moins chaude en fonction de la température
+# copier ce code dans la partie "automation" du fichier "openkarotz.yaml"
+  - id: karotz_meteo_automation
+    alias: karotz - Réaction météo complète
+    description: "Adapte les oreilles, la LED et le clignotement selon les conditions météo"
+    trigger:
+      - trigger: time_pattern
+        minutes: "15" # annonce la météo toutes les 15iemes minute de chaque heures entre 7h et 19h
+    condition:
+      - condition: time
+        after: "07:00:00"
+        before: "19:00:00"
+    actions:
+      - action: rest_command.karotz_say
+        data:
+          text: >-
+            Voici la météo.
+      - action: rest_command.karotz_ears_reset
+      - variables:
+          rain_chance: "{{ states('sensor.treillieres_rain_chance') | float(0) }}"
+          temp: "{{ states('sensor.pac_atom_temp_ext') | float(0) }}"
+          wind: "{{ states('sensor.weather_station_vitesse_moyenne_du_vent_km_h') | float(0) }}"
+
+          # Position des oreilles
+          ear_pos: >
+            {% set rain_chance = states('sensor.treillieres_rain_chance') | float(0) %}
+            {% if rain_chance < 5 %}
+              15
+            {% elif rain_chance > 60 %}
+              4
+            {% else %}
+              {{ 15 - ((rain_chance - 5) // 5) }}
+            {% endif %}
+
+          # Couleur LED
+          color_palette:
+            [
+              "ADD8E6",
+              "87CEFA",
+              "00CED1",
+              "40E0D0",
+              "90EE90",
+              "ADFF2F",
+              "FFD700",
+              "FFA500",
+              "FF4500",
+              "FF0000",
+            ]
+          color_index: >
+            {% set index = ((temp + 10) // 5) | int %}
+            {% if index < 0 %}0{% elif index > 9 %}9{% else %}{{ index }}{% endif %}
+          led_color: "{{ color_palette[color_index] }}"
+          # Clignotement
+          blink_speed: >
+            {% set base = 2000 %}
+            {% set min_speed = 100 %}
+            {% set decrement = ((wind // 5) * 150) %}
+            {% set result = base - decrement %}
+            {% if result < min_speed %}{{ min_speed }}{% elif result > base %}{{ base }}{% else %}{{ result | int }}{% endif %}
+      - action: input_number.set_value
+        data:
+          entity_id: input_number.karotz_ear_left
+          value: "{{ ear_pos }}"
+      - action: input_number.set_value
+        data:
+          entity_id: input_number.karotz_ear_right
+          value: "{{ ear_pos }}"
+      - action: input_text.set_value
+        data:
+          entity_id: input_text.karotz_color_1
+          value: "{{ led_color }}"
+      - action: input_text.set_value
+        data:
+          entity_id: input_text.karotz_color_2
+          value: "000000"
+      - action: input_number.set_value
+        data:
+          entity_id: input_number.karotz_light_speed
+          value: "{{ blink_speed }}"
+      - action: rest_command.karotz_light
+      - action: rest_command.karotz_ears
+      - action: rest_command.karotz_say
+        data:
+          text: >-
+            Il fait {{ temp | round(0) }} degrés.
+            Le vent souffle à {{ wind | round(0) }} kilomètres par heure.
+            Le risque de pluie est de {{ rain_chance | round(0) }} pourcents.
+    mode: single
