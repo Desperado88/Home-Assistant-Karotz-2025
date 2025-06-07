@@ -1,4 +1,5 @@
 #!/bin/bash
+#/karotz/scripts/karotz_init.sh
 
 # This script will install openkarotz on the Karotz
 # www.openkarotz.org
