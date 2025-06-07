@@ -1,11 +1,17 @@
-# Annonce de l'heure toutes les heures
-# copier ce code dans la partie "rest_command" du fichier "openkarotz.yaml"
-# Annonce de l'heure
-  karotz_violet_clock:
-    url: "http://{{ states('input_text.karotz_violet_ip_address') }}/cgi-bin/apps/clock"
+# Automatisation horloge parlante pour Karotz
+# Cette automatisation permet de faire annoncer l'heure toutes les heures
+# entre 7h et 20h lorsque le Karotz est en mode éveillé
 
-# copier ce code dans la partie "automation" du fichier "openkarotz.yaml"
-  - id: karotz_orloge_parlante_automation
+# Configuration du service REST
+# À copier dans la section "rest_command" du fichier "openkarotz.yaml"
+
+  karotz_clock:
+    url: "http://{{ states('input_text.karotz_ip_address') }}/cgi-bin/apps/clock"
+
+# Configuration de l'automatisation
+# À copier dans la section "automation" du fichier "openkarotz.yaml"
+
+  - id: karotz_horloge_parlante_automation
     alias: "Karotz - Annonce de l'heure"
     description: "Fait annoncer l'heure par le Karotz toutes les heures"
     trigger:

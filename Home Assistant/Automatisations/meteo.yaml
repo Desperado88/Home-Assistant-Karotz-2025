@@ -1,11 +1,23 @@
-# abaisser les oreilles en fonction du risque de pluie, clignoter plus ou moins vite en fonction de la vitesse du vent et avoir une couleur plus ou moins chaude en fonction de la température
-# copier ce code dans la partie "automation" du fichier "openkarotz.yaml"
+# Automatisation météo pour Karotz
+# Cette automatisation permet de :
+# - Adapter la position des oreilles en fonction du risque de pluie (plus le risque est élevé, plus les oreilles sont basses)
+# - Modifier la couleur de la LED en fonction de la température (du bleu froid au rouge chaud)
+# - Ajuster la vitesse de clignotement selon la force du vent (plus le vent est fort, plus le clignotement est rapide)
+# 
+# Installation :
+# 1. Copier ce code dans la section "automation" du fichier "openkarotz.yaml"
+# 2. Remplacer les entités suivantes par celles de votre configuration :
+#    - [ville]_rain_chance : capteur de probabilité de pluie
+#    - [temperature] : capteur de température
+#    - [vitesse du vent] : capteur de vitesse du vent
+# 3. Redémarrer Home Assistant
+
   - id: karotz_meteo_automation
-    alias: karotz - Réaction météo complète
+    alias: "Karotz - Réaction météo"
     description: "Adapte les oreilles, la LED et le clignotement selon les conditions météo"
     trigger:
       - trigger: time_pattern
-        minutes: "15" # annonce la météo toutes les 15iemes minute de chaque heures entre 7h et 19h
+        minutes: "15"  # Déclenchement toutes les 15 minutes entre 7h et 19h
     condition:
       - condition: time
         after: "07:00:00"
@@ -17,44 +29,45 @@
             Voici la météo.
       - action: rest_command.karotz_ears_reset
       - variables:
-          rain_chance: "{{ states('sensor.treillieres_rain_chance') | float(0) }}"
-          temp: "{{ states('sensor.pac_atom_temp_ext') | float(0) }}"
-          wind: "{{ states('sensor.weather_station_vitesse_moyenne_du_vent_km_h') | float(0) }}"
+          rain_chance: "{{ states('sensor.[ville]_rain_chance') | float(0) }}" # changer en fonction de l'entité météo utilisé
+          temp: "{{ states('sensor.[temperature]t') | float(0) }}"             # changer en fonction de l'entité température utilisé
+          wind: "{{ states('sensor.[vitesse du vent]') | float(0) }}"          # changer en fonction de l'entité vitesse du vent utilisé
 
-          # Position des oreilles
+          # Position des oreilles (15 = haut, 4 = bas)
           ear_pos: >
-            {% set rain_chance = states('sensor.treillieres_rain_chance') | float(0) %}
+            {% set rain_chance = states('sensor.[ville]_rain_chance') | float(0) %}
             {% if rain_chance < 5 %}
-              15
+              15  # Oreilles hautes si risque de pluie < 5%
             {% elif rain_chance > 60 %}
-              4
+              4   # Oreilles basses si risque de pluie > 60%
             {% else %}
-              {{ 15 - ((rain_chance - 5) // 5) }}
+              {{ 15 - ((rain_chance - 5) // 5) }}  # Position intermédiaire proportionnelle au risque
             {% endif %}
 
-          # Couleur LED
+          # Palette de couleurs (du froid au chaud)
           color_palette:
             [
-              "ADD8E6",
-              "87CEFA",
-              "00CED1",
-              "40E0D0",
-              "90EE90",
-              "ADFF2F",
-              "FFD700",
-              "FFA500",
-              "FF4500",
-              "FF0000",
+              "ADD8E6", # Bleu clair (-10°C et moins)
+              "87CEFA", # Bleu ciel (-5°C)
+              "00CED1", # Turquoise (0°C)
+              "40E0D0", # Turquoise clair (5°C)
+              "90EE90", # Vert clair (10°C)
+              "ADFF2F", # Vert jaune (15°C)
+              "FFD700", # Or (20°C)
+              "FFA500", # Orange (25°C)
+              "FF4500", # Orange rouge (30°C)
+              "FF0000", # Rouge (35°C et plus)
             ]
           color_index: >
             {% set index = ((temp + 10) // 5) | int %}
             {% if index < 0 %}0{% elif index > 9 %}9{% else %}{{ index }}{% endif %}
           led_color: "{{ color_palette[color_index] }}"
-          # Clignotement
+
+          # Vitesse de clignotement (2000ms = lent, 100ms = rapide)
           blink_speed: >
-            {% set base = 2000 %}
-            {% set min_speed = 100 %}
-            {% set decrement = ((wind // 5) * 150) %}
+            {% set base = 2000 %}      # Vitesse de base (lente)
+            {% set min_speed = 100 %}  # Vitesse minimale (rapide)
+            {% set decrement = ((wind // 5) * 150) %}  # Réduction de la vitesse selon le vent
             {% set result = base - decrement %}
             {% if result < min_speed %}{{ min_speed }}{% elif result > base %}{{ base }}{% else %}{{ result | int }}{% endif %}
       - action: input_number.set_value
@@ -85,4 +98,4 @@
             Il fait {{ temp | round(0) }} degrés.
             Le vent souffle à {{ wind | round(0) }} kilomètres par heure.
             Le risque de pluie est de {{ rain_chance | round(0) }} pourcents.
-    mode: single
+    mode: single  # Empêche le déclenchement multiple simultané
