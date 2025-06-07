@@ -1,6 +1,6 @@
 { "streams": [ 
-{"id":1,"name":"RTL","url":"http://streaming.radio.rtl.fr/rtl-1-44-96"},
-{"id":2,"name":"RTL2","url":"http://streaming.radio.rtl2.fr/rtl2-1-44-96"},
+{"id":1,"name":"RTL","url":"https://www.ecouter-en-direct.com/rtl/"},
+{"id":2,"name":"RTL2","url":"https://www.ecouter-en-direct.com/rtl2/"},
 {"id":3,"name":"TSF Jazz","url":"http://broadcast.infomaniak.net:80/tsfjazz-high.mp3"},
 {"id":4,"name":"Sud Radio","url":"http://broadcast.infomaniak.net:80/start-sud-high.mp3"},
 {"id":5,"name":"Cristal FM","url":"http://cristalfm.no-ip.biz:8000/listen.pls"},
