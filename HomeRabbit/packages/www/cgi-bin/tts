@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# -*- coding: utf-8 -*-
 
 # Text To Speech with Python, powered by ResponsiveVoice (https://responsivevoice.org) cached by Free Rabbits.
 # Save this file as "tts" in /www/cgi-bin, and delete tts.inc.
@@ -20,7 +21,23 @@ def IsSleeping():
 
 def PlayMP3(mp3file):
     if not IsSleeping():
-        cmd = "/usr/bin/madplay " + mp3file + " >/dev/null 2>&1"
+        # Récupération du volume configuré
+        try:
+            f = open("/usr/karotz/config/volume", "r")
+            volume = f.read().strip()
+            f.close()
+            if volume:
+                volume = int(volume)
+                # Vérification des limites
+                if volume < -30:
+                    volume = -30
+                elif volume > 8:
+                    volume = 8
+                cmd = "/usr/bin/madplay --adjust-volume=%d %s >/dev/null 2>&1" % (volume, mp3file)
+            else:
+                cmd = "/usr/bin/madplay %s >/dev/null 2>&1" % mp3file
+        except:
+            cmd = "/usr/bin/madplay %s >/dev/null 2>&1" % mp3file
         return os.system(cmd)
 
 # Main program
@@ -63,10 +80,6 @@ data["voicelanguage"] = voicelanguage
 data["voicegender"] = voicegender
 
 # Write Output Response
-print "Server: OpenKarotz WebServer 1.0"
-print "Connection: close"
-print "Accept-Ranges: bytes"
-print "Content-type: text/plain"
-print "Access-Control-Allow-Origin: *"
-print
-print json.dumps(data)
+print("Content-type: application/json; charset=utf-8")
+print("")
+print(json.dumps(data))

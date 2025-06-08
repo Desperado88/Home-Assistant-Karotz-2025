@@ -364,44 +364,33 @@ function IsSoundPlaying {
 # ---------------------------------------------------------------------------
 #                                                                            
 # ---------------------------------------------------------------------------
-function PlaySound {
+function PlaySound { 
 #SOUND $1
 
-      # TODO : Volume management
-      # -softvol -af volume=-20
-      #  0  => Normal
-      #  -x => Down
-      #  +x => Up
-   # killall mr >>/dev/null 2>>/dev/null
+   # Récupération du volume configuré
+   VOLUME=$(cat /usr/karotz/config/volume 2>/dev/null)
+   if [ -z "$VOLUME" ]; then
+       VOLUME=0  # Volume par défaut
+   fi
+
+   # Log pour déboguer
+   echo "PlaySound - Fichier: $1" >> /tmp/volume_debug.log
+   echo "PlaySound - Volume lu: $VOLUME" >> /tmp/volume_debug.log
+
+   # Vérification des limites
+   if [ "$VOLUME" -lt -30 ]; then
+       VOLUME=-30
+   elif [ "$VOLUME" -gt 8 ]; then
+       VOLUME=8
+   fi
+
    CHECK=$(IsSoundPlaying)
    if [ $CHECK -eq 0 ]; then
         KillProcess SOUNDS
-   	/usr/bin/madplay -q $1 >>/dev/null 2>>/dev/null
+        echo "PlaySound - Commande madplay: madplay --adjust-volume=$VOLUME $1" >> /tmp/volume_debug.log
+        madplay --adjust-volume=$VOLUME $1 >>/tmp/volume_debug.log 2>>/tmp/volume_debug.log
    fi
 }
-
-
-function PlaySoundEx { 
-#SOUND $1
-#BG    $2
-# TODO : Volume management
-# -softvol -af volume=-20
-#  0  => Normal
-#  -x => Down
-#  +x => Up 
-   CHECK=$(IsSoundPlaying)
-   if [ $CHECK -eq 0 ]; then
-        KillProcess SOUNDS
-        if [ ! -f /tmp/mplayer-control ]; then
-          mknod /tmp/mplayer-control p  >>/dev/null 2>>/dev/null
-        fi
-        if [ "$2" == "1" ]; then
-          mplayer -quiet -slave -input file=/tmp/mplayer-control $1 >>/dev/null 2>>/dev/null & 
-        else
-          mplayer -quiet -slave -input file=/tmp/mplayer-control $1 >>/dev/null 2>>/dev/null
-        fi
-   fi
-}                                            
 
                                                            
 # ---------------------------------------------------------------------------
@@ -410,7 +399,7 @@ function PlaySoundEx {
 function StartTagRecording { 
     Leds 775577 000000 1 1
     echo "1" > $CNF_DATADIR/Run/rfid.record  >>/dev/null 2>>/dev/null
-    PlaySound $CNF_DATADIR/Voice/Rfid_Start_Record.mp3 1 >>/dev/null 2>>/dev/null
+    PlaySoundEx $CNF_DATADIR/Voice/Rfid_Start_Record.mp3 1 >>/dev/null 2>>/dev/null
 }  
 
 
@@ -419,8 +408,48 @@ function StartTagRecording {
 # ---------------------------------------------------------------------------
 function StopTagRecording {
     rm -f   $CNF_DATADIR/Run/rfid.record  >>/dev/null 2>>/dev/null
-    PlaySound $CNF_DATADIR/Voice/Rfid_Stop_record.mp3 1 >>/dev/null 2>>/dev/null
+    PlaySoundEx $CNF_DATADIR/Voice/Rfid_Stop_record.mp3 1 >>/dev/null 2>>/dev/null
     LedsRestore
 }  
+
+# ---------------------------------------------------------------------------
+#                                                                            
+# ---------------------------------------------------------------------------
+function PlaySoundEx { 
+#SOUND $1
+#BG    $2
+
+   # Récupération du volume configuré
+   VOLUME=$(cat /usr/karotz/config/volume 2>/dev/null)
+   if [ -z "$VOLUME" ]; then
+       VOLUME=0  # Volume par défaut
+   fi
+
+   # Log pour déboguer
+   echo "PlaySoundEx - Fichier: $1" >> /tmp/volume_debug.log
+   echo "PlaySoundEx - Volume lu: $VOLUME" >> /tmp/volume_debug.log
+
+   # Vérification des limites
+   if [ "$VOLUME" -lt -30 ]; then
+       VOLUME=-30
+   elif [ "$VOLUME" -gt 8 ]; then
+       VOLUME=8
+   fi
+
+   CHECK=$(IsSoundPlaying)
+   if [ $CHECK -eq 0 ]; then
+        KillProcess SOUNDS
+        if [ ! -f /tmp/mplayer-control ]; then
+          mknod /tmp/mplayer-control p  >>/dev/null 2>>/dev/null
+        fi
+        if [ "$2" == "1" ]; then
+          echo "PlaySoundEx - Commande mplayer (background): mplayer -quiet -slave -input file=/tmp/mplayer-control -af volume=$VOLUME $1" >> /tmp/volume_debug.log
+          mplayer -quiet -slave -input file=/tmp/mplayer-control -af volume=$VOLUME $1 >>/tmp/volume_debug.log 2>>/tmp/volume_debug.log & 
+        else
+          echo "PlaySoundEx - Commande mplayer: mplayer -quiet -slave -input file=/tmp/mplayer-control -af volume=$VOLUME $1" >> /tmp/volume_debug.log
+          mplayer -quiet -slave -input file=/tmp/mplayer-control -af volume=$VOLUME $1 >>/tmp/volume_debug.log 2>>/tmp/volume_debug.log
+        fi
+   fi
+}                                            
 
 

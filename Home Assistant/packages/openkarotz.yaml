@@ -21,7 +21,7 @@ input_text:
 input_boolean:
   karotz_awake:
     initial: on
-# active ou désactive l'ajout d'un tag rfid  -----------------------------------------------------------
+# active ou désactive l'ajout d'un tag rfid -----------------------------------------------------------
   karotz_mode_enregistrement_tag:
     name: Enregistrement Tag karotz
 
@@ -56,6 +56,15 @@ input_number:
     min: 0
     max: 2000 # Vitesse maximale des effets lumineux
     step: 100
+# ajout du controle du volume -------------------------------------------------------------------------------------------------------------
+  karotz_volume:
+    name: "Volume Karotz "
+    min: -30
+    max: 8
+    step: 1
+    mode: slider
+    unit_of_measurement: "dB"
+    initial: 0 
 
 # Groupement des contrôles karotz
 group:
@@ -133,7 +142,7 @@ rest_command:
   karotz_light_fixed:
     url: "http://{{ states('input_text.karotz_ip_address') }}/cgi-bin/leds?pulse=0color={{ states('input_text.karotz_color_1') }}" # allume la led fixe
   karotz_say:
-    url: "http://{{ states('input_text.karotz_ip_address') }}/cgi-bin/tts?voice=2&text={{ text }}&nocache=undefined" # Text to speeck, dit un du text
+    url: "http://{{ states('input_text.karotz_ip_address') }}/cgi-bin/tts?voice=2&text={{ text }}&nocache=1" # Text to speeck, dit un du text
   karotz_sound:
     url: "http://{{ states('input_text.karotz_ip_address') }}/cgi-bin/sound?id={{ sound }}" # jour un son près enregistré
 # sounds : bip1,bling,flush,install_ok,jet1,laser_15,ready,rfid_error,rfid_ok,saut1,start,twang_01,twang_04,return":"0"
@@ -156,6 +165,10 @@ rest_command:
 # Annonce de l'heure
   karotz_clock:
     url: "http://{{ states('input_text.karotz_ip_address') }}/cgi-bin/apps/clock"
+# Controle du volume ----------------------------------------------------------------------------------------------------------------------
+  karotz_volume:
+    url: "http://{{ states('input_text.karotz_ip_address') }}/cgi-bin/volume?level={{ level | int }}"
+    method: GET
 
 # Capteur pour surveiller l'état de sommeil
 sensor:
@@ -180,7 +193,6 @@ template:
           tags: >
             {% set tags = state_attr('sensor.karotz_rfid_tags', 'tags') %}
             {{ tags[::-1] if tags is iterable else [] }}
-
 
 # Automatisations
 automation:
@@ -257,8 +269,8 @@ automation:
 
   # Annonce de l'heure toutes les heures
   - id: karotz_orloge_parlante_automation
-    alias: "karotz bleu - Annonce de l'heure"
-    description: "Fait annoncer l'heure par le karotz bleu toutes les heures"
+    alias: "karotz  - Annonce de l'heure"
+    description: "Fait annoncer l'heure par le karotz  toutes les heures"
     trigger:
       - trigger: time_pattern
         minutes: "0"
@@ -321,3 +333,15 @@ automation:
         data_template:
           entity_id: input_text.karotz_rfid_id
           value: "{{ state_attr('sensor.karotz_rfid_tags', 'tags')[0].id if state_attr('sensor.karotz_rfid_tags', 'tags') | length > 0 else '' }}"
+# Automatisation pour gérer le volume du Karotz -----------------------------------------------------------
+  - id: karotz_volume_control
+    alias: "Karotz - Contrôle du volume"
+    description: "Ajuste le volume du Karotz via le slider"
+    trigger:
+      - trigger: state
+        entity_id: input_number.karotz_volume
+    action:
+      - action: rest_command.karotz_volume
+        data:
+          level: "{{ states('input_number.karotz_volume') | int }}"
+    mode: single 

@@ -1,0 +1,39 @@
+#!/bin/sh
+
+# Script pour gérer le volume du Karotz
+# Utilisation : /cgi-bin/volume?level=X
+# X doit être entre -30 et 8
+
+# Création du dossier de configuration s'il n'existe pas
+mkdir -p /usr/karotz/config
+
+# Récupération du niveau de volume depuis l'URL
+VOLUME=$(echo $QUERY_STRING | sed 's/.*level=\([^&]*\).*/\1/')
+
+# Log pour déboguer
+echo "Volume reçu: $VOLUME" >> /tmp/volume_debug.log
+
+# Vérification que le volume est un nombre
+if ! echo "$VOLUME" | grep -qE '^-?[0-9]+$'; then
+    echo "Content-type: application/json; charset=utf-8"
+    echo ""
+    echo "{\"status\": \"error\", \"message\": \"Le volume doit être un nombre\", \"volume\": null}"
+    exit 1
+fi
+
+# Vérification des limites
+if [ "$VOLUME" -lt -30 ] || [ "$VOLUME" -gt 8 ]; then
+    echo "Content-type: application/json; charset=utf-8"
+    echo ""
+    echo "{\"status\": \"error\", \"message\": \"Le volume doit être entre -30 et 8\", \"volume\": null}"
+    exit 1
+fi
+
+# Sauvegarde du volume dans un fichier
+echo $VOLUME > /usr/karotz/config/volume
+echo "Volume sauvegardé: $VOLUME" >> /tmp/volume_debug.log
+
+# Réponse HTTP en JSON
+echo "Content-type: application/json; charset=utf-8"
+echo ""
+echo "{\"status\": \"success\", \"message\": \"Volume réglé avec succès\", \"volume\": $VOLUME, \"timestamp\": \"$(date +%s)\"}" 
