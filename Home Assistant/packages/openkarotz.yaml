@@ -2,14 +2,14 @@
 input_text:
   karotz_ip_address:
     name: karotz Ip Address
-    initial: "192.168.1.xxx" # Adresse IP par défaut du karotz
+    initial: "192.168.1.xxx" # ⚠️ À MODIFIER : Adresse IP de votre Karotz
   karotz_color_1:
     name: karotz Color 1
     initial: "ffff00" # Couleur primaire en hexadécimal (jaune)
   karotz_color_2:
     name: karotz Color 2
     initial: "000000" # Couleur secondaire en hexadécimal (noir)
-# tag RFID -----------------------------------------------------------
+# configuration tag RFID -----------------------------------------------------------
   karotz_rfid_id:
     name: ID du tag RFID
   karotz_rfid_name:
@@ -58,7 +58,7 @@ input_number:
     step: 100
 # ajout du controle du volume -------------------------------------------------------------------------------------------------------------
   karotz_volume:
-    name: "Volume Karotz "
+    name: "Volume Karotz"
     min: -30
     max: 8
     step: 1
@@ -173,13 +173,13 @@ rest_command:
 # Capteur pour surveiller l'état de sommeil
 sensor:
   - platform: rest
-    resource: http://192.168.1.xxx/cgi-bin/status
+    resource: http://192.168.1.xxx/cgi-bin/status # ⚠️ À MODIFIER : Adresse IP de votre Karotz
     name: karotz_sleep_sensor
     value_template: "{{ value_json.sleep }}"
 # tag RFID -----------------------------------------------------------
   - platform: rest
     name: karotz_rfid_tags
-    resource: "http://192.168.1.xxx/cgi-bin/rfid_list_ext"
+    resource: "http://192.168.1.xxx/cgi-bin/rfid_list_ext" # ⚠️ À MODIFIER : Adresse IP de votre Karotz
     scan_interval: 5
     value_template: "{{ value_json.tags | to_json }}"
     json_attributes:
@@ -209,7 +209,7 @@ automation:
           entity_id: input_boolean.karotz_awake
       # - action: rest_command.karotz_say
       #   data:
-      #     text: Bonjour tous le monde !
+      #     text: Bonjour tous le monde ! # ⚠️ À PERSONNALISER : Message de bienvenue
 
   - id: karotz_off_automation
     alias: "karotz off"
@@ -220,7 +220,7 @@ automation:
     actions:
       # - action: rest_command.karotz_say
       #   data:
-      #     text: Bonne nuit les petits !
+      #     text: Bonne nuit les petits ! # ⚠️ À PERSONNALISER : Message de bonne nuit
       - action: input_boolean.turn_off
         target:
           entity_id: input_boolean.karotz_awake
@@ -276,8 +276,8 @@ automation:
         minutes: "0"
     condition:
       - condition: time
-        after: "07:00:00"
-        before: "20:00:00"
+        after: "07:00:00" # ⚠️ À PERSONNALISER : Heure de début des annonces
+        before: "20:00:00" # ⚠️ À PERSONNALISER : Heure de fin des annonces
       - condition: state
         entity_id: input_boolean.karotz_awake
         state: "on"
