@@ -55,6 +55,6 @@ Le volume est persistant et est sauvegardé dans la configuration du Karotz.
 
 ## Prérequis
 
-- Home Assistant version X.X ou supérieure
+- Home Assistant version 2025.5 ou supérieure
 - Module RFID compatible
 - Configuration correcte des entités RFID dans Home Assistant
