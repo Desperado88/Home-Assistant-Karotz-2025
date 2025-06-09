@@ -12,8 +12,9 @@
 #    - [vitesse du vent] : capteur de vitesse du vent
 # 3. Redémarrer Home Assistant
 
-  - id: karotz_meteo_automation
-    alias: "Karotz - Réaction météo"
+  # Meteo -----------------------------------------------------------
+  - id: karotz_violet_meteo_automation
+    alias: "karotz_violet - Réaction météo"
     description: "Adapte les oreilles, la LED et le clignotement selon les conditions météo"
     trigger:
       - trigger: time_pattern
@@ -23,79 +24,70 @@
         after: "07:00:00"
         before: "19:00:00"
     actions:
-      - action: rest_command.karotz_say
+      - action: rest_command.karotz_violet_say
         data:
           text: >-
             Voici la météo.
-      - action: rest_command.karotz_ears_reset
-      - variables:
-          rain_chance: "{{ states('sensor.[ville]_rain_chance') | float(0) }}" # changer en fonction de l'entité météo utilisé
-          temp: "{{ states('sensor.[temperature]t') | float(0) }}"             # changer en fonction de l'entité température utilisé
-          wind: "{{ states('sensor.[vitesse du vent]') | float(0) }}"          # changer en fonction de l'entité vitesse du vent utilisé
-
-          # Position des oreilles (15 = haut, 4 = bas)
-          ear_pos: >
-            {% set rain_chance = states('sensor.[ville]_rain_chance') | float(0) %}
-            {% if rain_chance < 5 %}
-              15  # Oreilles hautes si risque de pluie < 5%
-            {% elif rain_chance > 60 %}
-              4   # Oreilles basses si risque de pluie > 60%
+      - action: rest_command.karotz_violet_ears_reset
+      - action: input_number.set_value
+        data:
+          entity_id: input_number.karotz_violet_ear_left
+          value: >
+            {% set rain = states('sensor.treillieres_rain_chance') | default(0) | float %}
+            {% if rain < 5 %}
+              {{ 15 }}
+            {% elif rain > 60 %}
+              {{ 4 }}
             {% else %}
-              {{ 15 - ((rain_chance - 5) // 5) }}  # Position intermédiaire proportionnelle au risque
+              {{ (15 - ((rain - 5) // 5)) | int }}
             {% endif %}
-
-          # Palette de couleurs (du froid au chaud)
-          color_palette:
-            [
-              "ADD8E6", # Bleu clair (-10°C et moins)
-              "87CEFA", # Bleu ciel (-5°C)
-              "00CED1", # Turquoise (0°C)
-              "40E0D0", # Turquoise clair (5°C)
-              "90EE90", # Vert clair (10°C)
-              "ADFF2F", # Vert jaune (15°C)
-              "FFD700", # Or (20°C)
-              "FFA500", # Orange (25°C)
-              "FF4500", # Orange rouge (30°C)
-              "FF0000", # Rouge (35°C et plus)
-            ]
-          color_index: >
-            {% set index = ((temp + 10) // 5) | int %}
-            {% if index < 0 %}0{% elif index > 9 %}9{% else %}{{ index }}{% endif %}
-          led_color: "{{ color_palette[color_index] }}"
-
-          # Vitesse de clignotement (2000ms = lent, 100ms = rapide)
-          blink_speed: >
-            {% set base = 2000 %}      # Vitesse de base (lente)
-            {% set min_speed = 100 %}  # Vitesse minimale (rapide)
-            {% set decrement = ((wind // 5) * 150) %}  # Réduction de la vitesse selon le vent
-            {% set result = base - decrement %}
-            {% if result < min_speed %}{{ min_speed }}{% elif result > base %}{{ base }}{% else %}{{ result | int }}{% endif %}
       - action: input_number.set_value
         data:
-          entity_id: input_number.karotz_ear_left
-          value: "{{ ear_pos }}"
-      - action: input_number.set_value
-        data:
-          entity_id: input_number.karotz_ear_right
-          value: "{{ ear_pos }}"
+          entity_id: input_number.karotz_violet_ear_right
+          value: >
+            {% set rain = states('sensor.treillieres_rain_chance') | default(0) | float %}
+            {% if rain < 5 %}
+              {{ 15 }}
+            {% elif rain > 60 %}
+              {{ 4 }}
+            {% else %}
+              {{ (15 - ((rain - 5) // 5)) | int }}
+            {% endif %}
       - action: input_text.set_value
         data:
-          entity_id: input_text.karotz_color_1
-          value: "{{ led_color }}"
+          entity_id: input_text.karotz_violet_color_1
+          value: >
+            {% set temp = states('sensor.pac_atom_temp_ext') | default(20) | float %}
+            {% if temp <= -10 %}ADD8E6
+            {% elif temp <= -5 %}87CEFA
+            {% elif temp <= 0 %}00CED1
+            {% elif temp <= 5 %}40E0D0
+            {% elif temp <= 10 %}90EE90
+            {% elif temp <= 15 %}ADFF2F
+            {% elif temp <= 20 %}FFD700
+            {% elif temp <= 25 %}FFA500
+            {% elif temp <= 30 %}FF4500
+            {% else %}FF0000{% endif %}
       - action: input_text.set_value
         data:
-          entity_id: input_text.karotz_color_2
+          entity_id: input_text.karotz_violet_color_2
           value: "000000"
       - action: input_number.set_value
         data:
-          entity_id: input_number.karotz_light_speed
-          value: "{{ blink_speed }}"
-      - action: rest_command.karotz_light
-      - action: rest_command.karotz_ears
-      - action: rest_command.karotz_say
+          entity_id: input_number.karotz_violet_light_speed
+          value: >
+            {% set wind = states('sensor.weather_station_vitesse_moyenne_du_vent_km_h') | default(0) | float %}
+            {% set base = 2000 %}
+            {% set min_speed = 100 %}
+            {% set decrement = ((wind // 5) * 150) %}
+            {% set result = base - decrement %}
+            {% if result < min_speed %}{{ min_speed }}{% elif result > base %}{{ base }}{% else %}{{ result | int }}{% endif %}
+      - action: rest_command.karotz_violet_light
+      - action: rest_command.karotz_violet_ears
+      - action: rest_command.karotz_violet_say
         data:
           text: >-
-            Il fait {{ temp | round(0) }} degrés.
-            Le vent souffle à {{ wind | round(0) }} kilomètres par heure.
-            Le risque de pluie est de {{ rain_chance | round(0) }} pourcents.
+            Il fait {{ states('sensor.pac_atom_temp_ext') | default(20) | float | round(0) }} degrés.
+            Le vent souffle à {{ states('sensor.weather_station_vitesse_moyenne_du_vent_km_h') | default(0) | float | round(0) }} kilomètres par heure.
+            Le risque de pluie est de {{ states('sensor.treillieres_rain_chance') | default(0) | float | round(0) }} pourcents.
     mode: single  # Empêche le déclenchement multiple simultané

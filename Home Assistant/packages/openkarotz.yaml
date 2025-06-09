@@ -69,12 +69,14 @@ input_number:
 # Template pour afficher le volume en décibels
 template:
   - sensor:
+  # RFID --------------------------------------------------------------------------------------
       - name: "Liste Tags RFID (Inversée)"
         state: "{{ now() }}"  # Juste pour forcer une mise à jour
         attributes:
           tags: >
             {% set tags = state_attr('sensor.karotz_rfid_tags', 'tags') %}
             {{ tags[::-1] if tags is iterable else [] }}
+  # Volume --------------------------------------------------------------------------------------
       - name: "Volume Karotz (dB)"
         state: >
           {% set percentage = states('input_number.karotz_volume') | float %}

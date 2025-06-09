@@ -23,6 +23,12 @@ SOUND2="twang_04.mp3"
 
 RFID_DETECTED=0
 
+# Creation des dossiers necessaires
+mkdir -p "$CNF_DATADIR/Rfid"
+mkdir -p "$CNF_DATADIR/Run"
+
+Log "[RFID]" "Démarrage du watcher RFID"
+
 dbus-monitor --system |
 while read -r line; do
 
@@ -80,71 +86,89 @@ while read -r line; do
     echo "$line" | grep -q "tag_in"
     if [ $? -eq 0 ]; then
         RFID_DETECTED=1
+        continue
     fi
 
+    # Étape 1 : Lire l'ID du tag
     if [ $RFID_DETECTED -eq 1 ]; then
-        RFID_ID=$(awk -F\" '{print $2}' <<< "$line")
-        if [ -e "$CNF_DATADIR/Run/rfid.record" ]; then 
-            RFID_DETECTED=2
-        else
-            RFID_DETECTED=7
+        RFID_ID=$(echo "$line" | grep -oE 'string "[^"]+"' | sed 's/string "\(.*\)"/\1/')
+        if [ -n "$RFID_ID" ]; then
+            if [ -e "$CNF_DATADIR/Run/rfid.record" ]; then 
+                RFID_DETECTED=2
+            else
+                RFID_DETECTED=5
+            fi
         fi
+        continue
     fi
 
-    if [ $RFID_DETECTED -eq 2 ]; then RFID_DETECTED=3; fi
-    if [ $RFID_DETECTED -eq 3 ]; then RFID_DETECTED=4; fi
-    if [ $RFID_DETECTED -eq 4 ]; then
-        RFID_TYPE=$(awk -F\  '{print $2}' <<< "$line")
-        GetRfidTypeName "$RFID_TYPE"
-        RFID_DETECTED=5
-    fi
-    if [ $RFID_DETECTED -eq 5 ]; then RFID_DETECTED=6; fi
-    if [ $RFID_DETECTED -eq 6 ]; then
-        RFID_COLOR=$(awk -F\  '{print $2}' <<< "$line")
-        RFID_DETECTED=7
+    # Étape 2 : Lire le type (juste après l'ID)
+    if [ $RFID_DETECTED -eq 2 ]; then
+        RFID_TYPE=$(echo "$line" | grep -oE 'string "[^"]+"' | sed 's/string "\(.*\)"/\1/')
+        if [ -n "$RFID_TYPE" ]; then
+            GetRfidTypeName "$RFID_TYPE"
+            RFID_DETECTED=3
+        fi
+        continue
     fi
 
-    if [ $RFID_DETECTED -eq 7 ]; then
+    # Étape 3 : Lire la couleur
+    if [ $RFID_DETECTED -eq 3 ]; then
+        RFID_COLOR=$(echo "$line" | grep -oE 'string "[^"]+"' | sed 's/string "\(.*\)"/\1/')
+        if [ -n "$RFID_COLOR" ]; then
+            RFID_DETECTED=4
+        fi
+        continue
+    fi
+
+    # Étape finale : Traitement
+    if [ $RFID_DETECTED -eq 4 ] || [ $RFID_DETECTED -eq 5 ]; then
+        # Enregistrement
         if [ -e "$CNF_DATADIR/Run/rfid.record" ]; then
             if [ -e "$CNF_DATADIR/Rfid/${RFID_ID}.rfid" ]; then
-                PlaySound $CNF_DATADIR/Sounds/rfid_error.mp3
-                PlaySound $CNF_DATADIR/Voice/Rfid_objet_deja_enregistre.mp3
+                PlaySound "$CNF_DATADIR/Sounds/rfid_error.mp3"
+                PlaySound "$CNF_DATADIR/Voice/Rfid_objet_deja_enregistre.mp3"
             else
-                echo "" > $CNF_DATADIR/Rfid/${RFID_ID}.rfid
-                echo $RFID_COLOR > $CNF_DATADIR/Rfid/${RFID_ID}.color
-                echo $RFID_TYPE  > $CNF_DATADIR/Rfid/${RFID_ID}.type
-                PlaySound $CNF_DATADIR/Sounds/rfid_ok.mp3
-                PlaySound $CNF_DATADIR/Voice/Rfid_objet_enregistre.mp3
+                echo "" > "$CNF_DATADIR/Rfid/${RFID_ID}.rfid"
+                echo "$RFID_COLOR" > "$CNF_DATADIR/Rfid/${RFID_ID}.color"
+                echo "$RFID_TYPE"  > "$CNF_DATADIR/Rfid/${RFID_ID}.type"
+                PlaySound "$CNF_DATADIR/Sounds/rfid_ok.mp3"
+                PlaySound "$CNF_DATADIR/Voice/Rfid_objet_enregistre.mp3"
             fi
+
+        # Suppression
         elif [ -e "$CNF_DATADIR/Run/rfid.delete" ]; then
-            PlaySound $CNF_DATADIR/Voice/Rfid_objet_supprime.mp3 
-            rm -f $CNF_DATADIR/Rfid/$RFID_ID.*
+            PlaySound "$CNF_DATADIR/Voice/Rfid_objet_supprime.mp3" 
+            rm -f "$CNF_DATADIR/Rfid/$RFID_ID.*"
+
+        # Lecture normale
         else
             if [ -e "$CNF_DATADIR/Rfid/${RFID_ID}.rfid" ]; then         
                 if [ ! -e "$CNF_DATADIR/Rfid/${RFID_ID}.action" ]; then 
                     if [ ! -e "$CNF_DATADIR/Run/karotz.sleep" ]; then
-                        PlaySound $CNF_DATADIR/Sounds/rfid_error.mp3
-                        PlaySound $CNF_DATADIR/Voice/Rfid_objet_pas_action.mp3
+                        PlaySound "$CNF_DATADIR/Sounds/rfid_error.mp3"
+                        PlaySound "$CNF_DATADIR/Voice/Rfid_objet_pas_action.mp3"
                     fi
                 else
                     Leds FF0000 000000 0 1
                     if [ ! -e "$CNF_DATADIR/Run/karotz.sleep" ]; then
-                        PlaySound $CNF_DATADIR/Sounds/${SOUND}
+                        PlaySound "$CNF_DATADIR/Sounds/${SOUND}"
                     fi
-                    SCENE_ID=$(cat $CNF_DATADIR/Rfid/${RFID_ID}.rfid)
-                    SCENE_CMD=$(cat $CNF_DATADIR/Rfid/${RFID_ID}.cmd)
+                    SCENE_ID=$(cat "$CNF_DATADIR/Rfid/${RFID_ID}.rfid")
+                    SCENE_CMD=$(cat "$CNF_DATADIR/Rfid/${RFID_ID}.cmd")
                     Log "[Rfid]" "Calling external action : $(GetCmdName $SCENE_CMD)"
                     LedsRestore
-                    eval $(cat $CNF_DATADIR/Rfid/${RFID_ID}.action | busybox base64 -d)
+                    eval $(cat "$CNF_DATADIR/Rfid/${RFID_ID}.action" | busybox base64 -d)
                 fi
             else
                 if [ ! -e "$CNF_DATADIR/Run/karotz.sleep" ]; then
-                    PlaySound $CNF_DATADIR/Sounds/rfid_error.mp3
-                    PlaySound $CNF_DATADIR/Voice/Rfid_Object_inconnu.mp3
+                    PlaySound "$CNF_DATADIR/Sounds/rfid_error.mp3"
+                    PlaySound "$CNF_DATADIR/Voice/Rfid_Object_inconnu.mp3"
                 fi
             fi
         fi
         RFID_DETECTED=0
+        continue
     fi
-
+    
 done
