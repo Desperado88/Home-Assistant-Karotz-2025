@@ -8,6 +8,7 @@ Cette carte Lovelace pour Home Assistant permet de gérer facilement les tags RF
 - Supprimer des tags existants
 - Créer des tags personnalisés
 - Interface utilisateur intuitive
+- Contrôle du volume du Karotz
 
 ## Installation
 
@@ -37,6 +38,20 @@ entities:
 2. Pour supprimer un tag :
    - Sélectionnez le tag dans la liste
    - Cliquez sur le bouton "Supprimer"
+
+## Gestion du Volume
+
+Le Karotz dispose d'un contrôle de volume via un slider dans l'interface :
+
+- 0% : Volume minimum (-30 dB)
+- 100% : Volume maximum (0 dB)
+
+Le volume est réglé en décibels (dB) et est converti automatiquement en pourcentage pour une utilisation plus intuitive. La conversion suit une échelle linéaire :
+- 100% = 0 dB (volume maximum)
+- 50% = -15 dB (volume moyen)
+- 0% = -30 dB (volume minimum)
+
+Le volume est persistant et est sauvegardé dans la configuration du Karotz.
 
 ## Prérequis
 
