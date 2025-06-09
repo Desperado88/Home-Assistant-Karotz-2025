@@ -59,12 +59,29 @@ input_number:
 # ajout du controle du volume -------------------------------------------------------------------------------------------------------------
   karotz_volume:
     name: "Volume Karotz"
-    min: -30
-    max: 8
+    min: 0
+    max: 100
     step: 1
     mode: slider
-    unit_of_measurement: "dB"
-    initial: 0 
+    unit_of_measurement: "%"
+    initial: 100 # Volume maximum par défaut
+
+# Template pour afficher le volume en décibels
+template:
+  - sensor:
+      - name: "Liste Tags RFID (Inversée)"
+        state: "{{ now() }}"  # Juste pour forcer une mise à jour
+        attributes:
+          tags: >
+            {% set tags = state_attr('sensor.karotz_rfid_tags', 'tags') %}
+            {{ tags[::-1] if tags is iterable else [] }}
+      - name: "Volume Karotz (dB)"
+        state: >
+          {% set percentage = states('input_number.karotz_volume') | float %}
+          {% set db = ((100 - percentage) / 100 * -30) %}
+          {{ db | round(0) }}
+        unit_of_measurement: "dB"
+        icon: mdi:volume-high
 
 # Groupement des contrôles karotz
 group:
@@ -72,6 +89,7 @@ group:
     name: karotz Utils
     entities:
       - script.karotz_moods
+      - sensor.volume_karotz_d_b
 
 # Scripts de contrôle du karotz
 script:
@@ -167,7 +185,7 @@ rest_command:
     url: "http://{{ states('input_text.karotz_ip_address') }}/cgi-bin/apps/clock"
 # Controle du volume ----------------------------------------------------------------------------------------------------------------------
   karotz_volume:
-    url: "http://{{ states('input_text.karotz_ip_address') }}/cgi-bin/volume?level={{ level | int }}"
+    url: "http://{{ states('input_text.karotz_ip_address') }}/cgi-bin/volume?level={{ level }}"
     method: GET
 
 # Capteur pour surveiller l'état de sommeil
@@ -176,7 +194,8 @@ sensor:
     resource: http://192.168.1.xxx/cgi-bin/status # ⚠️ À MODIFIER : Adresse IP de votre Karotz
     name: karotz_sleep_sensor
     value_template: "{{ value_json.sleep }}"
-# tag RFID -----------------------------------------------------------
+
+# configuration tag RFID -----------------------------------------------------------
   - platform: rest
     name: karotz_rfid_tags
     resource: "http://192.168.1.xxx/cgi-bin/rfid_list_ext" # ⚠️ À MODIFIER : Adresse IP de votre Karotz
@@ -184,15 +203,6 @@ sensor:
     value_template: "{{ value_json.tags | to_json }}"
     json_attributes:
       - tags
-
-template:
-  - sensor:
-      - name: "Liste Tags RFID (Inversée)"
-        state: "{{ now() }}"  # Juste pour forcer une mise à jour
-        attributes:
-          tags: >
-            {% set tags = state_attr('sensor.karotz_rfid_tags', 'tags') %}
-            {{ tags[::-1] if tags is iterable else [] }}
 
 # Automatisations
 automation:
@@ -334,13 +344,12 @@ automation:
           entity_id: input_text.karotz_rfid_id
           value: "{{ state_attr('sensor.karotz_rfid_tags', 'tags')[0].id if state_attr('sensor.karotz_rfid_tags', 'tags') | length > 0 else '' }}"
 # Automatisation pour gérer le volume du Karotz -----------------------------------------------------------
-  - id: karotz_volume_control
-    alias: "Karotz - Contrôle du volume"
-    description: "Ajuste le volume du Karotz via le slider"
+  - id: karotz_volume_automation
+    alias: "Update karotz volume"
     trigger:
       - trigger: state
         entity_id: input_number.karotz_volume
-    action:
+    actions:
       - action: rest_command.karotz_volume
         data:
           level: "{{ states('input_number.karotz_volume') | int }}"

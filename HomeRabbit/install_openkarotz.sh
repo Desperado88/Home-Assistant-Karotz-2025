@@ -20,6 +20,8 @@ cp -Rf /mnt/usbkey/packages/www/* /usr/www/
 chmod -R 755 /usr/www/cgi-bin
 cp -f /usr/www/cgi-bin/dbus_events /usr/scripts/dbus_watcher && LOG "WWW OK"
 ln -s /usr/openkarotz/Snapshots /usr/www/snapshots
+# Création du dossier Tmp
+mkdir -p /usr/openkarotz/Tmp
 ln -s /usr/openkarotz/Tmp /usr/www/ttscache
 
 # Copie des fichiers aux bon emplacements
@@ -37,3 +39,4 @@ cp -f /mnt/usbkey/packages/conf/karotz.conf /usr/etc/conf/ && LOG "Karotz OK"
 # Install SSH et désactive telnet
 cp -f /mnt/usbkey/packages/conf/inetd.conf /usr/etc/ && LOG "InetD OK"
 LOG "Patching finished!"
+
