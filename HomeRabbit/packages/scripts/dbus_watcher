@@ -5,106 +5,78 @@ source /usr/www/cgi-bin/setup.inc
 source /usr/www/cgi-bin/utils.inc
 source /usr/www/cgi-bin/leds.inc
 
-LOCKFILE="/tmp/dbus_watcher.lock"
-
-# Empêche les instances multiples du script
-if [ -e "$LOCKFILE" ]; then
-    echo "Déjà en cours"
-    exit 1
-else
-    touch "$LOCKFILE"
-fi
-
-# Nettoyage à la fin du script
-trap "rm -f $LOCKFILE; exit" INT TERM EXIT
-
+# Variables globales
+RFID_DETECTED=0
 SOUND1="twang_01.mp3"
 SOUND2="twang_04.mp3"
 
-RFID_DETECTED=0
+# Nettoyage des processus existants
+killall dbus-monitor 2>/dev/null
 
-# Creation des dossiers necessaires
-mkdir -p "$CNF_DATADIR/Rfid"
-mkdir -p "$CNF_DATADIR/Run"
-
-Log "[RFID]" "Démarrage du watcher RFID"
-
-dbus-monitor --system |
-while read -r line; do
-
+# Démarrage du moniteur DBUS
+dbus-monitor --system | while read -r line; do
     # ---------------------
-    # BUTTON HANDLER
+    # GESTION BOUTONS
     # ---------------------
-
-    echo "$line" | grep -q "member=lclick_start"
-    if [ $? -eq 0 ]; then
+    
+    # Long Click - Mode enregistrement
+    if echo "$line" | grep -q "member=lclick_start"; then
         KillProcess
         if [ -e "$CNF_DATADIR/Run/rfid.record" ]; then 
             StopTagRecording
         else
             StartTagRecording
-        fi        
+        fi
+        continue
     fi
 
-    echo "$line" | grep -q "member=click"
-    if [ $? -eq 0 ]; then
-        if [ ! -e "/tmp/click.lock" ]; then
-            touch /tmp/click.lock
-            PlaySound "$CNF_DATADIR/Sounds/${SOUND2}"
-            /www/cgi-bin/apps/moods &
-            sleep 1
-            rm -f /tmp/click.lock
-        fi
+    # Simple Click
+    if echo "$line" | grep -q "member=click"; then
+        PlaySound "$CNF_DATADIR/Sounds/${SOUND2}"
+        /www/cgi-bin/apps/moods &
+        continue
     fi
 
-    echo "$line" | grep -q "member=dclick"
-    if [ $? -eq 0 ]; then
-        if [ ! -e "/tmp/dclick.lock" ]; then
-            touch /tmp/dclick.lock
-            PlaySound "$CNF_DATADIR/Sounds/${SOUND1}"
-            /www/cgi-bin/apps/tai-chi &
-            sleep 1
-            rm -f /tmp/dclick.lock
-        fi
+    # Double Click
+    if echo "$line" | grep -q "member=dclick"; then
+        PlaySound "$CNF_DATADIR/Sounds/${SOUND1}"
+        /www/cgi-bin/apps/tai-chi &
+        continue
     fi
 
-    echo "$line" | grep -q "member=tclick"
-    if [ $? -eq 0 ]; then
-        if [ ! -e "/tmp/tclick.lock" ]; then
-            touch /tmp/tclick.lock
-            PlaySound "$CNF_DATADIR/Sounds/flush.mp3"
-            /sbin/reboot
-            sleep 1
-            rm -f /tmp/tclick.lock
-        fi
+    # Triple Click
+    if echo "$line" | grep -q "member=tclick"; then
+        PlaySound "$CNF_DATADIR/Sounds/flush.mp3"
+        /sbin/reboot
+        continue
     fi
 
     # ---------------------
-    # RFID HANDLER
+    # GESTION RFID
     # ---------------------
-
-    echo "$line" | grep -q "tag_in"
-    if [ $? -eq 0 ]; then
+    
+    # Détection d'un tag
+    if echo "$line" | grep -q "tag_in"; then
         RFID_DETECTED=1
         continue
     fi
 
-    # Étape 1 : Lire l'ID du tag
+    # Lecture de l'ID du tag
     if [ $RFID_DETECTED -eq 1 ]; then
-        RFID_ID=$(echo "$line" | grep -oE 'string "[^"]+"' | sed 's/string "\(.*\)"/\1/')
+        RFID_ID=$(echo "$line" | awk -F\" '{print $2}')
         if [ -n "$RFID_ID" ]; then
             if [ -e "$CNF_DATADIR/Run/rfid.record" ]; then 
                 RFID_DETECTED=2
             else
-                RFID_DETECTED=5
+                RFID_DETECTED=7
             fi
         fi
         continue
     fi
 
-    # Étape 2 : Lire le type (juste après l'ID)
+    # Lecture du type
     if [ $RFID_DETECTED -eq 2 ]; then
-        RFID_TYPE=$(echo "$line" | grep -oE 'string "[^"]+"' | sed 's/string "\(.*\)"/\1/')
+        RFID_TYPE=$(echo "$line" | awk -F\  '{print $2}')
         if [ -n "$RFID_TYPE" ]; then
             GetRfidTypeName "$RFID_TYPE"
             RFID_DETECTED=3
@@ -112,18 +84,18 @@ while read -r line; do
         continue
     fi
 
-    # Étape 3 : Lire la couleur
+    # Lecture de la couleur
     if [ $RFID_DETECTED -eq 3 ]; then
-        RFID_COLOR=$(echo "$line" | grep -oE 'string "[^"]+"' | sed 's/string "\(.*\)"/\1/')
+        RFID_COLOR=$(echo "$line" | awk -F\  '{print $2}')
         if [ -n "$RFID_COLOR" ]; then
             RFID_DETECTED=4
         fi
         continue
     fi
 
-    # Étape finale : Traitement
-    if [ $RFID_DETECTED -eq 4 ] || [ $RFID_DETECTED -eq 5 ]; then
-        # Enregistrement
+    # Traitement final
+    if [ $RFID_DETECTED -eq 4 ] || [ $RFID_DETECTED -eq 7 ]; then
+        # Mode enregistrement
         if [ -e "$CNF_DATADIR/Run/rfid.record" ]; then
             if [ -e "$CNF_DATADIR/Rfid/${RFID_ID}.rfid" ]; then
                 PlaySound "$CNF_DATADIR/Sounds/rfid_error.mp3"
@@ -135,16 +107,14 @@ while read -r line; do
                 PlaySound "$CNF_DATADIR/Sounds/rfid_ok.mp3"
                 PlaySound "$CNF_DATADIR/Voice/Rfid_objet_enregistre.mp3"
             fi
-
-        # Suppression
+        # Mode suppression
         elif [ -e "$CNF_DATADIR/Run/rfid.delete" ]; then
             PlaySound "$CNF_DATADIR/Voice/Rfid_objet_supprime.mp3" 
             rm -f "$CNF_DATADIR/Rfid/$RFID_ID.*"
-
-        # Lecture normale
+        # Mode normal
         else
-            if [ -e "$CNF_DATADIR/Rfid/${RFID_ID}.rfid" ]; then         
-                if [ ! -e "$CNF_DATADIR/Rfid/${RFID_ID}.action" ]; then 
+            if [ -e "$CNF_DATADIR/Rfid/${RFID_ID}.rfid" ]; then
+                if [ ! -e "$CNF_DATADIR/Rfid/${RFID_ID}.action" ]; then
                     if [ ! -e "$CNF_DATADIR/Run/karotz.sleep" ]; then
                         PlaySound "$CNF_DATADIR/Sounds/rfid_error.mp3"
                         PlaySound "$CNF_DATADIR/Voice/Rfid_objet_pas_action.mp3"
@@ -170,5 +140,4 @@ while read -r line; do
         RFID_DETECTED=0
         continue
     fi
-    
 done
