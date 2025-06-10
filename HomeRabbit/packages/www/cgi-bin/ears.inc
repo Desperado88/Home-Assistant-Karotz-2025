@@ -64,14 +64,11 @@ function EarsRestore {
     fi
 }
 
-# Fonction pour sauvegarder la position actuelle des oreilles
-EarsSave() {
-    # Sauvegarde de la position actuelle des oreilles
+function EarsSave {
     if [ -f "$CNF_DATADIR/Run/ear.left" ] && [ -f "$CNF_DATADIR/Run/ear.right" ]; then
         SAVED_EAR_LEFT=$(cat "$CNF_DATADIR/Run/ear.left")
         SAVED_EAR_RIGHT=$(cat "$CNF_DATADIR/Run/ear.right")
     else
-        # Si les fichiers n'existent pas, on utilise la position par défaut
         SAVED_EAR_LEFT=0
         SAVED_EAR_RIGHT=0
     fi
