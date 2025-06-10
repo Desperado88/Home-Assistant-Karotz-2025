@@ -6,6 +6,11 @@ source /usr/www/cgi-bin/setup.inc
 source /usr/www/cgi-bin/url.inc
 source /usr/www/cgi-bin/utils.inc
 source /usr/www/cgi-bin/ears.inc
+source /usr/www/cgi-bin/leds.inc
+
+# Sauvegarde de l'état actuel de la LED et des oreilles
+LedsSave
+EarsSave
 
 # Log de l'appel du script Moods
 Log "[MOODS]" "Moods Called"
@@ -88,9 +93,9 @@ if [ ! -e "$CNF_DATADIR/Run/karotz.sleep" ]; then
       81) /usr/www/cgi-bin/apps/moods_81 ;; # Ho non je ne veux pas retourner dans la boite !
       82) /usr/www/cgi-bin/apps/moods_82 ;; # J'suis là ! J'suis plus là !
       86) /usr/www/cgi-bin/apps/moods_82 ;; # Myxomatose et lapins pas comestibles
-      97) /usr/www/cgi-bin/apps/moods_97 ;; # J’ai mal à la tête
+      97) /usr/www/cgi-bin/apps/moods_97 ;; # J'ai mal à la tête
       99) /usr/www/cgi-bin/apps/moods_99 ;; # Tu veux pas m'changer mes oreilles ?
-      100) /usr/www/cgi-bin/apps/moods_100 ;; # Y a de l’écho... ça doit venir de mes oreilles.
+      100) /usr/www/cgi-bin/apps/moods_100 ;; # Y a de l'écho... ça doit venir de mes oreilles.
       101) /usr/www/cgi-bin/apps/moods_101 ;; # Mail pas passé
       111) /usr/www/cgi-bin/apps/moods_111 ;; # Gouzi gouzi gouzi…
       112) /usr/www/cgi-bin/apps/moods_111 ;; # Gouzi gouzi gouzi…
@@ -109,6 +114,10 @@ else
    DATA='{"return":"1","msg":"Unable to perform action, rabbit is sleeping."}'
    Log "[MOODS]"  "Rabbit if sleeping."
 fi
+
+# Restauration de l'état de la LED et des oreilles
+LedsRestore
+EarsRestore
 
 # Envoie la réponse JSON au client
 SendResponse "$DATA"

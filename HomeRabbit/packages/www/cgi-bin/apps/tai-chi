@@ -9,6 +9,10 @@ source /usr/www/cgi-bin/utils.inc
 source /usr/www/cgi-bin/leds.inc
 CNF_DATADIR="/usr/openkarotz"
 
+# Sauvegarde de l'état actuel de la LED et des oreilles
+LedsSave
+EarsSave
+
 # Vérifie si Karotz est en veille
 if [ -e "$CNF_DATADIR/Run/karotz.sleep" ]; then
     DATA='{"return":"1","msg":"Unable to perform action, rabbit is sleeping."}'
@@ -61,7 +65,7 @@ for i in 1 2; do
     sleep 5
     Leds 0000FF # blue
 
-    # Étape 5 : Oreilles à l’horizontale
+    # Étape 5 : Oreilles à l'horizontale
     EarsMove 5 5 10
     sleep 5
     Leds 9F00FF # purple
@@ -71,6 +75,11 @@ done
 EarsReset
 Leds 00FF00 000000 1 1 1000
 
+# Restauration de l'état de la LED et des oreilles
+LedsRestore
+EarsRestore
+
 # Réponse JSON
 DATA='{"return":"0","msg":"Expressive Tai-Chi sequence completed (2 loops)."}'
+# Envoie la réponse JSON au client
 SendResponse "$DATA"
