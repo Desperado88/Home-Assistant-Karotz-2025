@@ -95,11 +95,11 @@ function BuildUrl {
     LURL=$1
    fi
    
-   if [ "$3" == "" ]; then
+#   if [ "$3" == "" ]; then
      #Log "Building URL: $LURL"   
-   else
+#   else
      #Log "Building URL (Auth): $LURL ($3:$4)"
-   fi
+#   fi
 
    if [ "$5" != "1" ]; then
       if [ "$3" != "" ]; then
@@ -126,7 +126,7 @@ function GetUrl {
     printf -v UTEMP '%s "%s"' "$CURL_BASE" "$1"
     URL=$UTEMP
  else
-    printf -v UTEMP '%s --user %s:%s "%s"' "$CURL_BASE" "$2" "$3" "$URL"
+    printf -v UTEMP '%s --user %s:%s "%s"' "$CURL_BASE" "$2" "$3" "$1"
     URL=$UTEMP
  fi
  #Log  "Calling URL :" "$URL"
