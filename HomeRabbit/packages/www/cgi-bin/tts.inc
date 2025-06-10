@@ -17,13 +17,13 @@ function AcapelaTTS {
         MD5FILE=$(echo "$TTS$VOICE" | md5sum | cut -d ' ' -f 1)
         curl -s -o ${CNF_DATADIR}/Tmp/${MD5FILE}.mp3 ${FILERESULT} >>/dev/null 2>>/dev/null
         
-        Log "[TTS]" "Playing sound ${MD5FILE}.mp3"  
+        #Log "[TTS]" "Playing sound ${MD5FILE}.mp3"  
         PlaySound $CNF_DATADIR/Tmp/${MD5FILE}.mp3
 
         if [ "$NOCACHE" == "1" ]; then
             rm -f $CNF_DATADIR/Tmp/${MD5FILE}.mp3 >>/dev/null 2>>/dev/null
         else
-            Log "[TTS]" "File stored in cache as $CNF_DATADIR/Tmp/${MD5FILE}.mp3"
+            #Log "[TTS]" "File stored in cache as $CNF_DATADIR/Tmp/${MD5FILE}.mp3"
         fi
 
     fi

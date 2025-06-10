@@ -36,7 +36,7 @@ if [ ! -e "$CNF_DATADIR/Run/karotz.sleep" ]; then
 fi
   
 if [ ! -e "/tmp/picture.jpg" ]; then
-      Log  "Snapshot" "Unable to take snapshot" 1
+      #Log  "Snapshot" "Unable to take snapshot" 1
       DATA='{"return":"1","msg":"Unable to take snapshot."}'
       SendResponse "$DATA"
       exit 0
@@ -48,7 +48,7 @@ if [ $? -eq 0 ]; then
 else
   ERR=`cat /tmp/ftperror`
   DATA='{"message":"'$ERR'","return":"0"}'
-  Log  "Snapshot" "Unable to upload file to server" 1
+  #Log  "Snapshot" "Unable to upload file to server" 1
 fi
 
 SendResponse "$DATA"

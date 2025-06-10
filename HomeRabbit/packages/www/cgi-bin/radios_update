@@ -9,16 +9,16 @@ CheckMandatoryDirectory "$CNF_DATADIR/Streams"
 DATA=""
 
 if [ -e "$CNF_DATADIR/Apps/Streams/radios.json"  ]; then
-   Log "[UPDATE][RADIOS]" "Save Existing Radios List"
+   #Log "[UPDATE][RADIOS]" "Save Existing Radios List"
    cp "$CNF_DATADIR/Apps/Streams/radios.json" "$CNF_DATADIR/Apps/Streams/radios.json.bak"
    rm -f "$CNF_DATADIR/Apps/Streams/radios.json"
 fi
 
-Log "[UPDATE][RADIOS]"  "Downloading Updated Radios List"
+#Log "[UPDATE][RADIOS]"  "Downloading Updated Radios List"
 curl --connect-timeout 30 -s -L -k -o "$CNF_DATADIR/Apps/Streams/radios.json" "http://www.freerabbits.nl/service/karotztimeradiolist"
 
 if [ ! -e "$CNF_DATADIR/Apps/Streams/radios.json" ]; then
-    Log "[UPDATE][FIRMWARE]"  "Unable read radio List" 1
+    #Log "[UPDATE][FIRMWARE]"  "Unable read radio List" 1
     DATA='{"return": "1", "msg": "Unable to read radio list"}'
 else
     DATA='{"return": "0"}'

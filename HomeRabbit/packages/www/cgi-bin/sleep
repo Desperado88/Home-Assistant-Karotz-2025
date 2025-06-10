@@ -9,7 +9,7 @@ source /www/cgi-bin/ears.inc
 KillProcess
 
 if [ ! -e "$CNF_DATADIR/Run/karotz.sleep" ]; then  
-     Log  "Going to sleep"
+     #Log  "Going to sleep"
      EarsReset
      Leds 00FF66 00FF00 1
      EarsMove 5 5 50

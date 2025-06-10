@@ -34,6 +34,13 @@ fi
 # Formule : db = ((100 - percentage) / 100 * -30)
 VOLUME=$(echo "$PERCENTAGE 100 -30" | awk '{printf "%.0f", (100 - $1) * $3 / 100}')
 
+# Vérification des limites en dB
+if [ "$VOLUME" -lt -30 ]; then
+    VOLUME=-30
+elif [ "$VOLUME" -gt 0 ]; then
+    VOLUME=0
+fi
+
 # Sauvegarde du volume dans le fichier de configuration
 echo "$VOLUME" > $CNF_DATADIR/Run/volume
 

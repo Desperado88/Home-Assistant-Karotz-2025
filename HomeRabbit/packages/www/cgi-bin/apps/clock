@@ -20,7 +20,7 @@ if [ -e "$CNF_DATADIR/Run/karotz.sleep" ]; then
    exit 0
 fi
 
-Log "[APPS][CLOCK]" "Clock Called"
+#Log "[APPS][CLOCK]" "Clock Called"
 
 if [ "$H" == "" ]; then
   D=$(date +%H)
@@ -41,8 +41,8 @@ fi
        if [ $NB -gt 0 ]; then
           SOUND=$[($RANDOM % ($[$NB - $MIN] + 1)) + $MIN] >>/dev/null 2>>/dev/null
           if [ -f "$CNF_DATADIR/Apps/Clock/Data/$HOUR/$SOUND.mp3" ]; then
-            Log "[APPS][CLOCK]"  "Playing sound : "$CNF_DATADIR/Apps/Clock/Data/$HOUR/$SOUND.mp3
-            PlaySound  $CNF_DATADIR/Apps/Clock/Data/$HOUR/$SOUND.mp3 1
+            #Log "[APPS][CLOCK]"  "Playing sound : "$CNF_DATADIR/Apps/Clock/Data/$HOUR/$SOUND.mp3
+            PlaySound  $CNF_DATADIR/Apps/Clock/Data/$HOUR/$SOUND.mp3
             #EarsReset
             DATA='{"return":"0","hour":"'$HOUR'"}'
        else

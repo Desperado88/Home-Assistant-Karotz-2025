@@ -36,5 +36,5 @@ fi
 
 TG=$TG',"return":"0" }'
 
-Log "[RFID_LIST]" "Liste des tags RFID recuperee"
+#Log "[RFID_LIST]" "Liste des tags RFID recuperee"
 SendResponse "$TG"

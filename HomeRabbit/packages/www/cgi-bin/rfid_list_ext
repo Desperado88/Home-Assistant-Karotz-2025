@@ -33,5 +33,5 @@ fi
 
 TG=$TG',"return":"0" }'
 
-Log "[RFID_LIST_EXT]" "Liste etendue des tags RFID recuperee"
+#Log "[RFID_LIST_EXT]" "Liste etendue des tags RFID recuperee"
 SendResponse "$TG"

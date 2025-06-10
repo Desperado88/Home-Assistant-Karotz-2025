@@ -45,7 +45,7 @@ function CheckMandatoryParameter {
 #echo "-"$1"-"
 #echo "-"$2"-"
 if [ "$1" == "" ]; then
-    Log  "API" "Missing mandatory parameter : ('${2}')" 1
+    #Log  "API" "Missing mandatory parameter : ('${2}')" 1
     DATA='{"return":"1","msg":"Missing mandatory parameter : ('${2}')" }'
     SendResponse "$DATA"
     exit 0
@@ -106,7 +106,7 @@ function KillProcess {
 # $1 : Process To kill
 
 if [ "$1" == "" ]; then
-   Log  "System" "Stopping all Ok process"
+   #Log  "System" "Stopping all Ok process"
    /bin/killall led  >> /dev/null 2>> /dev/null
    /bin/killall ears >> /dev/null 2>> /dev/null
    /bin/killall madplay >> /dev/null 2>> /dev/null
@@ -115,17 +115,17 @@ if [ "$1" == "" ]; then
    /bin/killall squeezeslave >> /dev/null 2>> /dev/null
 else
    if [ "$1" == "LEDS" ]; then
-      Log  "System" "Stopping led process"
+      #Log  "System" "Stopping led process"
       /bin/killall led  >> /dev/null 2>>/dev/null
    fi
    
    if [ "$1" == "EARS" ]; then
-     Log  "System" "Stopping ears process"
+     #Log  "System" "Stopping ears process"
      /bin/killall ears  >> /dev/null 2>> /dev/null
    fi
 
    if [ "$1" == "SOUNDS" ]; then
-     Log  "System" "Stopping sounds process"
+     #Log  "System" "Stopping sounds process"
      /bin/killall madplay >> /dev/null 2>> /dev/null
      /bin/killall mpd  >> /dev/null 2>> /dev/null
      /bin/killall mplayer >> /dev/null 2>> /dev/null
@@ -352,7 +352,7 @@ function IsSoundPlaying {
     exit
   fi 
   
-  pidof squeezeslave >>/dev/null 2>>/dev/null
+  pidof madplay >>/dev/null 2>>/dev/null
   if [ $? -eq 0 ]; then
     echo 1
     exit
@@ -365,6 +365,7 @@ function IsSoundPlaying {
 #                                                                            
 # ---------------------------------------------------------------------------
 function PlaySound { 
+# lecteur madplay est plus simple et plus léger, mais moins flexible (idéal pour les sons simples sans besoin de contrôle)
 #SOUND $1
 
    # Récupération du volume configuré
@@ -373,21 +374,8 @@ function PlaySound {
        VOLUME=0  # Volume par défaut
    fi
 
-   # Log pour déboguer
-   echo "PlaySound - Fichier: $1" >> /tmp/volume_debug.log
-   echo "PlaySound - Volume lu: $VOLUME" >> /tmp/volume_debug.log
-
-   # Vérification des limites
-   if [ "$VOLUME" -lt -30 ]; then
-       VOLUME=-30
-   elif [ "$VOLUME" -gt 8 ]; then
-       VOLUME=8
-   fi
-
    CHECK=$(IsSoundPlaying)
    if [ $CHECK -eq 0 ]; then
-        KillProcess SOUNDS
-        echo "PlaySound - Commande madplay: madplay --adjust-volume=$VOLUME $1" >> /tmp/volume_debug.log
         madplay --adjust-volume=$VOLUME $1 >>/tmp/volume_debug.log 2>>/tmp/volume_debug.log
    fi
 }
@@ -415,7 +403,8 @@ function StopTagRecording {
 # ---------------------------------------------------------------------------
 #                                                                            
 # ---------------------------------------------------------------------------
-function PlaySoundEx { 
+function PlaySoundEx {
+# lecteur mplayer est plus sophistiqué et permet un contrôle plus fin de la lecture (idéal pour les applications interactives)
 #SOUND $1
 #BG    $2
 
@@ -425,28 +414,21 @@ function PlaySoundEx {
        VOLUME=0  # Volume par défaut
    fi
 
-   # Log pour déboguer
-   echo "PlaySoundEx - Fichier: $1" >> /tmp/volume_debug.log
-   echo "PlaySoundEx - Volume lu: $VOLUME" >> /tmp/volume_debug.log
-
    # Vérification des limites
    if [ "$VOLUME" -lt -30 ]; then
        VOLUME=-30
-   elif [ "$VOLUME" -gt 8 ]; then
-       VOLUME=8
+   elif [ "$VOLUME" -gt 0 ]; then
+       VOLUME=0
    fi
 
    CHECK=$(IsSoundPlaying)
    if [ $CHECK -eq 0 ]; then
-        KillProcess SOUNDS
         if [ ! -f /tmp/mplayer-control ]; then
           mknod /tmp/mplayer-control p  >>/dev/null 2>>/dev/null
         fi
         if [ "$2" == "1" ]; then
-          echo "PlaySoundEx - Commande mplayer (background): mplayer -quiet -slave -input file=/tmp/mplayer-control -af volume=$VOLUME $1" >> /tmp/volume_debug.log
           mplayer -quiet -slave -input file=/tmp/mplayer-control -af volume=$VOLUME $1 >>/tmp/volume_debug.log 2>>/tmp/volume_debug.log & 
         else
-          echo "PlaySoundEx - Commande mplayer: mplayer -quiet -slave -input file=/tmp/mplayer-control -af volume=$VOLUME $1" >> /tmp/volume_debug.log
           mplayer -quiet -slave -input file=/tmp/mplayer-control -af volume=$VOLUME $1 >>/tmp/volume_debug.log 2>>/tmp/volume_debug.log
         fi
    fi

@@ -63,7 +63,7 @@ function Leds {
    LED_NO_MEMORY=$4
    LED_SPEED=$5
  
-   Log "[LEDS]"  "Led color $1,$2,$3"	
+   #Log "[LEDS]"  "Led color $1,$2,$3"	
   
    if [ "$LED_PULSE" == "" ]; then
      LED_PULSE=0 

@@ -10,19 +10,22 @@ CheckMandatoryDirectory  "$CNF_DATADIR/Moods/fr"
  
 if [ -e "$CNF_DATADIR/Moods/fr/moods.lst"  ]; then
   nbline=$(cat "$CNF_DATADIR/Moods/fr/moods.lst" | wc -l )
-  # TODO Check if nbline  greater than 0
-  TG='{ "moods":['
-  while read line;
-  do
-    if [ ! "$line" == "" ]; then
-      saveIFS=$IFS
-      IFS=':'
-      set $line
-      IFS=$saveIFS
-      TG=$TG'{ "id":"'$1'","text":"'$2'"},'
-    fi
-   done < "$CNF_DATADIR/Moods/fr/moods.lst"
-   TG=${TG%?}'],"return":"0"}'
+  if [ $nbline -eq 0 ]; then
+    TG='{"return":"1","msg":"Le fichier moods.lst est vide" }'
+  else
+    TG='{ "moods":['
+    while read line;
+    do
+      if [ ! "$line" == "" ]; then
+        saveIFS=$IFS
+        IFS=':'
+        set $line
+        IFS=$saveIFS
+        TG=$TG'{ "id":"'$1'","text":"'$2'"},'
+      fi
+     done < "$CNF_DATADIR/Moods/fr/moods.lst"
+     TG=${TG%?}'],"return":"0"}'
+  fi
 else
    TG='{"return":"1","msg":"Unable to found mood list" }'
 fi                     

@@ -94,7 +94,7 @@ do
  	             fi
  	             SCENE_ID$(cat CNF_DATADIR/Rfid/${RFID_ID}.rfid)
                      SCENE_CMD=$(cat $CNF_DATADIR/Rfid/${RFID_ID}.cmd)
- 	             Log "[Rfid]" "Calling external action : $(GetCmdName $SCENE_CMD)"
+ 	             #Log "[Rfid]" "Calling external action : $(GetCmdName $SCENE_CMD)"
 		     LedsRestore
               	     eval $(cat $CNF_DATADIR/Rfid/${RFID_ID}.action | busybox base64 -d)
               	  fi

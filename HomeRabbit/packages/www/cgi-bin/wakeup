@@ -9,7 +9,7 @@ source /www/cgi-bin/ears.inc
 KillProcess
 ReadUrlParam
 
-Log  "Waking Up"
+#Log  "Waking Up"
 Leds 00FF00 000000 1
 EarsReset
 SILENT=${URLParam[silent]}

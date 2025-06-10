@@ -12,11 +12,11 @@ CHK=${URLParam[enable]}
 CheckMandatoryParameter "$CHK" enable
 if [ "$CHK" == "1" ]; then
 	echo "1" > "$CNF_DATADIR/Run/karotz.check"
-	Log "[SYSTEM]"  "Network check enabled"
+	#Log "[SYSTEM]"  "Network check enabled"
 	DATA='{"return":"0","silent":"Network check enabled"}'
 else
 	rm -rf   /usr/openkarotz/Run/karotz.check
-	Log "[SYSTEM]"  "Network check disabled"
+	#Log "[SYSTEM]"  "Network check disabled"
 	DATA='{"return":"0","msg":"Network check disable"}'
 fi
 
