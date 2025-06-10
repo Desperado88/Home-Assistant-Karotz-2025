@@ -33,7 +33,7 @@
         data:
           entity_id: input_number.karotz_violet_ear_left
           value: >
-            {% set rain = states('sensor.treillieres_rain_chance') | default(0) | float %}
+            {% set rain = states('sensor.ville_rain_chance') | default(0) | float %}
             {% if rain < 5 %}
               {{ 15 }}
             {% elif rain > 60 %}
@@ -45,7 +45,7 @@
         data:
           entity_id: input_number.karotz_violet_ear_right
           value: >
-            {% set rain = states('sensor.treillieres_rain_chance') | default(0) | float %}
+            {% set rain = states('sensor.ville_rain_chance') | default(0) | float %}
             {% if rain < 5 %}
               {{ 15 }}
             {% elif rain > 60 %}
