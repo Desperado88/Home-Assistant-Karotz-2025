@@ -180,6 +180,19 @@ script:
     alias: Supprimer un tag RFID
     sequence:
       - action: rest_command.karotz_dev_rfid_delete
+  karotz_dev_wakeup:
+    sequence:
+      - action: rest_command.karotz_dev_wakeup
+  karotz_dev_sleep:
+    sequence:
+      - action: rest_command.karotz_dev_sleep
+  karotz_dev_tai_chi:
+    sequence:
+      - action: rest_command.karotz_dev_tai_chi
+  karotz_dev_moods:
+    sequence:
+      - action: rest_command.karotz_dev_moods
+
       
 automation:
   - id: karotz_dev_on_automation
