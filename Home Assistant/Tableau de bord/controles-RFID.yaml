@@ -1,0 +1,56 @@
+type: vertical-stack
+cards:
+  - type: entities
+    title: RFID - Configuration
+    show_header_toggle: false
+    entities:
+      - entity: input_text.karotz_dev_rfid_id
+        name: ID du tag
+        show_icon: false
+      - entity: input_text.karotz_dev_rfid_name
+        name: Nom du tag
+        show_icon: false
+      - entity: input_text.karotz_dev_rfid_url
+        name: URL Webhook
+        show_icon: false
+      - type: button
+        name: Assigner le Tag
+        show_icon: false
+        tap_action:
+          action: call-service
+          service: rest_command.karotz_dev_rfid_assign
+  - type: entities
+    title: RFID - Actions
+    show_header_toggle: false
+    entities:
+      - type: button
+        name: Démarrer l'enregistrement
+        show_icon: false
+        tap_action:
+          action: call-service
+          service: rest_command.karotz_dev_rfid_record_start
+      - type: button
+        name: Arrêter l'enregistrement
+        show_icon: false
+        tap_action:
+          action: call-service
+          service: rest_command.karotz_dev_rfid_record_stop
+      - type: button
+        name: Rafraîchir la liste
+        show_icon: false
+        tap_action:
+          action: homeassistant.update_entity
+          target:
+            entity_id: sensor.karotz_dev_rfid_list_ext
+  - type: markdown
+    title: Liste des Tags RFID
+    content: >
+      <table> <thead><tr><th>ID</th><th>Nom</th></tr></thead> <tbody> {% set
+      tags = state_attr('sensor.karotz_dev_rfid_list_ext', 'tags') %} {% if tags
+      %}
+        {% for tag in tags %}
+          <tr><td>{{ tag.id }}</td><td>{{ tag.name if tag.name else 'Sans nom' }}</td></tr>
+        {% endfor %}
+      {% else %}
+        <tr><td colspan="2">Aucun tag trouvé</td></tr>
+      {% endif %} </tbody> </table>

@@ -1,0 +1,60 @@
+type: vertical-stack
+cards:
+  - type: entities
+    title: Karotz Dev
+    entities:
+      - entity: input_boolean.karotz_dev_awake
+        name: Awake
+      - entity: input_number.karotz_dev_volume
+        name: Volume
+      - entity: input_number.karotz_dev_ear_left
+        name: Ear Left
+      - entity: input_number.karotz_dev_ear_right
+        name: Ear Right
+      - entity: input_text.karotz_dev_color_1
+        name: Color 1
+      - entity: input_text.karotz_dev_color_2
+        name: Color 2
+      - entity: input_number.karotz_dev_light_speed
+        name: Light Speed
+  - type: horizontal-stack
+    cards:
+      - show_name: true
+        show_icon: true
+        type: button
+        name: Wake Up
+        icon: mdi:power
+        tap_action:
+          action: call-service
+          service: script.karotz_dev_wakeup
+      - type: button
+        name: Sleep
+        icon: mdi:power-off
+        tap_action:
+          action: call-service
+          service: script.karotz_dev_sleep
+      - type: button
+        name: Tai-Chi
+        icon: mdi:yin-yang
+        tap_action:
+          action: call-service
+          service: script.karotz_dev_tai_chi
+      - type: button
+        name: Moods
+        icon: mdi:emoticon-happy
+        tap_action:
+          action: call-service
+          service: script.karotz_dev_moods
+  - type: entities
+    title: Text To Speech
+    entities:
+      - entity: input_text.karotz_dev_tts_text_ha
+        name: TTS Message
+  - type: button
+    name: Speak
+    icon: mdi:microphone
+    tap_action:
+      action: call-service
+      service: rest_command.karotz_dev_say_ha
+      data:
+        text: "{{ states('input_text.karotz_tts_text') }}"
