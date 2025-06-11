@@ -24,15 +24,17 @@ Ce projet permet d'intégrer votre Karotz à Home Assistant, offrant un contrôl
    - Le **SSID** de votre Wi-Fi
    - Le **mot de passe** correspondant
 
-3. Copiez le contenu du dossier "HomeRabbit" sur la clé USB 
+(Optionnel, vous pouvez indiquer l'adresse IP de votre serveur TTS/HA dans le fichier HomeRabbit/packages/www/cgi-bin/tts ligne 66 et commenter la ligne 67 si besoin.)
 
-4. Réinitialisez le karotz en le branchant en maintenant le bouton de la tête jusqu'à ce que la led s'allume bleu, relâchez le bouton et attendez que la led devienne cyan fixe
+3. Copiez le contenu du dossier "HomeRabbit" sur la clé USB (en remplaçant les fichiers existants si besoin)
 
-5. Débranchez le karotz, Insérez la clé USB dans votre Karotz et branchez-le (molette tournée sur on). Il va indiquer qu'il fait la mise à jour. Puis, redémarrez. Attendez la led verte, il devrait se connecter automatiquement au Wi-Fi. (ne pas encore retirer la clé USB)
+4. Réinitialisez le Karotz en le branchant en maintenant le bouton de la tête jusqu'à ce que la LED s'allume bleue, relâchez le bouton et attendez que la LED devienne cyan fixe
 
-6. Connectez-vous au karotz en ssh via la commande terminal "ssh karotz@[Ip du karotz]"
+5. Débranchez le Karotz, insérez la clé USB dans votre Karotz et branchez-le (molette tournée sur on). Il va indiquer qu'il fait la mise à jour. Puis, redémarrez. Attendez la LED verte, il devrait se connecter automatiquement au Wi-Fi. (Ne pas encore retirer la clé USB)
 
-7. Une fois en ssh, faites les commandes "passwd" et "passwd karotz" pour initialiser des mots de passe
+6. Connectez-vous au Karotz en SSH via la commande terminal "ssh karotz@[IP du Karotz]"
+
+7. Une fois en SSH, faites les commandes "passwd" et "passwd karotz" pour initialiser des mots de passe
 
 8. Passez à l'Intégration dans Home Assistant
 
@@ -49,9 +51,9 @@ homeassistant:
   
 - Redémarrez Home Assistant depuis Paramètres → Système → Redémarrer.
 
-## 🔊 karotz TTS via home assistant
+## 🔊 Karotz TTS via Home Assistant
 
-un Addon est disponible pour faire du tts localement via Home Assistant, pour plus d'informations :
+Un Addon est disponible pour faire du TTS localement via Home Assistant, pour plus d'informations :
 https://github.com/Desperado88/karotz-tts-addon
 
 ## 🔧 Installation détaillée (FreeRabbit, openkarotz, ssh)
@@ -68,19 +70,23 @@ https://github.com/Desperado88/karotz-tts-addon
    - Le **SSID** de votre Wi-Fi
    - Le **mot de passe** correspondant
 
-4. Réinitialisez le karotz en le branchant en maintenant le bouton de la tête jusqu'à ce que la led s'allume bleu et attendez le redémarrage
+(Optionnel, vous pouvez indiquer l'adresse IP de votre serveur TTS/HA dans le fichier HomeRabbit/packages/www/cgi-bin/tts ligne 66 et commenter la ligne 67 si besoin.)
 
-5. Débranchez le karotz, Insérez la clé USB dans votre Karotz et branchez-le (molette tournée sur on). Il va indiquer qu'il fait la mise à jour. Puis, redémarrez. Attendez la led verte, il devrait se connecter automatiquement au Wi-Fi. (ne pas encore retirer la clé USB)
+4. Copiez le contenu du dossier "HomeRabbit" sur la clé USB (en remplaçant les fichiers existants si besoin)
 
-6. Connectez-vous sur l'ip du karotz : http://[ip du karotz]/install
+5. Réinitialisez le Karotz en le branchant en maintenant le bouton de la tête jusqu'à ce que la LED s'allume bleue et attendez le redémarrage
 
-7. Installez Openkarotz et ssh depuis cette page
+6. Débranchez le Karotz, insérez la clé USB dans votre Karotz et branchez-le (molette tournée sur on). Il va indiquer qu'il fait la mise à jour. Puis, redémarrez. Attendez la LED verte, il devrait se connecter automatiquement au Wi-Fi. (Ne pas encore retirer la clé USB)
 
-8. Redémarrez le karotz via la molette de réglage du volume
+7. Connectez-vous sur l'IP du Karotz : http://[IP du Karotz]/install
 
-9. Connectez-vous au karotz en ssh via la commande terminal "ssh karotz@[Ip du karotz]"
+8. Installez OpenKarotz et SSH depuis cette page
 
-10. Connectez-vous en ssh et faites les commandes "passwd" et "passwd karotz" pour initialiser des mots de passe
+9. Redémarrez le Karotz via la molette de réglage du volume
+
+10. Connectez-vous au Karotz en SSH via la commande terminal "ssh karotz@[IP du Karotz]"
+
+11. Connectez-vous en SSH et faites les commandes "passwd" et "passwd karotz" pour initialiser des mots de passe
 
 ## 🏠 Intégration dans Home Assistant
 

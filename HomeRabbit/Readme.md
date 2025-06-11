@@ -11,9 +11,11 @@ Ce dossier contient les fichiers nécessaires pour la configuration de votre Kar
    - Si des fichiers existent déjà, remplacez-les
    - Assurez-vous de copier tous les fichiers et dossiers
 
-3. Branchez la clé USB à votre lapin et mettez-le sous tension
+3. Pensez à remplir l'adresse IP de votre Karotz dans le fichier `waitfornetwork.sh`. Vous pouvez également renseigner l'IP de votre serveur TTS/HA dans le script 'tts' ligne 66 et commenter la ligne 67 si besoin.
 
-4. Le lapin vous avertit lorsque l'installation est finie et redémarre, retirez la clé
+4. Branchez la clé USB à votre lapin et mettez-le sous tension
+
+5. Le lapin vous avertit lorsque l'installation est finie et redémarre, retirez la clé
 
 ## Vérification
 
