@@ -13,8 +13,8 @@
 # 3. Redémarrer Home Assistant
 
   # Meteo -----------------------------------------------------------
-  - id: karotz_violet_meteo_automation
-    alias: "karotz_violet - Réaction météo"
+  - id: karotz_dev_meteo_automation
+    alias: "karotz_dev - Réaction météo"
     description: "Adapte les oreilles, la LED et le clignotement selon les conditions météo"
     trigger:
       - trigger: time_pattern
@@ -24,14 +24,14 @@
         after: "07:00:00"
         before: "19:00:00"
     actions:
-      - action: rest_command.karotz_violet_say
+      - action: rest_command.karotz_dev_say
         data:
           text: >-
             Voici la météo.
-      - action: rest_command.karotz_violet_ears_reset
+      - action: rest_command.karotz_dev_ears_reset
       - action: input_number.set_value
         data:
-          entity_id: input_number.karotz_violet_ear_left
+          entity_id: input_number.karotz_dev_ear_left
           value: >
             {% set rain = states('sensor.[ville]_rain_chance') | default(0) | float %}
             {% if rain < 5 %}
@@ -43,7 +43,7 @@
             {% endif %}
       - action: input_number.set_value
         data:
-          entity_id: input_number.karotz_violet_ear_right
+          entity_id: input_number.karotz_dev_ear_right
           value: >
             {% set rain = states('sensor.[ville]_rain_chance') | default(0) | float %}
             {% if rain < 5 %}
@@ -55,7 +55,7 @@
             {% endif %}
       - action: input_text.set_value
         data:
-          entity_id: input_text.karotz_violet_color_1
+          entity_id: input_text.karotz_dev_color_1
           value: >
             {% set temp = states('sensor.[temperature]') | default(20) | float %}
             {% if temp <= -10 %}ADD8E6
@@ -70,11 +70,11 @@
             {% else %}FF0000{% endif %}
       - action: input_text.set_value
         data:
-          entity_id: input_text.karotz_violet_color_2
+          entity_id: input_text.karotz_dev_color_2
           value: "000000"
       - action: input_number.set_value
         data:
-          entity_id: input_number.karotz_violet_light_speed
+          entity_id: input_number.karotz_dev_light_speed
           value: >
             {% set wind = states('sensor.[vitesse du vent]') | default(0) | float %}
             {% set base = 2000 %}
@@ -82,9 +82,9 @@
             {% set decrement = ((wind // 5) * 150) %}
             {% set result = base - decrement %}
             {% if result < min_speed %}{{ min_speed }}{% elif result > base %}{{ base }}{% else %}{{ result | int }}{% endif %}
-      - action: rest_command.karotz_violet_light
-      - action: rest_command.karotz_violet_ears
-      - action: rest_command.karotz_violet_say
+      - action: rest_command.karotz_dev_light
+      - action: rest_command.karotz_dev_ears
+      - action: rest_command.karotz_dev_say
         data:
           text: >-
             Il fait {{ states('sensor.[temperature]') | default(20) | float | round(0) }} degrés.
