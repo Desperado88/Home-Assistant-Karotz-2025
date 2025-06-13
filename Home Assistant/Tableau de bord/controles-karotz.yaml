@@ -1,7 +1,7 @@
 type: vertical-stack
 cards:
   - type: entities
-    title: Karotz dev 103
+    title: Karotz dev
     entities:
       - entity: input_boolean.karotz_dev_awake
         name: Awake
