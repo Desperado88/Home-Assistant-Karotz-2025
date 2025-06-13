@@ -54,17 +54,17 @@ input_number:
     step: 100
 
   karotz_dev_volume:
-    name: Karotz Dev Volume
+    name: "Volume karotz_dev"
     min: 0
     max: 100
     step: 1
     mode: slider
     unit_of_measurement: "%"
-    initial: 100
+    initial: 100 # Volume maximum par défaut
 
 template:
   - sensor:
-      - name: "Karotz Dev Volume (dB)"
+      - name: "Volume karotz_dev (dB)"
         state: >
           {% set percentage = states('input_number.karotz_dev_volume') | float %}
           {% set db = ((100 - percentage) / 100 * -30) %}
@@ -155,8 +155,9 @@ rest_command:
   karotz_dev_clock:
     url: "http://{{ states('input_text.karotz_dev_ip_address') }}/cgi-bin/apps/clock"
   karotz_dev_volume:
-    url: "http://{{ states('input_text.karotz_dev_ip_address') }}/cgi-bin/volume?level={{ level }}"
+    url: "http://{{ states('input_text.karotz_dev_ip_address') }}/cgi-bin/volume?level={{ states('input_number.karotz_dev_volume') }}"
     method: GET
+    timeout: 10
 # RFID ----------------------------------------------------
   karotz_dev_rfid_record_start:
     url: "http://{{ states('input_text.karotz_dev_ip_address') }}/cgi-bin/rfid_start_record"
@@ -256,3 +257,11 @@ automation:
         entity_id: input_number.karotz_dev_ear_right
     action:
       - action: rest_command.karotz_dev_ears
+
+  - id: karotz_dev_volume_automation
+    alias: "Update karotz_dev volume"
+    trigger:
+      - trigger: state
+        entity_id: input_number.karotz_dev_volume
+    action:
+      - action: rest_command.karotz_dev_volume

@@ -1,7 +1,7 @@
 type: vertical-stack
 cards:
   - type: entities
-    title: Karotz Dev
+    title: Karotz dev 103
     entities:
       - entity: input_boolean.karotz_dev_awake
         name: Awake
@@ -17,6 +17,9 @@ cards:
         name: Color 2
       - entity: input_number.karotz_dev_light_speed
         name: Light Speed
+      - entity: input_boolean.karotz_dev_light_fixed_mode
+        name: Light Fixed Mode
+    show_header_toggle: false
   - type: horizontal-stack
     cards:
       - show_name: true
@@ -27,7 +30,9 @@ cards:
         tap_action:
           action: call-service
           service: script.karotz_dev_wakeup
-      - type: button
+      - show_name: true
+        show_icon: true
+        type: button
         name: Sleep
         icon: mdi:power-off
         tap_action:
@@ -39,7 +44,9 @@ cards:
         tap_action:
           action: call-service
           service: script.karotz_dev_tai_chi
-      - type: button
+      - show_name: true
+        show_icon: true
+        type: button
         name: Moods
         icon: mdi:emoticon-happy
         tap_action:
@@ -52,9 +59,6 @@ cards:
         name: TTS Message
   - type: button
     name: Speak
-    icon: mdi:microphone
     tap_action:
       action: call-service
       service: rest_command.karotz_dev_say_ha
-      data:
-        text: "{{ states('input_text.karotz_tts_text') }}"

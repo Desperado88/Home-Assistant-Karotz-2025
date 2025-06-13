@@ -23,7 +23,7 @@ def PlayMP3(mp3file):
     if not IsSleeping():
         # Récupération du volume configuré
         try:
-            f = open("/usr/karotz/config/volume", "r")
+            f = open("/usr/openkarotz/Run/volume", "r")
             volume = f.read().strip()
             f.close()
             if volume:

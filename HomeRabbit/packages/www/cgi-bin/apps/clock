@@ -43,7 +43,7 @@ fi
           if [ -f "$CNF_DATADIR/Apps/Clock/Data/$HOUR/$SOUND.mp3" ]; then
             #Log "[APPS][CLOCK]"  "Playing sound : "$CNF_DATADIR/Apps/Clock/Data/$HOUR/$SOUND.mp3
             PlaySound  $CNF_DATADIR/Apps/Clock/Data/$HOUR/$SOUND.mp3
-            #EarsReset
+            EarsReset
             DATA='{"return":"0","hour":"'$HOUR'"}'
        else
 	    DATA='{"return":"1","msg":"No sound for this time."}'       

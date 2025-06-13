@@ -41,7 +41,7 @@ elif [ "$VOLUME" -gt 0 ]; then
     VOLUME=0
 fi
 
-# Sauvegarde du volume dans le fichier de configuration
+# Sauvegarde du volume dans le fichier de configuration /usr/openkarotz/Run/volume
 echo "$VOLUME" > $CNF_DATADIR/Run/volume
 
 # Jouer un son de test avec le nouveau volume

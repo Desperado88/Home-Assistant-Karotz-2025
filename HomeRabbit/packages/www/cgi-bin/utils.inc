@@ -369,9 +369,9 @@ function PlaySound {
 #SOUND $1
 
    # Récupération du volume configuré
-   VOLUME=$(cat /usr/karotz/config/volume 2>/dev/null)
+   VOLUME=$(cat /usr/openkarotz/Run/volume 2>/dev/null)
    if [ -z "$VOLUME" ]; then
-       VOLUME=0  # Volume par défaut
+       VOLUME=100  # Volume par défaut
    fi
 
    CHECK=$(IsSoundPlaying)
@@ -409,7 +409,7 @@ function PlaySoundEx {
 #BG    $2
 
    # Récupération du volume configuré
-   VOLUME=$(cat /usr/karotz/config/volume 2>/dev/null)
+   VOLUME=$(cat /usr/openkarotz/Run/volume 2>/dev/null)
    if [ -z "$VOLUME" ]; then
        VOLUME=0  # Volume par défaut
    fi
