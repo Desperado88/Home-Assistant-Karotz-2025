@@ -8,40 +8,20 @@ input_text:
   karotz_dev_color_2:
     name: Karotz dev Color 2
     initial: "000000"
+  # --- RFID ---
   karotz_dev_rfid_id:
     name: ID du tag
-    initial: ""
+  karotz_dev_rfid_url:
+    name: URL à assigner
   karotz_dev_rfid_name:
     name: Nom du tag
-    initial: ""
-  karotz_dev_rfid_url:
-    name: URL du webhook
-    initial: ""
   karotz_dev_rfid_delete_id:
     name: ID du tag à supprimer
-    initial: ""
+  # --- FIN RFID ---
   karotz_dev_tts_text_ha:
     name: Karotz TTS Text
     initial: "Bonjour, je suis réveillé"
 
-sensor:
-  - platform: rest
-    resource: "http://192.168.1.xxx/cgi-bin/status"
-    name: karotz_dev_sleep_sensor
-    value_template: "{{ value_json.sleep }}"
-  - platform: rest
-    name: karotz_dev_rfid_list_ext
-    resource: "http://192.168.1.xxx/cgi-bin/rfid_list_ext"
-    value_template: >
-      {% if value_json is defined %}
-        {{ value_json.get('return', 'unknown') }}
-      {% else %}
-        unavailable
-      {% endif %}
-    json_attributes:
-      - tags
-    scan_interval: 60
-    
 input_boolean:
   karotz_dev_awake:
     name: Karotz dev Awake
@@ -78,6 +58,21 @@ input_number:
     unit_of_measurement: "%"
     initial: 100
 
+sensor:
+  - platform: rest
+    resource: "http://192.168.1.xxx/cgi-bin/status"
+    name: karotz_dev_sleep_sensor
+    value_template: "{{ value_json.sleep }}"
+  # --- RFID ---
+  - platform: rest
+    name: karotz_dev_rfid_list
+    resource: "http://192.168.1.xxx/cgi-bin/rfid_list"
+    value_template: "{{ value_json.return if value_json is defined else 'unknown' }}"
+    json_attributes:
+      - tags
+    scan_interval: 60
+  # --- FIN RFID ---
+
 template:
   - sensor:
       - name: "Karotz dev Volume (dB)"
@@ -87,42 +82,7 @@ template:
           {{ db | round(0) }}
         unit_of_measurement: "dB"
         icon: mdi:volume-high
-      - name: "Karotz dev RFID Tag List"
-        state: >
-          {% set tags = state_attr('sensor.karotz_dev_rfid_list_ext', 'tags') %}
-          {% if tags %}
-            OK
-          {% else %}
-            AUCUN
-          {% endif %}
-        attributes:
-          list_markdown: >
-            {% set tags = state_attr('sensor.karotz_dev_rfid_list_ext', 'tags') %}
-            {% if tags %}
-            | ID | Nom |
-            |----|------|
-            {% for tag in tags %}
-            | {{ tag.id }} | {{ tag.name if tag.name else 'Sans nom' }} |
-            {% endfor %}
-            {% else %}
-            Aucun tag trouvé
-            {% endif %}
-
-switch:
-  - platform: template
-    switches:
-      karotz_dev_life:
-        friendly_name: "Karotz dev Awake"
-        value_template: "{{ is_state('input_boolean.karotz_dev_awake', 'on') }}"
-        turn_on:
-          action: script.turn_on
-          target:
-            entity_id: script.karotz_dev_wakeup
-        turn_off:
-          action: script.turn_on
-          target:
-            entity_id: script.karotz_dev_sleep
-
+  
 rest_command:
   karotz_dev_free_space:
     url: "http://{{ states('input_text.karotz_dev_ip_address') }}/cgi-bin/get_free_space"
@@ -158,6 +118,7 @@ rest_command:
     url: "http://{{ states('input_text.karotz_dev_ip_address') }}/cgi-bin/volume?level={{ states('input_number.karotz_dev_volume') | int }}"
     method: GET
     timeout: 10
+  # --- RFID ---
   karotz_dev_rfid_record_start:
     url: "http://{{ states('input_text.karotz_dev_ip_address') }}/cgi-bin/rfid_start_record"
   karotz_dev_rfid_record_stop:
@@ -166,93 +127,82 @@ rest_command:
     url: "http://{{ states('input_text.karotz_dev_ip_address') }}/cgi-bin/rfid_assign_url?tag={{ states('input_text.karotz_dev_rfid_id') }}&url={{ states('input_text.karotz_dev_rfid_url') | urlencode }}&name={{ states('input_text.karotz_dev_rfid_name') | urlencode }}"
   karotz_dev_rfid_list:
     url:  "http://{{ states('input_text.karotz_dev_ip_address') }}/cgi-bin/rfid_list"
-  karotz_dev_rfid_list_ext:
-    url:  "http://{{ states('input_text.karotz_dev_ip_address') }}/cgi-bin/rfid_list_ext"
   karotz_dev_rfid_delete:
     url: "http://{{ states('input_text.karotz_dev_ip_address') }}/cgi-bin/rfid_delete?tag={{ states('input_text.karotz_dev_rfid_delete_id') }}"
+  # --- FIN RFID ---
 
 script:
+  # --- RFID ---
   karotz_dev_assign_rfid:
     alias: Assigner un tag RFID
     sequence:
-      - action: rest_command.karotz_dev_rfid_assign
+      - service: rest_command.karotz_dev_rfid_assign
   karotz_dev_delete_rfid:
     alias: Supprimer un tag RFID
     sequence:
-      - action: rest_command.karotz_dev_rfid_delete
+      - service: rest_command.karotz_dev_rfid_delete
+  karotz_refresh_tags:
+    alias: Rafraîchir liste des tags Karotz
+    sequence:
+      - service: rest.reload
+  # --- FIN RFID ---
   karotz_dev_wakeup:
     sequence:
-      - action: rest_command.karotz_dev_wakeup
+      - service: rest_command.karotz_dev_wakeup
   karotz_dev_sleep:
     sequence:
-      - action: rest_command.karotz_dev_sleep
+      - service: rest_command.karotz_dev_sleep
   karotz_dev_tai_chi:
     sequence:
-      - action: rest_command.karotz_dev_tai_chi
+      - service: rest_command.karotz_dev_tai_chi
   karotz_dev_moods:
     sequence:
-      - action: rest_command.karotz_dev_moods
+      - service: rest_command.karotz_dev_moods
 
 automation:
   - id: karotz_dev_on_automation
     alias: Karotz dev On
     trigger:
-      - trigger: state
+      - platform: state
         entity_id: sensor.karotz_dev_sleep_sensor
         to: "0"
     action:
-      - action: input_boolean.turn_on
+      - service: input_boolean.turn_on
         target:
           entity_id: input_boolean.karotz_dev_awake
   - id: karotz_dev_off_automation
     alias: Karotz dev Off
     trigger:
-      - trigger: state
+      - platform: state
         entity_id: sensor.karotz_dev_sleep_sensor
         to: "1"
     action:
-      - action: input_boolean.turn_off
+      - service: input_boolean.turn_off
         target:
           entity_id: input_boolean.karotz_dev_awake
-  - id: karotz_dev_color_1_automation
-    alias: Update Karotz dev Color 1
+  - id: karotz_dev_color_automation
+    alias: Update Karotz dev Color
     trigger:
-      - trigger: state
-        entity_id: input_text.karotz_dev_color_1
+      - platform: state
+        entity_id:
+          - input_text.karotz_dev_color_1
+          - input_text.karotz_dev_color_2
+          - input_number.karotz_dev_light_speed
     action:
-      - action: rest_command.karotz_dev_light
-  - id: karotz_dev_color_2_automation
-    alias: Update Karotz dev Color 2
+      - service: rest_command.karotz_dev_light
+  - id: karotz_dev_ear_automation
+    alias: Update Karotz dev Ears
     trigger:
-      - trigger: state
-        entity_id: input_text.karotz_dev_color_2
+      - platform: state
+        entity_id:
+          - input_number.karotz_dev_ear_left
+          - input_number.karotz_dev_ear_right
     action:
-      - action: rest_command.karotz_dev_light
-  - id: karotz_dev_color_speed_automation
-    alias: Update Karotz dev Light Speed
-    trigger:
-      - trigger: state
-        entity_id: input_number.karotz_dev_light_speed
-    action:
-      - action: rest_command.karotz_dev_light
-  - id: karotz_dev_ear_left_automation
-    alias: Update Karotz dev Ear Left
-    trigger:
-      - trigger: state
-        entity_id: input_number.karotz_dev_ear_left
-    action:
-      - action: rest_command.karotz_dev_ears
-  - id: karotz_dev_ear_right_automation
-    alias: Update Karotz dev Ear Right
-    trigger:
-      - trigger: state
-        entity_id: input_number.karotz_dev_ear_right
-    action:
-      - action: rest_command.karotz_dev_ears
+      - service: rest_command.karotz_dev_ears
   - id: karotz_dev_light_mode_automation
     alias: Karotz dev Light Mode Automation
     trigger:
-      - trigger: state
+      - platform: state
         entity_id: input_boolean.karotz_dev_light_fixed_mode
     action:
       - choose:
@@ -261,115 +211,19 @@ automation:
                 entity_id: input_boolean.karotz_dev_light_fixed_mode
                 state: 'on'
             sequence:
-              - action: rest_command.karotz_dev_light_fixed
+              - service: rest_command.karotz_dev_light_fixed
           - conditions:
               - condition: state
                 entity_id: input_boolean.karotz_dev_light_fixed_mode
                 state: 'off'
             sequence:
-              - action: rest_command.karotz_dev_light
+              - service: rest_command.karotz_dev_light
   - id: karotz_dev_volume_automation
     alias: Update Karotz dev Volume
     trigger:
-      - trigger: state
+      - platform: state
         entity_id: input_number.karotz_dev_volume
     action:
-      - action: rest_command.karotz_dev_volume
+      - service: rest_command.karotz_dev_volume
         data:
           level: "{{ states('input_number.karotz_dev_volume') | int }}"
-
-# Annonce de l'heure toutes les heures
-  - id: karotz_dev_orloge_parlante_automation
-    alias: "karotz_dev  - Annonce de l'heure"
-    description: "Fait annoncer l'heure par le karotz_dev  toutes les heures"
-    trigger:
-      - trigger: time_pattern
-        minutes: "0"
-    condition:
-      - condition: time
-        after: "07:00:00" # ⚠️ À PERSONNALISER : Heure de début des annonces
-        before: "20:00:00" # ⚠️ À PERSONNALISER : Heure de fin des annonces
-      - condition: state
-        entity_id: input_boolean.karotz_dev_awake
-        state: "on"
-    action:
-      - action: rest_command.karotz_dev_clock
-# Meteo -----------------------------------------------------------
-  - id: karotz_dev_meteo_automation
-    alias: "karotz_dev - Réaction météo"
-    description: "Adapte les oreilles, la LED et le clignotement selon les conditions météo"
-    trigger:
-      - trigger: time_pattern
-        minutes: "15"  # Déclenchement toutes les 15 minutes entre 7h et 19h
-    condition:
-      - condition: time
-        after: "07:00:00"
-        before: "19:00:00"
-    actions:
-      - action: rest_command.karotz_dev_say
-        data:
-          text: >-
-            Voici la météo.
-      - action: rest_command.karotz_dev_ears_reset
-      - action: input_number.set_value
-        data:
-          entity_id: input_number.karotz_dev_ear_left
-          value: >
-            {% set rain = states('sensor.treillieres_rain_chance') | default(0) | float %}
-            {% if rain < 5 %}
-              {{ 15 }}
-            {% elif rain > 60 %}
-              {{ 4 }}
-            {% else %}
-              {{ (15 - ((rain - 5) // 5)) | int }}
-            {% endif %}
-      - action: input_number.set_value
-        data:
-          entity_id: input_number.karotz_dev_ear_right
-          value: >
-            {% set rain = states('sensor.treillieres_rain_chance') | default(0) | float %}
-            {% if rain < 5 %}
-              {{ 15 }}
-            {% elif rain > 60 %}
-              {{ 4 }}
-            {% else %}
-              {{ (15 - ((rain - 5) // 5)) | int }}
-            {% endif %}
-      - action: input_text.set_value
-        data:
-          entity_id: input_text.karotz_dev_color_1
-          value: >
-            {% set temp = states('sensor.pac_atom_temp_ext') | default(20) | float %}
-            {% if temp <= -10 %}ADD8E6
-            {% elif temp <= -5 %}87CEFA
-            {% elif temp <= 0 %}00CED1
-            {% elif temp <= 5 %}40E0D0
-            {% elif temp <= 10 %}90EE90
-            {% elif temp <= 15 %}ADFF2F
-            {% elif temp <= 20 %}FFD700
-            {% elif temp <= 25 %}FFA500
-            {% elif temp <= 30 %}FF4500
-            {% else %}FF0000{% endif %}
-      - action: input_text.set_value
-        data:
-          entity_id: input_text.karotz_dev_color_2
-          value: "000000"
-      - action: input_number.set_value
-        data:
-          entity_id: input_number.karotz_dev_light_speed
-          value: >
-            {% set wind = states('sensor.weather_station_vitesse_moyenne_du_vent_km_h') | default(0) | float %}
-            {% set base = 2000 %}
-            {% set min_speed = 100 %}
-            {% set decrement = ((wind // 5) * 150) %}
-            {% set result = base - decrement %}
-            {% if result < min_speed %}{{ min_speed }}{% elif result > base %}{{ base }}{% else %}{{ result | int }}{% endif %}
-      - action: rest_command.karotz_dev_light
-      - action: rest_command.karotz_dev_ears
-      - action: rest_command.karotz_dev_say
-        data:
-          text: >-
-            Il fait {{ states('sensor.pac_atom_temp_ext') | default(20) | float | round(0) }} degrés.
-            Le vent souffle à {{ states('sensor.weather_station_vitesse_moyenne_du_vent_km_h') | default(0) | float | round(0) }} kilomètres par heure.
-            Le risque de pluie est de {{ states('sensor.treillieres_rain_chance') | default(0) | float | round(0) }} pourcents.
-    mode: single  # Empêche le déclenchement multiple simultané
