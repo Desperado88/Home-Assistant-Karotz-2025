@@ -39,18 +39,31 @@ cards:
         name: Rafraîchir la liste
         show_icon: false
         tap_action:
-          action: homeassistant.update_entity
-          target:
-            entity_id: sensor.karotz_dev_rfid_list_ext
+          action: call-service
+          service: homeassistant.update_entity
+          data:
+            entity_id: sensor.karotz_dev_rfid_list
   - type: markdown
     title: Liste des Tags RFID
     content: >
-      <table> <thead><tr><th>ID</th><th>Nom</th></tr></thead> <tbody> {% set
-      tags = state_attr('sensor.karotz_dev_rfid_list_ext', 'tags') %} {% if tags
-      %}
+      <table> <tbody> {% set
+      tags = state_attr('sensor.karotz_dev_rfid_list', 'tags') %} {% if tags %}
         {% for tag in tags %}
-          <tr><td>{{ tag.id }}</td><td>{{ tag.name if tag.name else 'Sans nom' }}</td></tr>
+          ID: {{ tag.id }} {{ tag.name if tag.name else 'Sans nom' }}
         {% endfor %}
       {% else %}
-        <tr><td colspan="2">Aucun tag trouvé</td></tr>
+        Aucun tag trouvé
       {% endif %} </tbody> </table>
+  - type: entities
+    title: RFID - Supprimer
+    show_header_toggle: false
+    entities:
+      - entity: input_text.karotz_dev_rfid_delete_id
+        name: ID du tag à supprimer
+        show_icon: false
+      - type: button
+        name: Supprimer le tag
+        show_icon: false
+        tap_action:
+          action: call-service
+          service: rest_command.karotz_dev_rfid_delete
