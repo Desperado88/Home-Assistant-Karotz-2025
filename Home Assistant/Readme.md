@@ -1,60 +1,39 @@
-# Carte Lovelace pour la Gestion des Tags RFID
+# Home Assistant - Configuration Karotz
 
-Cette carte Lovelace pour Home Assistant permet de gérer facilement les tags RFID dans votre système domotique.
-
-## Fonctionnalités
-
-- Ajouter de nouveaux tags RFID
-- Supprimer des tags existants
-- Créer des tags personnalisés
-- Interface utilisateur intuitive
-- Contrôle du volume du Karotz
+Ce projet contient une configuration complète pour l'intégration du Karotz dans Home Assistant, incluant des automatisations, des cartes Lovelace et des packages.
 
 ## Installation
 
-1. Copiez le code de la carte tag-rfid.yaml dans votre configuration de nouvelle carte
-2. Remplacez les noms des entités par ceux de votre configuration
-3. Redémarrez Home Assistant
+### Packages
+1. Copiez le contenu du dossier `packages` dans le dossier `/config/packages/` de votre installation Home Assistant
+2. Assurez-vous que les packages sont bien inclus dans votre `configuration.yaml` avec la ligne :
+   ```yaml
+   homeassistant:
+     packages: !include_dir_named packages
+   ```
 
-## Configuration
+### Automatisations
+Des exemples d'automatisations sont disponibles dans le dossier `Automatisation/`. Consultez le README de ce dossier pour plus de détails sur leur installation et configuration.
 
-```yaml
-# Exemple de configuration
-type: custom:rfid-manager
-entities:
-  - entity_id: sensor.rfid_1
-    name: "Tag Principal"
-  - entity_id: sensor.rfid_2
-    name: "Tag Secondaire"
-```
-
-## Utilisation
-
-1. Pour ajouter un nouveau tag :
-   - Cliquez sur le bouton "Ajouter"
-   - Scannez votre tag RFID
-   - Donnez un nom au tag
-
-2. Pour supprimer un tag :
-   - Sélectionnez le tag dans la liste
-   - Cliquez sur le bouton "Supprimer"
-
-## Gestion du Volume
-
-Le Karotz dispose d'un contrôle de volume via un slider dans l'interface :
-
-- 0% : Volume minimum (-30 dB)
-- 100% : Volume maximum (0 dB)
-
-Le volume est réglé en décibels (dB) et est converti automatiquement en pourcentage pour une utilisation plus intuitive. La conversion suit une échelle linéaire :
-- 100% = 0 dB (volume maximum)
-- 50% = -15 dB (volume moyen)
-- 0% = -30 dB (volume minimum)
-
-Le volume est persistant et est sauvegardé dans la configuration du Karotz.
+### Cartes Lovelace
+Des exemples de cartes Lovelace sont disponibles dans le dossier `Tableau de bord/`. Consultez le README de ce dossier pour plus de détails sur leur installation et configuration.
 
 ## Prérequis
 
 - Home Assistant version 2025.5 ou supérieure
-- Module RFID compatible
-- Configuration correcte des entités RFID dans Home Assistant
+
+## Fonctionnalités
+
+- Gestion des tags RFID
+- Contrôle du volume du Karotz
+- Automatisations personnalisables
+- Interface utilisateur intuitive
+- Contrôle des oreilles et des lumières
+- Utilisation du serveur TTS (Text-to-Speech pour faire parler le Karotz)
+
+## Support
+
+Pour plus de détails sur chaque composant, consultez les README spécifiques dans les dossiers correspondants :
+- `Automatisation/README.md` pour les détails sur les automatisations
+- `Tableau de bord/README.md` pour les détails sur les cartes Lovelace
+- `packages/README.md` pour les détails sur les packages

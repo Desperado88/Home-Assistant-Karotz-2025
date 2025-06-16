@@ -9,6 +9,8 @@ Les automatisations permettent de :
 - Contrôler automatiquement les oreilles et les LED
 - Gérer les modes veille/réveil
 - Déclencher des actions personnalisées
+- Annoncer l'heure toutes les heures entre 7h et 20h
+- Comportement du Karotz en fonction de la météo
 
 ## Installation
 
