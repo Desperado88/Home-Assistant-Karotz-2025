@@ -54,7 +54,7 @@ homeassistant:
 ## 🔊 Karotz TTS via Home Assistant
 
 Un Addon est disponible pour faire du TTS localement via Home Assistant, pour plus d'informations :
-https://github.com/Desperado88/karotz-tts-addon
+https://github.com/Desperado88/Home-Assistant-Karotz-2025/tree/master/karotz-tts-docker
 
 ## 🔧 Installation détaillée (FreeRabbit, openkarotz, ssh)
 
