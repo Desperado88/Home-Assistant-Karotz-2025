@@ -52,25 +52,34 @@ com.mindscape.karotz.KarotzInterface.move string:$uuid int32:$1 int32:$3 int32:$
     echo "$2" > "$CNF_DATADIR/Run/ear.right"
 }
 
+function EarsSave {
+    # Sauvegarde la position actuelle des oreilles
+    if [ -f "$CNF_DATADIR/Run/ear.left" ] && [ -f "$CNF_DATADIR/Run/ear.right" ]; then
+        # Sauvegarde dans les fichiers .save
+        cp "$CNF_DATADIR/Run/ear.left" "$CNF_DATADIR/Run/ear.left.save"
+        cp "$CNF_DATADIR/Run/ear.right" "$CNF_DATADIR/Run/ear.right.save"
+    else
+        # Si pas de position actuelle, sauvegarde la position par défaut
+        echo "0" > "$CNF_DATADIR/Run/ear.left.save"
+        echo "0" > "$CNF_DATADIR/Run/ear.right.save"
+    fi
+}
+
 function EarsRestore {
     if [ ! -e "$CNF_DATADIR/Run/ears.disabled" ]; then
-        if [ -e "$CNF_DATADIR/Run/ear.left" ] && [ -e "$CNF_DATADIR/Run/ear.right" ]; then
+        # Vérifie d'abord les fichiers de sauvegarde
+        if [ -e "$CNF_DATADIR/Run/ear.left.save" ] && [ -e "$CNF_DATADIR/Run/ear.right.save" ]; then
+            EAR_LEFT=$(cat "$CNF_DATADIR/Run/ear.left.save")
+            EAR_RIGHT=$(cat "$CNF_DATADIR/Run/ear.right.save")
+            EarsMove "$EAR_LEFT" "$EAR_RIGHT" 50
+        # Si pas de sauvegarde, vérifie les fichiers d'état actuels
+        elif [ -e "$CNF_DATADIR/Run/ear.left" ] && [ -e "$CNF_DATADIR/Run/ear.right" ]; then
             EAR_LEFT=$(cat "$CNF_DATADIR/Run/ear.left")
             EAR_RIGHT=$(cat "$CNF_DATADIR/Run/ear.right")
             EarsMove "$EAR_LEFT" "$EAR_RIGHT" 50
         else
             EarsReset
         fi
-    fi
-}
-
-function EarsSave {
-    if [ -f "$CNF_DATADIR/Run/ear.left" ] && [ -f "$CNF_DATADIR/Run/ear.right" ]; then
-        SAVED_EAR_LEFT=$(cat "$CNF_DATADIR/Run/ear.left")
-        SAVED_EAR_RIGHT=$(cat "$CNF_DATADIR/Run/ear.right")
-    else
-        SAVED_EAR_LEFT=0
-        SAVED_EAR_RIGHT=0
     fi
 }
 

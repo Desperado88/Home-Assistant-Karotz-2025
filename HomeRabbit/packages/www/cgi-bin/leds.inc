@@ -79,12 +79,16 @@ function Leds {
       
       if [ $LED_NO_MEMORY -ne 1 ]; then
         echo "1" > "$CNF_DATADIR/Run/led.pulse"
+        echo "$LED_COLOR_PULSE" > "$CNF_DATADIR/Run/led.color.pulse"
+        echo "$LED_SPEED" > "$CNF_DATADIR/Run/led.speed"
       fi
     else
       # Led Fixe
       if [ -e "$CNF_DATADIR/Run/led.pulse" ]; then                               
          if [ $LED_NO_MEMORY -ne 1 ]; then
-           rm "$CNF_DATADIR/Run/led.pulse"                                         
+           rm "$CNF_DATADIR/Run/led.pulse"
+           rm "$CNF_DATADIR/Run/led.color.pulse"
+           rm "$CNF_DATADIR/Run/led.speed"
       	fi
       fi
       dbus_led_fixed $LED_COLOR                              	
@@ -98,20 +102,92 @@ function Leds {
 # ---------------------------------------------------------------------------
 #                                                                            
 # ---------------------------------------------------------------------------
-function LedsRestore {                                                       
-                                                              
-    if [ -e "$CNF_DATADIR/Run/led.pulse" ]; then                               
-        LED_PULSE=1                                                           
-    else                                                                      
-        LED_PULSE=0                                                           
-    fi                                                                        
-                                                                                                                                                                                 
-    if [ -e "$CNF_DATADIR/Run/led.color" ]; then                               
-       LED_COLOR=`cat $CNF_DATADIR/Run/led.color`                             
-    else                                                                      
-       LED_COLOR=00FF00                                                      
-    fi                                                                        
-    Leds $LED_COLOR 000000 $LED_PULSE                                               
- }                                                                                                                                                                                                                                                                                                                                           
+function LedsSave {
+    # Sauvegarde l'état de pulsation
+    if [ -e "$CNF_DATADIR/Run/led.pulse" ]; then
+        LED_PULSE=1
+    else
+        LED_PULSE=0
+    fi
+    echo "$LED_PULSE" > "$CNF_DATADIR/Run/led.pulse.save"
+
+    # Sauvegarde la couleur principale
+    if [ -e "$CNF_DATADIR/Run/led.color" ]; then
+        LED_COLOR=$(cat "$CNF_DATADIR/Run/led.color")
+    else
+        LED_COLOR=00FF00
+    fi
+    echo "$LED_COLOR" > "$CNF_DATADIR/Run/led.color.save"
+
+    # Si la LED est en mode pulsation, on sauvegarde aussi la couleur de pulsation et la vitesse
+    if [ $LED_PULSE -eq 1 ]; then
+        # Sauvegarde la couleur de pulsation
+        if [ -e "$CNF_DATADIR/Run/led.color.pulse" ]; then
+            LED_COLOR_PULSE=$(cat "$CNF_DATADIR/Run/led.color.pulse")
+        else
+            LED_COLOR_PULSE=000000
+        fi
+        echo "$LED_COLOR_PULSE" > "$CNF_DATADIR/Run/led.color.pulse.save"
+
+        # Sauvegarde la vitesse de pulsation
+        if [ -e "$CNF_DATADIR/Run/led.speed" ]; then
+            LED_SPEED=$(cat "$CNF_DATADIR/Run/led.speed")
+        else
+            LED_SPEED=700
+        fi
+        echo "$LED_SPEED" > "$CNF_DATADIR/Run/led.speed.save"
+    else
+        # En mode fixe, on supprime les fichiers de sauvegarde de pulsation s'ils existent
+        rm -f "$CNF_DATADIR/Run/led.color.pulse.save"
+        rm -f "$CNF_DATADIR/Run/led.speed.save"
+    fi
+}
+
+# ---------------------------------------------------------------------------
+#                                                                            
+# ---------------------------------------------------------------------------
+function LedsRestore {
+    # Vérifie d'abord les fichiers de sauvegarde
+    if [ -e "$CNF_DATADIR/Run/led.pulse.save" ]; then
+        LED_PULSE=$(cat "$CNF_DATADIR/Run/led.pulse.save")
+    elif [ -e "$CNF_DATADIR/Run/led.pulse" ]; then
+        LED_PULSE=1
+    else
+        LED_PULSE=0
+    fi
+
+    if [ -e "$CNF_DATADIR/Run/led.color.save" ]; then
+        LED_COLOR=$(cat "$CNF_DATADIR/Run/led.color.save")
+    elif [ -e "$CNF_DATADIR/Run/led.color" ]; then
+        LED_COLOR=$(cat "$CNF_DATADIR/Run/led.color")
+    else
+        LED_COLOR=00FF00
+    fi
+
+    # Si la LED est en mode pulsation, on restaure aussi la couleur de pulsation et la vitesse
+    if [ $LED_PULSE -eq 1 ]; then
+        if [ -e "$CNF_DATADIR/Run/led.color.pulse.save" ]; then
+            LED_COLOR_PULSE=$(cat "$CNF_DATADIR/Run/led.color.pulse.save")
+        elif [ -e "$CNF_DATADIR/Run/led.color.pulse" ]; then
+            LED_COLOR_PULSE=$(cat "$CNF_DATADIR/Run/led.color.pulse")
+        else
+            LED_COLOR_PULSE=000000
+        fi
+
+        if [ -e "$CNF_DATADIR/Run/led.speed.save" ]; then
+            LED_SPEED=$(cat "$CNF_DATADIR/Run/led.speed.save")
+        elif [ -e "$CNF_DATADIR/Run/led.speed" ]; then
+            LED_SPEED=$(cat "$CNF_DATADIR/Run/led.speed")
+        else
+            LED_SPEED=700
+        fi
+    else
+        # En mode fixe, on n'a pas besoin de ces paramètres
+        LED_COLOR_PULSE=000000
+        LED_SPEED=700
+    fi
+
+    Leds $LED_COLOR $LED_COLOR_PULSE $LED_PULSE 0 $LED_SPEED
+}
 
 
