@@ -22,20 +22,20 @@ TYPE_PLUGIN=7
 USER_DEFINED_TYPE=99
 
 # ---------------------------------------------------------------------------
-#
+# La fonction Log est actuelement désactiver, pour activer cmd + /
+# emplacement des logs /var/log/syslog ou /var/log/messages
 # ---------------------------------------------------------------------------
-function Log {
-#TAG=$1
-#MSG=$2
-#ERR=$3
+# function Log {
+#     TAG=$1
+#     MSG=$2
+#     ERR=$3
 
-if [ "$3" == "1" ]; then
-  logger -s "[OpenKarotz] [ERROR]" "$1 $2" >> /dev/null 2>> /dev/null
-else
-  logger -s "[OpenKarotz]" "$1 $2" >> /dev/null 2>> /dev/null
-fi
-}
-
+#     if [ "$3" == "1" ]; then
+#         logger -s "[OpenKarotz] [ERROR] $TAG" "$MSG"
+#     else
+#         logger -s "[OpenKarotz] $TAG" "$MSG"
+#     fi
+# }
 
 # ---------------------------------------------------------------------------
 #
