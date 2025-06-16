@@ -1,0 +1,21 @@
+# Voici un exemple de webhook
+# Configuration :
+# Alias = nom de l'automatisation
+# Description = description de l'automatisation
+# webhook_id = nom du web hook (url à appaeler)
+# actions = actions exécuter par la karotz (ici parler)
+
+alias: karotz_dev - test tag
+description: ""
+triggers:
+  - webhook_id: tag-lapin-test
+    allowed_methods:
+      - GET
+    local_only: true
+    trigger: webhook
+conditions: []
+actions:
+  - data:
+      text: Bonjour, je m'appel karotz !
+    action: rest_command.karotz_dev_say
+mode: single
