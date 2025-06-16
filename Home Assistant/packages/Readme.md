@@ -18,12 +18,7 @@ Ce dossier contient les packages de configuration pour votre installation Home A
 
 5. Optionnel, si vous possédez plusieurs Karotz, remplacez le nom des entités par le nom que vous voulez donner à vos Karotz (recherchez "karotz" et remplacez par "karotz-salon")
 
-6. Optionnel, si vous possédez votre propre serveur TTS, Modifiez la ligne 49 du script Python dans `/www/cgi-bin/tts` :
-   ```python
-   baseUrl = "http://[IP_DE_VOTRE_SERVEUR_HA]:5000/service/KarotzRvTTS"
-   ``` 
-
-## Configuration de la Carte Lovelace
+## Configuration de la Carte Lovelace (Voir le dossier Table de bord)
 
 Pour ajouter la carte de gestion RFID à votre tableau de bord :
 
