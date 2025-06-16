@@ -1,13 +1,13 @@
 input_text:
   karotz_dev_ip_address:
     name: Karotz dev IP Address
-    initial: "192.168.1.xxx"
+    initial: "192.168.1.xxx"  # ⚠️ À MODIFIER : Remplacer par l'adresse IP de votre Karotz + lignes 63 et 69
   karotz_dev_color_1:
     name: Karotz dev Color 1
-    initial: "ffff00"
+    initial: "ffff00"  # ⚠️ OPTIONNEL : Couleur par défaut en hexadécimal
   karotz_dev_color_2:
     name: Karotz dev Color 2
-    initial: "000000"
+    initial: "000000"  # ⚠️ OPTIONNEL : Couleur secondaire en hexadécimal
   # --- RFID ---
   karotz_dev_rfid_id:
     name: ID du tag
@@ -20,7 +20,7 @@ input_text:
   # --- FIN RFID ---
   karotz_dev_tts_text_ha:
     name: Karotz TTS Text
-    initial: "Bonjour, je suis réveillé"
+    initial: "Bonjour, je suis réveillé"  # ⚠️ OPTIONNEL : Message par defaut
 
 input_boolean:
   karotz_dev_awake:
@@ -60,13 +60,13 @@ input_number:
 
 sensor:
   - platform: rest
-    resource: "http://192.168.1.xxx/cgi-bin/status"
+    resource: "http://192.168.1.xxx/cgi-bin/status"  # ⚠️ À MODIFIER : Même IP que karotz_dev_ip_address
     name: karotz_dev_sleep_sensor
     value_template: "{{ value_json.sleep }}"
   # --- RFID ---
   - platform: rest
     name: karotz_dev_rfid_list
-    resource: "http://192.168.1.xxx/cgi-bin/rfid_list"
+    resource: "http://192.168.1.xxx/cgi-bin/rfid_list"  # ⚠️ À MODIFIER : Même IP que karotz_dev_ip_address
     value_template: "{{ value_json.return if value_json is defined else 'unknown' }}"
     json_attributes:
       - tags

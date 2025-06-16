@@ -29,15 +29,23 @@ Ce conteneur Docker fournit un service de synthèse vocale (TTS) pour votre Karo
 
 - Docker installé sur votre serveur
 - Un serveur local accessible depuis votre réseau
-##### ------------------------------------
-1. Clonez ce dépôt sur votre serveur
-2. Construisez l'image Docker :
+
+## 🐳 TTS Local avec Docker
+
+Pour les utilisateurs souhaitant héberger leur propre service TTS, un conteneur Docker est disponible :
+⚠️ Cette configuration modifie la voix et le style de parole du Karotz
+
+1. Copiez le dossier `karotz-tts-docker` sur votre serveur Docker
+
+2. Modifiez la ligne 49 du script Python dans `/www/cgi-bin/tts` :
+   ```python
+   baseUrl = "http://[IP_DE_VOTRE_SERVEUR_TTS]:5000/service/KarotzRvTTS"
+   ```
+
+3. Sur votre serveur Docker, exécutez les commandes suivantes :
    ```bash
    docker build -t karotz-tts .
-   ```
-3. Démarrez le conteneur :
-   ```bash
-   docker run -d -p 5000:5000 --name karotz-tts karotz-tts
+   docker run -d -p 5000:5000 --name karotz karotz-tts
    ```
 
 ## Utilisation
