@@ -2,7 +2,9 @@
 
 usedbus=0
 uuid=$(uuidgen)
-
+# ---------------------------------------------------------------------------
+#                                                                            
+# ---------------------------------------------------------------------------
 function EarsReset 
 {
   if [ ! -e "$CNF_DATADIR/Run/ears.disabled" ]; then
@@ -12,19 +14,25 @@ function EarsReset
      echo "0" > "$CNF_DATADIR/Run/ear.right"
   fi
 }
-    
+# ---------------------------------------------------------------------------
+#                                                                            
+# ---------------------------------------------------------------------------    
 function dbus_EarsReset 
 {  
     dbus-send --system --type=method_call --dest=com.mindscape.karotz.Ears /com/mindscape/karotz/Ears \
 com.mindscape.karotz.KarotzInterface.reset string:$uuid string:1
 }
-
+# ---------------------------------------------------------------------------
+#                                                                            
+# ---------------------------------------------------------------------------
 function EarMoveRight
 {
     dbus-send --system --type=method_call --dest=com.mindscape.karotz.Ears /com/mindscape/karotz/Ears \
 com.mindscape.karotz.KarotzInterface.move_righ string:$uuid string:1 string:3
 }
-
+# ---------------------------------------------------------------------------
+#                                                                            
+# ---------------------------------------------------------------------------
 function EarsMove 
 {   
    if [ ! -e "$CNF_DATADIR/Run/ears.disabled" ]; then
@@ -34,7 +42,9 @@ function EarsMove
        echo "$2" > "$CNF_DATADIR/Run/ear.right"
    fi
 }         
-
+# ---------------------------------------------------------------------------
+#                                                                            
+# ---------------------------------------------------------------------------
 function dbus_EarsMove 
 {
      dbus-send --system --type=method_call --dest=com.mindscape.karotz.Ears /com/mindscape/karotz/Ears \
@@ -43,7 +53,9 @@ function dbus_EarsMove
      echo "$1" > "$CNF_DATADIR/Run/ear.left"
      echo "$2" > "$CNF_DATADIR/Run/ear.right"
 }
-
+# ---------------------------------------------------------------------------
+#                                                                            
+# ---------------------------------------------------------------------------
 function dbus_EarsStep {
     dbus-send --system --type=method_call --dest=com.mindscape.karotz.Ears /com/mindscape/karotz/Ears \
 com.mindscape.karotz.KarotzInterface.move string:$uuid int32:$1 int32:$3 int32:$2 int32:$3  
@@ -51,7 +63,9 @@ com.mindscape.karotz.KarotzInterface.move string:$uuid int32:$1 int32:$3 int32:$
     echo "$1" > "$CNF_DATADIR/Run/ear.left"
     echo "$2" > "$CNF_DATADIR/Run/ear.right"
 }
-
+# ---------------------------------------------------------------------------
+#                                                                            
+# ---------------------------------------------------------------------------
 function EarsSave {
     # Sauvegarde la position actuelle des oreilles
     if [ -f "$CNF_DATADIR/Run/ear.left" ] && [ -f "$CNF_DATADIR/Run/ear.right" ]; then
@@ -64,7 +78,9 @@ function EarsSave {
         echo "0" > "$CNF_DATADIR/Run/ear.right.save"
     fi
 }
-
+# ---------------------------------------------------------------------------
+#                                                                            
+# ---------------------------------------------------------------------------
 function EarsRestore {
     if [ ! -e "$CNF_DATADIR/Run/ears.disabled" ]; then
         # Vérifie d'abord les fichiers de sauvegarde
