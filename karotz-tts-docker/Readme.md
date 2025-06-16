@@ -2,13 +2,34 @@
 
 Ce conteneur Docker fournit un service de synthèse vocale (TTS) pour votre Karotz, utilisant Pico TTS. Il est conçu pour fonctionner en dehors de Home Assistant sur un serveur local.
 
-## Prérequis
+## Installation sur Home Assistant
+
+1. Dans Home Assistant, allez dans "Paramètres" > "Modules complémentaires"
+2. Cliquer en bas à droite "Boutique des modules complémentaires"
+3. Cliquez sur les trois points en haut à droite
+4. Sélectionnez "Dépôts"
+5. Copier l'URL du dépôt : `https://github.com/Desperado88/karotz-tts-addon-rpi`
+6. Cliquez sur "Ajouter"
+7. Attendez que Home Assistant charge le dépôt
+8. Vois pourver maintenant installer 'Karotz piper TTS' ou 'Karotz pico TTS' en fonction de votre matériel
+9. Modifiez la ligne 49 du script Python dans `/www/cgi-bin/tts` :
+   ```python
+   baseUrl = "http://[IP_DE_VOTRE_SERVEUR_HA]:5000/service/KarotzRvTTS"
+   ```
+
+## Fonctionnalités
+
+- Utilise Pico ou Piper TTS pour la synthèse vocale
+- Mise en cache des fichiers audio générés
+- Conversion automatique en MP3
+
+## Installation sur un serveur (autre que HA)
+
+### Prérequis
 
 - Docker installé sur votre serveur
 - Un serveur local accessible depuis votre réseau
-
-## Installation
-
+##### ------------------------------------
 1. Clonez ce dépôt sur votre serveur
 2. Construisez l'image Docker :
    ```bash
@@ -36,38 +57,3 @@ Exemple :
 ```bash
 curl "http://[IP_DU_SERVEUR]:5000/service/KarotzRvTTS?text=Bonjour&language=fr-FR&gender=female"
 ```
-
-## Fonctionnalités
-
-- Utilise Pico TTS pour la synthèse vocale
-- Support multilingue
-- Mise en cache des fichiers audio générés
-- Conversion automatique en MP3
-
-## Intégration avec Home Assistant
-
-Pour utiliser ce service avec Home Assistant :
-
-1. Configurez un webhook dans Home Assistant pointant vers votre serveur Docker
-2. Utilisez l'URL complète avec les paramètres appropriés
-
-## Maintenance
-
-### Logs
-
-```bash
-docker logs karotz-tts
-```
-
-### Redémarrage
-
-```bash
-docker restart karotz-tts
-```
-
-## Notes importantes
-
-- Ce service est conçu pour fonctionner en dehors de Home Assistant
-- Les fichiers audio sont mis en cache dans le conteneur
-- Le service écoute sur le port 5000
-- Assurez-vous que votre serveur est accessible depuis votre réseau local 
