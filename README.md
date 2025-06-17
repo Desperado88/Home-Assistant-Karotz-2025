@@ -80,7 +80,7 @@ homeassistant:
 ## 🔊 Karotz TTS via Home Assistant
 
 Un Addon est disponible pour faire du TTS localement via Home Assistant, pour plus d'informations :
-https://github.com/Desperado88/Home-Assistant-Karotz-2025/tree/master/karotz-tts-docker
+[https://github.com/Desperado88/Home-Assistant-Karotz-2025/tree/master/karotz-tts-docker](https://github.com/Desperado88/karotz-tts-addon-rpi)
 
 ## 🔧 Installation détaillée (FreeRabbit, openkarotz, ssh)
 
