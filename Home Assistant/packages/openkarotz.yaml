@@ -1,13 +1,13 @@
 input_text:
   karotz_dev_ip_address:
     name: Karotz dev IP Address
-    initial: "192.168.1.xxx"  # ⚠️ À MODIFIER : Remplacer par l'adresse IP de votre Karotz + lignes 63 et 69
+    initial: "192.168.1.xxx"      # ⚠️ À MODIFIER : Remplacer par l'adresse IP de votre Karotz + lignes 63 et 69
   karotz_dev_color_1:
     name: Karotz dev Color 1
-    initial: "ffff00"  # ⚠️ OPTIONNEL : Couleur par défaut en hexadécimal
+    initial: "ffff00"             # ⚠️ OPTIONNEL : Couleur par défaut en hexadécimal
   karotz_dev_color_2:
     name: Karotz dev Color 2
-    initial: "000000"  # ⚠️ OPTIONNEL : Couleur secondaire en hexadécimal
+    initial: "000000"             # ⚠️ OPTIONNEL : Couleur secondaire en hexadécimal
   # --- RFID ---
   karotz_dev_rfid_id:
     name: ID du tag
@@ -20,7 +20,7 @@ input_text:
   # --- FIN RFID ---
   karotz_dev_tts_text_ha:
     name: Karotz TTS Text
-    initial: "Bonjour, je suis réveillé"  # ⚠️ OPTIONNEL : Message par defaut
+    initial: "Bonjour, je suis réveillé" # ⚠️ OPTIONNEL : Message par defaut
 
 input_boolean:
   karotz_dev_awake:
@@ -60,13 +60,13 @@ input_number:
 
 sensor:
   - platform: rest
-    resource: "http://192.168.1.xxx/cgi-bin/status"  # ⚠️ À MODIFIER : Même IP que karotz_dev_ip_address
+    resource: "http://192.168.1.xxx/cgi-bin/status" # ⚠️ À MODIFIER : Même IP que karotz_dev_ip_address
     name: karotz_dev_sleep_sensor
     value_template: "{{ value_json.sleep }}"
   # --- RFID ---
   - platform: rest
     name: karotz_dev_rfid_list
-    resource: "http://192.168.1.xxx/cgi-bin/rfid_list"  # ⚠️ À MODIFIER : Même IP que karotz_dev_ip_address
+    resource: "http://192.168.1.xxx/cgi-bin/rfid_list" # ⚠️ À MODIFIER : Même IP que karotz_dev_ip_address
     value_template: "{{ value_json.return if value_json is defined else 'unknown' }}"
     json_attributes:
       - tags
@@ -136,73 +136,73 @@ script:
   karotz_dev_assign_rfid:
     alias: Assigner un tag RFID
     sequence:
-      - service: rest_command.karotz_dev_rfid_assign
+      - action: rest_command.karotz_dev_rfid_assign
   karotz_dev_delete_rfid:
     alias: Supprimer un tag RFID
     sequence:
-      - service: rest_command.karotz_dev_rfid_delete
+      - action: rest_command.karotz_dev_rfid_delete
   karotz_refresh_tags:
     alias: Rafraîchir liste des tags Karotz
     sequence:
-      - service: rest.reload
+      - action: rest.reload
   # --- FIN RFID ---
   karotz_dev_wakeup:
     sequence:
-      - service: rest_command.karotz_dev_wakeup
+      - action: rest_command.karotz_dev_wakeup
   karotz_dev_sleep:
     sequence:
-      - service: rest_command.karotz_dev_sleep
+      - action: rest_command.karotz_dev_sleep
   karotz_dev_tai_chi:
     sequence:
-      - service: rest_command.karotz_dev_tai_chi
+      - action: rest_command.karotz_dev_tai_chi
   karotz_dev_moods:
     sequence:
-      - service: rest_command.karotz_dev_moods
+      - action: rest_command.karotz_dev_moods
 
 automation:
   - id: karotz_dev_on_automation
     alias: Karotz dev On
     trigger:
-      - platform: state
+      - trigger: state
         entity_id: sensor.karotz_dev_sleep_sensor
         to: "0"
     action:
-      - service: input_boolean.turn_on
+      - action: input_boolean.turn_on
         target:
           entity_id: input_boolean.karotz_dev_awake
   - id: karotz_dev_off_automation
     alias: Karotz dev Off
     trigger:
-      - platform: state
+      - trigger: state
         entity_id: sensor.karotz_dev_sleep_sensor
         to: "1"
     action:
-      - service: input_boolean.turn_off
+      - action: input_boolean.turn_off
         target:
           entity_id: input_boolean.karotz_dev_awake
   - id: karotz_dev_color_automation
     alias: Update Karotz dev Color
     trigger:
-      - platform: state
+      - trigger: state
         entity_id:
           - input_text.karotz_dev_color_1
           - input_text.karotz_dev_color_2
           - input_number.karotz_dev_light_speed
     action:
-      - service: rest_command.karotz_dev_light
+      - action: rest_command.karotz_dev_light
   - id: karotz_dev_ear_automation
     alias: Update Karotz dev Ears
     trigger:
-      - platform: state
+      - trigger: state
         entity_id:
           - input_number.karotz_dev_ear_left
           - input_number.karotz_dev_ear_right
     action:
-      - service: rest_command.karotz_dev_ears
+      - action: rest_command.karotz_dev_ears
   - id: karotz_dev_light_mode_automation
     alias: Karotz dev Light Mode Automation
     trigger:
-      - platform: state
+      - trigger: state
         entity_id: input_boolean.karotz_dev_light_fixed_mode
     action:
       - choose:
@@ -211,19 +211,19 @@ automation:
                 entity_id: input_boolean.karotz_dev_light_fixed_mode
                 state: 'on'
             sequence:
-              - service: rest_command.karotz_dev_light_fixed
+              - action: rest_command.karotz_dev_light_fixed
           - conditions:
               - condition: state
                 entity_id: input_boolean.karotz_dev_light_fixed_mode
                 state: 'off'
             sequence:
-              - service: rest_command.karotz_dev_light
+              - action: rest_command.karotz_dev_light
   - id: karotz_dev_volume_automation
     alias: Update Karotz dev Volume
     trigger:
-      - platform: state
+      - trigger: state
         entity_id: input_number.karotz_dev_volume
     action:
-      - service: rest_command.karotz_dev_volume
+      - action: rest_command.karotz_dev_volume
         data:
           level: "{{ states('input_number.karotz_dev_volume') | int }}"
