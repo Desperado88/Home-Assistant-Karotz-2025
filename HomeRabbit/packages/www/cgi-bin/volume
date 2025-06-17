@@ -17,7 +17,7 @@ PERCENTAGE=$(echo "$QUERY_STRING" | sed 's/.*level=\([^&]*\).*/\1/')
 # Verification que le pourcentage est un nombre
 if ! echo "$PERCENTAGE" | grep -qE '^[0-9]+$'; then
     DATA='{"return":"1","msg":"Le niveau doit etre un pourcentage entre 0 et 100"}'
-    Log "[VOLUME]" "Erreur: Le niveau doit etre un pourcentage entre 0 et 100"
+    #Log "[VOLUME]" "Erreur: Le niveau doit etre un pourcentage entre 0 et 100"
     SendResponse "$DATA"
     exit 1
 fi
@@ -25,7 +25,7 @@ fi
 # Verification des limites (0 a 100)
 if [ "$PERCENTAGE" -lt 0 ] || [ "$PERCENTAGE" -gt 100 ]; then
     DATA='{"return":"1","msg":"Le pourcentage doit etre entre 0 et 100"}'
-    Log "[VOLUME]" "Erreur: Le pourcentage doit etre entre 0 et 100"
+    #Log "[VOLUME]" "Erreur: Le pourcentage doit etre entre 0 et 100"
     SendResponse "$DATA"
     exit 1
 fi
@@ -53,5 +53,5 @@ fi
 
 # Reponse HTTP en JSON
 DATA='{"return":"0","msg":"Volume regle a '$VOLUME' dB ('$PERCENTAGE'%)"}'
-Log "[VOLUME]" "Volume regle a $VOLUME dB ($PERCENTAGE%)"
+#Log "[VOLUME]" "Volume regle a $VOLUME dB ($PERCENTAGE%)"
 SendResponse "$DATA"
