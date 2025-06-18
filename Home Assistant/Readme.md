@@ -13,7 +13,7 @@ Ce projet contient une configuration complète pour l'intégration du Karotz dan
    ```
 
 ### Automatisations
-Des exemples d'automatisations sont disponibles dans le dossier `Automatisation/`. Consultez le README de ce dossier pour plus de détails sur leur installation et configuration.
+Des exemples d'automatisations sont disponibles dans le dossier `Automatisations/`. Consultez le README de ce dossier pour plus de détails sur leur installation et configuration.
 
 ### Cartes Lovelace
 Des exemples de cartes Lovelace sont disponibles dans le dossier `Tableau de bord/`. Consultez le README de ce dossier pour plus de détails sur leur installation et configuration.
@@ -29,11 +29,19 @@ Des exemples de cartes Lovelace sont disponibles dans le dossier `Tableau de bor
 - Automatisations personnalisables
 - Interface utilisateur intuitive
 - Contrôle des oreilles et des lumières
-- Utilisation du serveur TTS (Text-to-Speech pour faire parler le Karotz)
+- Utilisation du serveur TTS (Text-to-Speech) pour faire parler le Karotz
 
 ## Support
 
 Pour plus de détails sur chaque composant, consultez les README spécifiques dans les dossiers correspondants :
-- `Automatisation/README.md` pour les détails sur les automatisations
-- `Tableau de bord/README.md` pour les détails sur les cartes Lovelace
-- `packages/README.md` pour les détails sur les packages
+- `Automatisations/Readme.md` pour les détails sur les automatisations
+- `Tableau de bord/Readme.md` pour les détails sur les cartes Lovelace
+- `packages/Readme.md` pour les détails sur les packages
+
+## Utilisation avancée : serveur NTP local pour couper complètement le Karotz du réseau
+
+Dans l'état actuel, si vous avez installé le serveur TTS sur Home Assistant, le seul service qui reste en communication avec Internet est le service "ntp".
+Pour pallier cela, nous pouvons héberger notre propre serveur NTP sur Home Assistant.
+- Sur Home Assistant (ou sur un serveur Docker)
+- Ajouter le module complémentaire "chrony"
+- Sur votre box ou DNS, modifiez la résolution de "pool.ntp.org" avec l'adresse de votre serveur NTP local
