@@ -21,6 +21,9 @@ input_text:
   karotz_dev_tts_text_ha:
     name: Karotz TTS Text
     initial: "Bonjour, je m'appel karotz_dev" # ⚠️ OPTIONNEL : Message par defaut
+  # --- Sauvegarde ---
+  karotz_dev_saved_color_1:
+  karotz_dev_saved_color_2:
 
 sensor:
   - platform: rest
@@ -72,7 +75,20 @@ input_number:
     mode: slider
     unit_of_measurement: "%"
     initial: 100
-
+  # -- Sauvegarde ---
+  karotz_dev_saved_light_speed:
+    min: 0
+    max: 10
+    step: 1
+  karotz_dev_saved_ear_left:
+    min: 0
+    max: 15
+    step: 1
+  karotz_dev_saved_ear_right:
+    min: 0
+    max: 15
+    step: 1
+    
 template:
   - sensor:
       - name: "Karotz dev Volume (dB)"
