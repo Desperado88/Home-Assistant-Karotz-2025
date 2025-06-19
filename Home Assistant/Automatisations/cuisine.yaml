@@ -1,0 +1,69 @@
+# Automatisation qui déclenche une réaction et prononce une phrase aléatoire
+# lorsque la hote de la cuisine se déclenche
+# À coller dans les automatisations de Home Assistant
+
+alias: karotz_dev - Cuisine
+description: karotz_dev réagit à l'allumage de la cuisine, puis reprend son état
+triggers:
+  - type: turned_on # Quand la hotte se déclenche
+    device_id: 26e2c20e7bdc25f3ee9e158db8a7ada9
+    entity_id: 4047c432f33eacd0d26280b195f15772
+    domain: switch
+    trigger: device
+conditions: []
+actions:
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 10
+      milliseconds: 0
+  - variables: # mémorisation de l'état actuel du Karotz
+      ear_left_prev: "{{ states('input_number.karotz_dev_ear_left') | int }}"
+      ear_right_prev: "{{ states('input_number.karotz_dev_ear_right') | int }}"
+      color1_prev: "{{ states('input_text.karotz_dev_color_1') }}"
+      color2_prev: "{{ states('input_text.karotz_dev_color_2') }}"
+      speed_prev: "{{ states('input_number.karotz_dev_light_speed') | int }}"
+  - action: rest_command.karotz_dev_ears_random
+    data: {}
+  - data:
+      text: |
+        {% set phrases = [
+          "Huuuuuummm, ça sent bon la carotte ici !",
+          "Tu cuisines ou tu fais une potion magique ?",
+          "Attention à ne pas brûler les poêles, c’est pas un barbekiou !",
+          "Le chef karotz dev est impressionné !",
+          "J’espère que c’est pour moi ce festin !"
+        ] %} {{ phrases | random }}
+    action: rest_command.karotz_dev_say
+  - data:
+      value: "{{ ear_left_prev }}"
+    target:
+      entity_id: input_number.karotz_dev_ear_left
+    action: input_number.set_value
+  - data:
+      value: "{{ ear_right_prev }}"
+    target:
+      entity_id: input_number.karotz_dev_ear_right
+    action: input_number.set_value
+  - data:
+      entity_id: input_text.karotz_dev_color_1
+      value: "{{ color1_prev }}"
+    action: input_text.set_value
+  - data:
+      entity_id: input_text.karotz_dev_color_2
+      value: "{{ color2_prev }}"
+    action: input_text.set_value
+  - data:
+      entity_id: input_number.karotz_dev_light_speed
+      value: "{{ speed_prev }}"
+    action: input_number.set_value
+  - action: rest_command.karotz_dev_light
+    data: {}
+  - action: rest_command.karotz_dev_ears
+    data: {}
+  - delay:
+      hours: 0
+      minutes: 5
+      seconds: 0
+      milliseconds: 0
+mode: single

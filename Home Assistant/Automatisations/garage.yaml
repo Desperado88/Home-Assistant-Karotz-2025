@@ -1,0 +1,25 @@
+# Automatisation qui dit une phrase aléatoire lors de l'ouverture de la porte du garag
+# À coller dans les automatisations de Home Assistant
+
+alias: karotz_dev - Son sur ouverture porte garage
+description: Joue le son 'bling' quand la porte du garage s'ouvre
+triggers:
+  - entity_id: binary_sensor.porte_garage
+    to: "on"
+    trigger: state
+conditions: []
+actions:
+  - data:
+      sound: jet1
+    action: rest_command.karotz_dev_sound
+  - data:
+      text: |
+        {% set phrases = [
+          "La porte du hangar spatial est ouverte.",
+          "Le sas du garage est désormais déverrouillé.",
+          "Ouverture du portail galactique confirmée.",
+          "Le garage s'ouvre sur l'infini et au-delà.",
+          "Accès au vaisseau terrestre autorisé."
+        ] %} {{ phrases | random }}
+    action: rest_command.karotz_dev_say
+mode: single

@@ -1,0 +1,35 @@
+# Automatisation qui dit une phrase aléatoire lors qu'il y a du courrier
+# À coller dans les automatisations de Home Assistant
+
+alias: karotz_dev il y a du courrier
+description: ""
+triggers:
+  - trigger: time_pattern
+    minutes: "45"
+conditions:
+  - condition: time
+    after: "07:00:00"
+    before: "20:00:00"
+  - type: is_on
+    condition: device
+    device_id: 4be07fd6ac0fb111a8c476bf8898e7e2
+    entity_id: a2a53206d72df98b4ebf9b62418fb8fe
+    domain: binary_sensor
+actions:
+  - data:
+      text: |
+        {% set phrases = [
+          "Une lettre cosmique vient d'atterrir.",
+          "Le courrier est arrivé, capitaine.",
+          "Message en provenance d'une autre galaxie détecté.",
+          "Il y a du courrier dans la boîte aux lettres.",
+          "Le facteur stellaire a fait sa livraison."
+        ] %} {{ phrases | random }}
+    action: rest_command.karotz_dev_say
+  - action: input_text.set_value
+    data:
+      entity_id: input_text.karotz_dev_color_1
+      value: 00FF00
+  - action: rest_command.karotz_dev_light_fixed
+    data: {}
+mode: single
