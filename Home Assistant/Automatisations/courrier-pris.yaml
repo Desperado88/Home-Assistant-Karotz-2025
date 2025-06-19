@@ -1,0 +1,34 @@
+# Automatisation qui restaure l'état précédent lorsque le courrier est pris
+# À coller dans les automatisations de Home Assistant
+
+alias: karotz_dev courrier retirée
+description: ""
+triggers:
+  - entity_id: binary_sensor.status_lettre
+    to: "off"
+    trigger: state
+actions:
+  - data:
+      entity_id: input_number.karotz_dev_ear_left
+      value: "{{ states('input_number.karotz_dev_saved_ear_left') | int }}"
+    action: input_number.set_value
+  - data:
+      entity_id: input_number.karotz_dev_ear_right
+      value: "{{ states('input_number.karotz_dev_saved_ear_right') | int }}"
+    action: input_number.set_value
+  - data:
+      entity_id: input_text.karotz_dev_color_1
+      value: "{{ states('input_text.karotz_dev_saved_color_1') }}"
+    action: input_text.set_value
+  - data:
+      entity_id: input_text.karotz_dev_color_2
+      value: "{{ states('input_text.karotz_dev_saved_color_2') }}"
+    action: input_text.set_value
+  - data:
+      entity_id: input_number.karotz_dev_light_speed
+      value: "{{ states('input_number.karotz_dev_saved_light_speed') | int }}"
+    action: input_number.set_value
+  - action: rest_command.karotz_dev_light
+    data: {}
+  - action: rest_command.karotz_dev_ears
+    data: {}

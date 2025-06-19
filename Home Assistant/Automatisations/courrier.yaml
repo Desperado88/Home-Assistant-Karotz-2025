@@ -2,20 +2,37 @@
 # À coller dans les automatisations de Home Assistant
 
 alias: karotz_dev il y a du courrier
-description: ""
 triggers:
-  - trigger: time_pattern
-    minutes: "45"
+  - minutes: "45"
+    trigger: time_pattern
 conditions:
   - condition: time
     after: "07:00:00"
     before: "20:00:00"
-  - type: is_on
-    condition: device
-    device_id: 4be07fd6ac0fb111a8c476bf8898e7e2
-    entity_id: a2a53206d72df98b4ebf9b62418fb8fe
-    domain: binary_sensor
+  - condition: state
+    entity_id: binary_sensor.status_lettre
+    state: "on"
 actions:
+  - data:
+      entity_id: input_text.karotz_dev_saved_color_1
+      value: "{{ states('input_text.karotz_dev_color_1') }}"
+    action: input_text.set_value
+  - data:
+      entity_id: input_text.karotz_dev_saved_color_2
+      value: "{{ states('input_text.karotz_dev_color_2') }}"
+    action: input_text.set_value
+  - data:
+      entity_id: input_number.karotz_dev_saved_light_speed
+      value: "{{ states('input_number.karotz_dev_light_speed') | int }}"
+    action: input_number.set_value
+  - data:
+      entity_id: input_number.karotz_dev_saved_ear_left
+      value: "{{ states('input_number.karotz_dev_ear_left') | int }}"
+    action: input_number.set_value
+  - data:
+      entity_id: input_number.karotz_dev_saved_ear_right
+      value: "{{ states('input_number.karotz_dev_ear_right') | int }}"
+    action: input_number.set_value
   - data:
       text: |
         {% set phrases = [
@@ -26,10 +43,9 @@ actions:
           "Le facteur stellaire a fait sa livraison."
         ] %} {{ phrases | random }}
     action: rest_command.karotz_dev_say
-  - action: input_text.set_value
-    data:
+  - data:
       entity_id: input_text.karotz_dev_color_1
       value: 00FF00
+    action: input_text.set_value
   - action: rest_command.karotz_dev_light_fixed
     data: {}
-mode: single
