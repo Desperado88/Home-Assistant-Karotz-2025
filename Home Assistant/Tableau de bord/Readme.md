@@ -40,6 +40,9 @@ Pour configurer un tag RFID qui déclenche un webhook Home Assistant :
    - Donnez un nom au tag dans le champ "Nom du tag"
    - Collez l'URL du webhook dans le champ "URL Webhook"
    - Cliquez sur "Assigner le Tag"
+     
+![Capture d’écran 2025-06-16 à 21 34 52](https://github.com/user-attachments/assets/8a52e96b-9b9e-4e6e-a374-da6aebef3390)
+
 
 4. Pour tester :
    - Présentez le tag RFID devant le Karotz

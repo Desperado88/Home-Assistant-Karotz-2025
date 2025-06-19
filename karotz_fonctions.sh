@@ -30,6 +30,58 @@ LedsRestore
     Description: Restaure l'état précédent de la LED
     Usage: LedsRestore
 
+LedsSave
+    Description: Sauvegarde l'état de pulsation et la couleur principale
+    Usage: LedsSave
+
+# ============================================================================
+# EARS.INC
+# ============================================================================
+
+EarsReset
+    Description: Réinitialise les oreilles à leur position par défaut (0,0)
+    Usage: EarsReset
+
+dbus_EarsReset
+    Description: Réinitialise les oreilles via D-Bus
+    Usage: dbus_EarsReset
+
+EarMoveRight
+    Description: Déplace l'oreille droite
+    Usage: EarMoveRight
+
+EarsMove
+    Description: Déplace les deux oreilles
+    Usage: EarsMove $left_position $right_position $speed
+    Paramètres:
+        - left_position: position de l'oreille gauche
+        - right_position: position de l'oreille droite
+        - speed: vitesse de déplacement
+
+dbus_EarsMove
+    Description: Déplace les oreilles via D-Bus
+    Usage: dbus_EarsMove $left_position $right_position $speed
+    Paramètres:
+        - left_position: position de l'oreille gauche
+        - right_position: position de l'oreille droite
+        - speed: vitesse de déplacement
+
+dbus_EarsStep
+    Description: Déplace les oreilles par étapes via D-Bus
+    Usage: dbus_EarsStep $left_position $right_position $speed
+    Paramètres:
+        - left_position: position de l'oreille gauche
+        - right_position: position de l'oreille droite
+        - speed: vitesse de déplacement
+
+EarsSave
+    Description: Sauvegarde la position actuelle des oreilles
+    Usage: EarsSave
+
+EarsRestore
+    Description: Restaure la position précédemment sauvegardée des oreilles
+    Usage: EarsRestore
+
 # ============================================================================
 # TTS.INC
 # ============================================================================
