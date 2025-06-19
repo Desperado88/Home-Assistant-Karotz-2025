@@ -44,13 +44,15 @@ fi
 # Sauvegarde du volume dans le fichier de configuration /usr/openkarotz/Run/volume
 echo "$VOLUME" > $CNF_DATADIR/Run/volume
 
-# Jouer un son de test avec le nouveau volume
-SOUND_FILE="$CNF_DATADIR/Sounds/saut1.mp3"
-if [ -f "$SOUND_FILE" ]; then
-    sleep 0.5
-    madplay --adjust-volume=$VOLUME "$SOUND_FILE" >/dev/null 2>&1
+# Verifie si le karotz est en veille
+if [ ! -e "$CNF_DATADIR/Run/karotz.sleep" ]; then
+    # Jouer un son de test avec le nouveau volume
+    SOUND_FILE="$CNF_DATADIR/Sounds/saut1.mp3"
+    if [ -f "$SOUND_FILE" ]; then
+        sleep 0.5
+        madplay --adjust-volume=$VOLUME "$SOUND_FILE" >/dev/null 2>&1
+    fi
 fi
-
 # Reponse HTTP en JSON
 DATA='{"return":"0","msg":"Volume regle a '$VOLUME' dB ('$PERCENTAGE'%)"}'
 Log "[VOLUME]" "Volume regle a $VOLUME dB ($PERCENTAGE%)"

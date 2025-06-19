@@ -35,7 +35,7 @@ def PlayMP3(mp3file):
                     volume = 8
                 cmd = "/usr/bin/madplay --adjust-volume=%d %s >/dev/null 2>&1" % (volume, mp3file)
             else:
-                cmd = "/usr/bin/madplay %s >/dev/null 2>&1" % mp3file
+                cmd = "/usr/bin/madplay --adjust-volume=0 %s >/dev/null 2>&1" % mp3file
         except:
             cmd = "/usr/bin/madplay %s >/dev/null 2>&1" % mp3file
         return os.system(cmd)
