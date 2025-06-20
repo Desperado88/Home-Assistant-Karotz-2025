@@ -15,3 +15,7 @@ else
 fi
 
 SendResponse "$DATA"
+
+# Sauvegarde de l'action
+echo "/www/cgi-bin/apps/mikeyhorloge $@" > /www/cgi-bin/karotz_last_action.sh
+chmod +x /www/cgi-bin/karotz_last_action.sh

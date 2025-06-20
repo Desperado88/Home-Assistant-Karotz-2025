@@ -115,6 +115,11 @@ else
    #Log "[MOODS]"  "Rabbit if sleeping."
 fi
 
+# Sauvegarde de la dernière action exécutée
+# (rejouable localement avec le bon paramètre)
+echo "QUERY_STRING=\"id=$MOODS\" ./apps/moods" > /www/cgi-bin/karotz_last_action.sh
+chmod +x /www/cgi-bin/karotz_last_action.sh
+
 # Restauration de l'état de la LED et des oreilles
 LedsRestore
 EarsRestore

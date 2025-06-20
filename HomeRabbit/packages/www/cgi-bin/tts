@@ -83,3 +83,22 @@ data["voicegender"] = voicegender
 print("Content-type: application/json; charset=utf-8")
 print("")
 print(json.dumps(data))
+
+# Sauvegarde de la dernière commande exécutée
+try:
+    query_string = ""
+    for key in fields.keys():
+        value = fields[key].value
+        if query_string:
+            query_string += "&"
+        query_string += "%s=%s" % (key, value)
+    if query_string:
+        cmd = 'QUERY_STRING="%s" ./tts' % query_string
+    else:
+        cmd = './tts'
+    f = open("/www/cgi-bin/karotz_last_action.sh", "w")
+    f.write(cmd + "\n")
+    f.close()
+    os.chmod("/www/cgi-bin/karotz_last_action.sh", 0755)
+except Exception, e:
+    print >> sys.stderr, "Erreur écriture last_action:", e
