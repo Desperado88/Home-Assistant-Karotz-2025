@@ -6,6 +6,14 @@ source /usr/www/cgi-bin/utils.inc
 source /usr/www/cgi-bin/ears.inc
 
 #Log "[MOODS]" "Obsolete Moods Function Called"
+# Si le script est appelé en CGI, il faut transmettre QUERY_STRING
+if [ ! -z "$QUERY_STRING" ]; then
+    export QUERY_STRING
+    exec /www/cgi-bin/apps/moods
+else
+    # Si le script est appelé en ligne de commande, on transmet les arguments
+    exec /www/cgi-bin/apps/moods "$@"
+fi
 
 DATA='{"moods":"'$MOODS'","msg":"Obsolete, Moods is now an Application. Use /cgi-bin/apps/moods now.","return":"1"}'
 SendResponse "$DATA"
