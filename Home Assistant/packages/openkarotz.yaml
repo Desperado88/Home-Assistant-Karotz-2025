@@ -134,6 +134,8 @@ rest_command:
     url: "http://{{ states('input_text.karotz_dev_ip_address') }}/cgi-bin/volume?level={{ states('input_number.karotz_dev_volume') | int }}"
     method: GET
     timeout: 10
+  karotz_dev_replay_last_action:
+    url: "http://{{ states('input_text.karotz_dev_ip_address') }}/cgi-bin/replay_last_action"
   # --- RFID ---
   karotz_dev_rfid_record_start:
     url: "http://{{ states('input_text.karotz_dev_ip_address') }}/cgi-bin/rfid_start_record"

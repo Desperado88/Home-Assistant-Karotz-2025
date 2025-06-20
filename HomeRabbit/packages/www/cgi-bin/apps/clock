@@ -35,21 +35,28 @@ if [ ! -d "$CNF_DATADIR/Apps/Clock/Data/$HOUR" ]; then
    SendResponse "$DATA"
    exit 0
 fi
-       find  $CNF_DATADIR/Apps/Clock/Data/$HOUR -name "*.mp3" > $CNF_DATADIR/Tmp/tmplst
-       NB=$(cat $CNF_DATADIR/Tmp/tmplst | wc -l)
-       r=$RANDOM
-       if [ $NB -gt 0 ]; then
-          SOUND=$[($RANDOM % ($[$NB - $MIN] + 1)) + $MIN] >>/dev/null 2>>/dev/null
-          if [ -f "$CNF_DATADIR/Apps/Clock/Data/$HOUR/$SOUND.mp3" ]; then
-            #Log "[APPS][CLOCK]"  "Playing sound : "$CNF_DATADIR/Apps/Clock/Data/$HOUR/$SOUND.mp3
-            PlaySound  $CNF_DATADIR/Apps/Clock/Data/$HOUR/$SOUND.mp3
-            EarsReset
-            DATA='{"return":"0","hour":"'$HOUR'"}'
-       else
-	    DATA='{"return":"1","msg":"No sound for this time."}'       
-       fi
-       else
-          DATA='{"return":"1","hour":"'$HOUR'"}'
-       fi
+
+find  $CNF_DATADIR/Apps/Clock/Data/$HOUR -name "*.mp3" > $CNF_DATADIR/Tmp/tmplst
+NB=$(cat $CNF_DATADIR/Tmp/tmplst | wc -l)
+r=$RANDOM
+if [ $NB -gt 0 ]; then
+   SOUND=$[($RANDOM % ($[$NB - $MIN] + 1)) + $MIN] >>/dev/null 2>>/dev/null
+   if [ -f "$CNF_DATADIR/Apps/Clock/Data/$HOUR/$SOUND.mp3" ]; then
+   #Log "[APPS][CLOCK]"  "Playing sound : "$CNF_DATADIR/Apps/Clock/Data/$HOUR/$SOUND.mp3
+   PlaySound  $CNF_DATADIR/Apps/Clock/Data/$HOUR/$SOUND.mp3
+   EarsReset
+   DATA='{"return":"0","hour":"'$HOUR'"}'
+else
+DATA='{"return":"1","msg":"No sound for this time."}'       
+fi
+else
+   DATA='{"return":"1","hour":"'$HOUR'"}'
+fi
+
+# Sauvegarde de la dernière action exécutée
+# (rejouable localement avec le bon paramètre)
+echo "QUERY_STRING=\"hour=$HOUR\" ./apps/clock" > /www/cgi-bin/karotz_last_action.sh
+chmod +x /www/cgi-bin/karotz_last_action.sh
 
 SendResponse "$DATA"
+
