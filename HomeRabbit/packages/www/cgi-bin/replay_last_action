@@ -1,0 +1,17 @@
+#!/bin/bash
+source /www/cgi-bin/setup.inc
+source /www/cgi-bin/utils.inc
+
+if [ -e "$CNF_DATADIR/Run/karotz.sleep" ]; then
+    DATA='{"return":"1","msg":"Le karotz est en veille."}'
+    SendResponse "$DATA"
+    exit 0
+fi
+
+if [ ! -f "/www/cgi-bin/karotz_last_action.sh" ]; then
+    DATA='{"return":"2","msg":"Script karotz_last_action.sh introuvable."}'
+    SendResponse "$DATA"
+    exit 0
+fi
+
+/www/cgi-bin/karotz_last_action.sh

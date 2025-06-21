@@ -16,9 +16,9 @@ CheckMandatoryDirectory  "$CNF_DATADIR/Apps/Clock/Data"
 
 if [ -e "$CNF_DATADIR/Run/karotz.sleep" ]; then
    DATA='{"return":"1","msg":"Unable to perform action, rabbit is sleeping."}'
-      SendResponse "$DATA"
-         exit 0
-         fi
+   SendResponse "$DATA"
+   exit 0
+fi
 
 
 SendResponse "$AL"
