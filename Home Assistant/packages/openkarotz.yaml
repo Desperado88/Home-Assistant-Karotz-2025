@@ -39,6 +39,14 @@ sensor:
       - tags
     scan_interval: 60
   # --- FIN RFID ---
+  - platform: rest
+    name: karotz_dev_free_space
+    resource: "http://192.168.1.xxx/cgi-bin/get_free_space"
+    value_template: "{{ value_json.karotz_percent_used_space }}"
+    json_attributes:
+      - karotz_percent_used_space
+      - usb_percent_used_space
+    #scan_interval: 3600 # toutes les heures, mais on va forcer le refresh avec un bouton
 
 input_boolean:
   karotz_dev_awake:
@@ -98,10 +106,16 @@ template:
           {{ db | round(0) }}
         unit_of_measurement: "dB"
         icon: mdi:volume-high
-  
+  - sensor:
+      - name: "Karotz USB utilisée (%)"
+        state: "{{ state_attr('sensor.karotz_dev_free_space', 'usb_percent_used_space') }}"
+        unit_of_measurement: "%"
+
 rest_command:
   karotz_dev_free_space:
     url: "http://{{ states('input_text.karotz_dev_ip_address') }}/cgi-bin/get_free_space"
+  karotz_dev_clear_cache:
+    url: "http://{{ states('input_text.karotz_dev_ip_address') }}/cgi-bin/clear_cache"
   karotz_dev_moods:
     url: "http://{{ states('input_text.karotz_dev_ip_address') }}/cgi-bin/apps/moods"
   karotz_dev_moods_id:
@@ -179,7 +193,7 @@ script:
 
 automation:
   - id: karotz_dev_on_automation
-    alias: Karotz dev On
+    alias: karotz_dev On
     trigger:
       - trigger: state
         entity_id: sensor.karotz_dev_sleep_sensor
@@ -189,7 +203,7 @@ automation:
         target:
           entity_id: input_boolean.karotz_dev_awake
   - id: karotz_dev_off_automation
-    alias: Karotz dev Off
+    alias: karotz_dev Off
     trigger:
       - trigger: state
         entity_id: sensor.karotz_dev_sleep_sensor
@@ -199,7 +213,7 @@ automation:
         target:
           entity_id: input_boolean.karotz_dev_awake
   - id: karotz_dev_color_automation
-    alias: Update Karotz dev Color
+    alias: karotz_dev Update Color
     trigger:
       - trigger: state
         entity_id:
@@ -209,7 +223,7 @@ automation:
     action:
       - action: rest_command.karotz_dev_light
   - id: karotz_dev_ear_automation
-    alias: Update Karotz dev Ears
+    alias: karotz_dev Update Ears
     trigger:
       - trigger: state
         entity_id:
@@ -218,7 +232,7 @@ automation:
     action:
       - action: rest_command.karotz_dev_ears
   - id: karotz_dev_light_mode_automation
-    alias: Karotz dev Light Mode Automation
+    alias: karotz_dev Light Mode Automation
     trigger:
       - trigger: state
         entity_id: input_boolean.karotz_dev_light_fixed_mode
@@ -237,7 +251,7 @@ automation:
             sequence:
               - action: rest_command.karotz_dev_light
   - id: karotz_dev_volume_automation
-    alias: Update Karotz dev Volume
+    alias: karotz_dev Update Volume
     trigger:
       - trigger: state
         entity_id: input_number.karotz_dev_volume
@@ -245,3 +259,11 @@ automation:
       - action: rest_command.karotz_dev_volume
         data:
           level: "{{ states('input_number.karotz_dev_volume') | int }}"
+  - id: karotz_dev_clear_cache_auto
+    alias: "karotz_dev Clear cache si mémoire > 80%"
+    trigger:
+      - trigger: numeric_state
+        entity_id: sensor.karotz_dev_free_space
+        above: 80
+    action:
+      - action: rest_command.karotz_dev_clear_cache
