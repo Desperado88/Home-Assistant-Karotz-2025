@@ -41,7 +41,7 @@ sensor:
   # --- FIN RFID ---
   - platform: rest
     name: karotz_dev_free_space
-    resource: "http://192.168.1.xxx/cgi-bin/get_free_space"
+    resource: "http://192.168.1.xxx/cgi-bin/get_free_space" # ⚠️ À MODIFIER : Même IP que karotz_dev_ip_address
     value_template: "{{ value_json.karotz_percent_used_space }}"
     json_attributes:
       - karotz_percent_used_space

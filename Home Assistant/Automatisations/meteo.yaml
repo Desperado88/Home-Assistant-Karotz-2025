@@ -90,4 +90,10 @@
             La température est de {{ states('sensor.[temperature]') | default(20) | float | round(0) }} degrés.
             Le vent souffle à {{ states('sensor.[vitesse du vent]') | default(0) | float | round(0) }} kilomètres par heure.
             Le risque de pluie est de {{ states('sensor.[ville]_rain_chance') | default(0) | float | round(0) }} pourcents.
+            {% set alerte = states('sensor.44_weather_alert') | default('') | lower %}
+            {% if 'orange' in alerte %}
+              Attention, une alerte météo **orange** est en cours.
+            {% elif 'rouge' in alerte %}
+              Attention, une alerte météo **rouge** est en cours. Restez vigilant.
+            {% endif %}
     mode: single  # Empêche le déclenchement multiple simultané
