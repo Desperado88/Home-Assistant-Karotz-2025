@@ -86,7 +86,7 @@ input_number:
   # -- Sauvegarde ---
   karotz_dev_saved_light_speed:
     min: 0
-    max: 10
+    max: 2000
     step: 1
   karotz_dev_saved_ear_left:
     min: 0
@@ -107,7 +107,7 @@ template:
         unit_of_measurement: "dB"
         icon: mdi:volume-high
   - sensor:
-      - name: "Karotz USB utilisée (%)"
+      - name: "Karotz_dev USB utilisée (%)"
         state: "{{ state_attr('sensor.karotz_dev_free_space', 'usb_percent_used_space') }}"
         unit_of_measurement: "%"
 
@@ -193,7 +193,7 @@ script:
 
 automation:
   - id: karotz_dev_on_automation
-    alias: karotz_dev On
+    alias: karotz_dev - On
     trigger:
       - trigger: state
         entity_id: sensor.karotz_dev_sleep_sensor
@@ -203,7 +203,7 @@ automation:
         target:
           entity_id: input_boolean.karotz_dev_awake
   - id: karotz_dev_off_automation
-    alias: karotz_dev Off
+    alias: karotz_dev - Off
     trigger:
       - trigger: state
         entity_id: sensor.karotz_dev_sleep_sensor
@@ -213,7 +213,7 @@ automation:
         target:
           entity_id: input_boolean.karotz_dev_awake
   - id: karotz_dev_color_automation
-    alias: karotz_dev Update Color
+    alias: karotz_dev - Update Color
     trigger:
       - trigger: state
         entity_id:
@@ -223,7 +223,7 @@ automation:
     action:
       - action: rest_command.karotz_dev_light
   - id: karotz_dev_ear_automation
-    alias: karotz_dev Update Ears
+    alias: karotz_dev - Update Ears
     trigger:
       - trigger: state
         entity_id:
@@ -232,7 +232,7 @@ automation:
     action:
       - action: rest_command.karotz_dev_ears
   - id: karotz_dev_light_mode_automation
-    alias: karotz_dev Light Mode Automation
+    alias: karotz_dev - Light Mode Automation
     trigger:
       - trigger: state
         entity_id: input_boolean.karotz_dev_light_fixed_mode
@@ -251,7 +251,7 @@ automation:
             sequence:
               - action: rest_command.karotz_dev_light
   - id: karotz_dev_volume_automation
-    alias: karotz_dev Update Volume
+    alias: karotz_dev - Update Volume
     trigger:
       - trigger: state
         entity_id: input_number.karotz_dev_volume
@@ -260,7 +260,7 @@ automation:
         data:
           level: "{{ states('input_number.karotz_dev_volume') | int }}"
   - id: karotz_dev_clear_cache_auto
-    alias: "karotz_dev Clear cache si mémoire > 80%"
+    alias: "karotz_dev - Clear cache si mémoire > 80%"
     trigger:
       - trigger: numeric_state
         entity_id: sensor.karotz_dev_free_space

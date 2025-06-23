@@ -1,7 +1,8 @@
 # Automatisation qui dit une phrase aléatoire lors qu'il y a du courrier
 # À coller dans les automatisations de Home Assistant
 
-alias: karotz_dev il y a du courrier
+alias: karotz_dev - Il y a du courrier
+description: ""
 triggers:
   - minutes: "45"
     trigger: time_pattern
@@ -9,8 +10,9 @@ conditions:
   - condition: time
     after: "07:00:00"
     before: "20:00:00"
+    enabled: true
   - condition: state
-    entity_id: binary_sensor.status_lettre
+    entity_id: binary_sensor.eth01_status_lettre
     state: "on"
 actions:
   - data:
@@ -47,5 +49,15 @@ actions:
       entity_id: input_text.karotz_dev_color_1
       value: 00FF00
     action: input_text.set_value
+  - action: input_boolean.turn_on
+    target:
+      entity_id: input_boolean.karotz_dev_light_fixed_mode
+    data: {}
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 1
+      milliseconds: 0
   - action: rest_command.karotz_dev_light_fixed
+    metadata: {}
     data: {}

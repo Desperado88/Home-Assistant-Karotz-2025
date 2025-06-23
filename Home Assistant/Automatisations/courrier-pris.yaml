@@ -1,10 +1,10 @@
 # Automatisation qui restaure l'état précédent lorsque le courrier est pris
 # À coller dans les automatisations de Home Assistant
 
-alias: karotz_dev courrier retirée
+alias: karotz_dev - Courrier retirée
 description: ""
 triggers:
-  - entity_id: binary_sensor.status_lettre
+  - entity_id: binary_sensor.eth01_status_lettre
     to: "off"
     trigger: state
 actions:
