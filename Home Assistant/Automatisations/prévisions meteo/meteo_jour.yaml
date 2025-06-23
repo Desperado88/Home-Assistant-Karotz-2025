@@ -1,0 +1,48 @@
+alias: karotz_dev - météo du jour 7h15
+description: Annonce la météo du jour à ville via Karotz_dev
+triggers:
+  - trigger: time
+    at: "07:15:00"
+conditions: []
+actions:
+  - action: rest_command.karotz_dev_say
+    metadata: {}
+    data:
+      text: >-
+        {% set conditions = {
+          'sunny': 'ensoleillé',
+          'clear-night': 'nuit dégagée',
+          'cloudy': 'nuageux',
+          'partlycloudy': 'partiellement nuageux',
+          'fog': 'brouillard',
+          'windy': 'venteux',
+          'windy-variant': 'variablement venteux',
+          'hail': 'grêle',
+          'lightning': 'orages',
+          'lightning-rainy': 'orages avec pluie',
+          'pouring': 'fortes pluies',
+          'rainy': 'pluvieux',
+          'snowy': 'enneigé',
+          'snowy-rainy': 'neige et pluie',
+          'exceptional': 'conditions exceptionnelles'
+        } %} {% set condition = states('sensor.prevision_meteo_aujourd_hui') %}
+        {% set condition_fr = conditions.get(condition, condition) %}
+
+        Voici la météo prévue pour aujourd_hui à ville. Le temps sera {{
+        condition_fr }}.  Température maximale : {{
+        state_attr('sensor.prevision_meteo_aujourd_hui', 'temperature') | float
+        | round(0) }} degrés.  Température minimale : {{
+        state_attr('sensor.prevision_meteo_aujourd_hui', 'templow') | float |
+        round(0) }} degrés.  {% set pluie =
+        state_attr('sensor.prevision_meteo_aujourd_hui',
+        'precipitation_probability') %} {% if pluie != 'n/a' %}
+          Risque de pluie : {{ pluie }} pourcents. 
+        {% endif %} {% set nuages =
+        state_attr('sensor.prevision_meteo_aujourd_hui', 'cloud_coverage') %} 
+        {% if nuages != 'n/a' %} 
+          Couverture nuageuse : {{ nuages }} pourcents. 
+        {% endif %}  Vent : {{ state_attr('sensor.prevision_meteo_aujourd_hui',
+        'wind_speed') | float | round(0) }} kilomètres par heure.  Indice UV :
+        {{ state_attr('sensor.prevision_meteo_aujourd_hui', 'uv_index') }} sur
+        10.
+mode: single
