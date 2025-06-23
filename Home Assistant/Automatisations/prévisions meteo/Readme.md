@@ -8,7 +8,7 @@ template:
 # ------- Template pour la méthéo aujourd'hui ----------
   - trigger:
       - trigger: time_pattern
-        hours: "/1"  # Met à jour chaque heure
+        hours: "/23" # Met à jour chaque heure
       - trigger: homeassistant
         event: start  # Met à jour au démarrage de Home Assistant
     action:
@@ -33,7 +33,7 @@ template:
 # ------- Template pour la méthéo de demain ----------
   - trigger:
       - trigger: time_pattern
-        hours: "/24"  # Met à jour toutes les heures
+        hours: "/23"  # Met à jour toutes les heures
       - trigger: homeassistant
         event: start  # Met à jour au redémarrage
     action:

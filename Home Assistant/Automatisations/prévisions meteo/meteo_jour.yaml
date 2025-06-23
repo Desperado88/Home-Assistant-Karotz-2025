@@ -28,21 +28,23 @@ actions:
         } %} {% set condition = states('sensor.prevision_meteo_aujourd_hui') %}
         {% set condition_fr = conditions.get(condition, condition) %}
 
-        Voici la météo prévue pour aujourd_hui à ville. Le temps sera {{
-        condition_fr }}.  Température maximale : {{
-        state_attr('sensor.prevision_meteo_aujourd_hui', 'temperature') | float
-        | round(0) }} degrés.  Température minimale : {{
-        state_attr('sensor.prevision_meteo_aujourd_hui', 'templow') | float |
-        round(0) }} degrés.  {% set pluie =
+        Voici la météo prévue pour aujourd’hui à Treillières. Le temps sera {{
+        condition_fr }}. Température maximale : {{
+          state_attr('sensor.prevision_meteo_aujourd_hui', 'temperature') | default(0) | float | round(0)
+        }} degrés. Température minimale : {{
+          state_attr('sensor.prevision_meteo_aujourd_hui', 'templow') | default(0) | float | round(0)
+        }} degrés. {% set pluie =
         state_attr('sensor.prevision_meteo_aujourd_hui',
-        'precipitation_probability') %} {% if pluie != 'n/a' %}
-          Risque de pluie : {{ pluie }} pourcents. 
+        'precipitation_probability') %} {% if pluie != 'n/a' and pluie is not
+        none %}
+          Risque de pluie : {{ pluie }} pourcents.
         {% endif %} {% set nuages =
-        state_attr('sensor.prevision_meteo_aujourd_hui', 'cloud_coverage') %} 
-        {% if nuages != 'n/a' %} 
-          Couverture nuageuse : {{ nuages }} pourcents. 
-        {% endif %}  Vent : {{ state_attr('sensor.prevision_meteo_aujourd_hui',
-        'wind_speed') | float | round(0) }} kilomètres par heure.  Indice UV :
-        {{ state_attr('sensor.prevision_meteo_aujourd_hui', 'uv_index') }} sur
-        10.
+        state_attr('sensor.prevision_meteo_aujourd_hui', 'cloud_coverage') %} {%
+        if nuages != 'n/a' and nuages is not none %}
+          Couverture nuageuse : {{ nuages }} pourcents.
+        {% endif %} Vent : {{
+          state_attr('sensor.prevision_meteo_aujourd_hui', 'wind_speed') | default(0) | float | round(0)
+        }} kilomètres par heure. {% set uv =
+        state_attr('sensor.prevision_meteo_aujourd_hui', 'uv_index') |
+        default(0) %} Indice UV : {{ uv }} sur 10.
 mode: single
