@@ -178,6 +178,11 @@ rest_command:
   # --- Stories ---
   karotz_dev_stories:
     url: "http://{{ states('input_text.karotz_dev_ip_address') }}/cgi-bin/stories?id={{ id }}"
+  # --- Play/Stop USB ---
+  karotz_dev_play_usb:
+    url: "http://{{ states('input_text.karotz_dev_ip_address') }}/cgi-bin/apps/play_usb"
+  karotz_dev_stop_usb:
+    url: "http://{{ states('input_text.karotz_dev_ip_address') }}/cgi-bin/apps/stop_usb"
   # --- RFID ---
   karotz_dev_rfid_record_start:
     url: "http://{{ states('input_text.karotz_dev_ip_address') }}/cgi-bin/rfid_start_record"

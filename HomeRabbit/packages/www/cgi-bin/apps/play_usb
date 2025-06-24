@@ -1,0 +1,21 @@
+#!/bin/bash
+
+source /www/cgi-bin/setup.inc
+source /www/cgi-bin/url.inc
+source /www/cgi-bin/utils.inc
+
+KillProcess
+ReadUrlParam
+
+if [ ! -e "$CNF_DATADIR/Run/karotz.sleep" ]; then
+    if ls /mnt/usbkey/*.mp3 1> /dev/null 2>&1; then
+        PlaySound /mnt/usbkey/*.mp3 &
+        DATA='{"return":"0"}'
+    else
+        DATA='{"return":"1","msg":"Unable to find sound"}'
+    fi
+else
+    DATA='{"return":"1","msg":"Unable to perform action, rabbit is sleeping."}'
+fi
+
+SendResponse "$DATA"

@@ -6,9 +6,26 @@ cards:
       - entity: input_select.karotz_dev_story
         name: Choisis une histoire
   - type: button
-    name: Lire l'histoire sélectionnée
-    icon: mdi:book-open-page-variant
+    name: 📚 Lire l'histoire sélectionnée 📖
     tap_action:
       action: call-service
       service: script.karotz_dev_play_story
 # === FIN CARTE AVEC INPUT_SELECT ET SCRIPT KAROTZ ===
+  - type: horizontal-stack
+    cards:
+      - show_name: true
+        show_icon: true
+        type: button
+        name: Lancer lecture USB ▶️
+        icon: ""
+        tap_action:
+          action: call-service
+          service: rest_command.karotz_dev_play_usb
+      - show_name: true
+        show_icon: true
+        type: button
+        name: Arrêter lecture ⏹️
+        icon: ""
+        tap_action:
+          action: call-service
+          service: rest_command.karotz_dev_stop_usb
