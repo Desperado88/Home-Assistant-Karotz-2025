@@ -1,4 +1,4 @@
-# === DEBUT CARTE AVEC INPUT_SELECT ET SCRIPT KAROTZ ===
+# === Controle de la lecture des histoires ===
 type: vertical-stack
 cards:
   - type: entities
@@ -10,7 +10,7 @@ cards:
     tap_action:
       action: call-service
       service: script.karotz_dev_play_story
-# === FIN CARTE AVEC INPUT_SELECT ET SCRIPT KAROTZ ===
+# === Controle de la lecture des fichier usb (mp3) ===
   - type: horizontal-stack
     cards:
       - show_name: true
