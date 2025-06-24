@@ -1,32 +1,4 @@
-# A ajouter dans "openkarotz.yaml"
-# Sensor REST pour récupérer le status du Karotz
-sensor:
-  - platform: rest
-    name: Karotz Status
-    resource: "http://<ADRESSE_IP_KAROTZ>/cgi-bin/status" # ⚠️ À MODIFIER : Même IP que karotz_dev_ip_address
-    value_template: "{{ value_json.version }}"
-    json_attributes:
-      - ears_disabled
-      - sleep
-      - sleep_time
-      - led_color
-      - led_pulse
-      - tts_cache_size
-      - usb_free_space
-      - karotz_free_space
-      - eth_mac
-      - wlan_mac
-      - nb_tags
-      - nb_moods
-      - nb_sounds
-      - nb_stories
-      - karotz_percent_used_space
-      - usb_percent_used_space
-      - data_dir
-    scan_interval: 60
-
 # A coller dans le tableau de bord -----------------------------------------------------
-# Carte Lovelace à ajouter dans le dashboard
 type: vertical-stack
 cards:
   - type: markdown
