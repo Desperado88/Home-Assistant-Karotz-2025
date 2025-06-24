@@ -19,10 +19,6 @@ cards:
         name: Light Speed
       - entity: input_boolean.karotz_dev_light_fixed_mode
         name: Light Fixed Mode
-      - entity: sensor.karotz_dev_free_space
-        name: Mémoire Karotz utilisée (%)
-      - entity: sensor.karotz_usb_utilisee
-        name: Clé USB utilisée (%)
     show_header_toggle: false
   - type: horizontal-stack
     cards:
@@ -56,16 +52,6 @@ cards:
         tap_action:
           action: call-service
           service: script.karotz_dev_moods
-      - show_name: true
-        show_icon: true
-        type: button
-        name: Refresh
-        icon: mdi:refresh
-        tap_action:
-          action: call-service
-          service: homeassistant.update_entity
-          target:
-            entity_id: sensor.karotz_dev_free_space
   - type: entities
     title: Text To Speech
     entities:

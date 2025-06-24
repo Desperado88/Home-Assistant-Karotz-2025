@@ -1,0 +1,61 @@
+# A ajouter dans "openkarotz.yaml"
+# Sensor REST pour récupérer le status du Karotz
+sensor:
+  - platform: rest
+    name: Karotz Status
+    resource: "http://<ADRESSE_IP_KAROTZ>/cgi-bin/status" # ⚠️ À MODIFIER : Même IP que karotz_dev_ip_address
+    value_template: "{{ value_json.version }}"
+    json_attributes:
+      - ears_disabled
+      - sleep
+      - sleep_time
+      - led_color
+      - led_pulse
+      - tts_cache_size
+      - usb_free_space
+      - karotz_free_space
+      - eth_mac
+      - wlan_mac
+      - nb_tags
+      - nb_moods
+      - nb_sounds
+      - nb_stories
+      - karotz_percent_used_space
+      - usb_percent_used_space
+      - data_dir
+    scan_interval: 60
+
+# A coller dans le tableau de bord -----------------------------------------------------
+# Carte Lovelace à ajouter dans le dashboard
+type: vertical-stack
+cards:
+  - type: markdown
+    title: "Status Karotz"
+    content: |
+      **Version :** {{ states('sensor.karotz_status') }}  
+      **Ears Disabled :** {{ state_attr('sensor.karotz_status', 'ears_disabled') }}  
+      **Sleep :** {{ state_attr('sensor.karotz_status', 'sleep') }}  
+      **Sleep Time :** {{ state_attr('sensor.karotz_status', 'sleep_time') }}  
+      **LED Color :** {{ state_attr('sensor.karotz_status', 'led_color') }}  
+      **LED Pulse :** {{ state_attr('sensor.karotz_status', 'led_pulse') }}  
+      **TTS Cache Size :** {{ state_attr('sensor.karotz_status', 'tts_cache_size') }}  
+      **USB Free Space :** {{ state_attr('sensor.karotz_status', 'usb_free_space') }}  
+      **Karotz Free Space :** {{ state_attr('sensor.karotz_status', 'karotz_free_space') }}  
+      **ETH MAC :** {{ state_attr('sensor.karotz_status', 'eth_mac') }}  
+      **WLAN MAC :** {{ state_attr('sensor.karotz_status', 'wlan_mac') }}  
+      **Nombre de tags :** {{ state_attr('sensor.karotz_status', 'nb_tags') }}  
+      **Nombre de moods :** {{ state_attr('sensor.karotz_status', 'nb_moods') }}  
+      **Nombre de sons :** {{ state_attr('sensor.karotz_status', 'nb_sounds') }}  
+      **Nombre d'histoires :** {{ state_attr('sensor.karotz_status', 'nb_stories') }}  
+      **% espace Karotz utilisé :** {{ state_attr('sensor.karotz_status', 'karotz_percent_used_space') }}%  
+      **% espace USB utilisé :** {{ state_attr('sensor.karotz_status', 'usb_percent_used_space') }}%  
+      **Répertoire data :** {{ state_attr('sensor.karotz_status', 'data_dir') }}
+  - type: button
+    name: Rafraîchir
+    show_icon: true
+    tap_action:
+      action: call-service
+      service: homeassistant.update_entity
+      target:
+        entity_id: sensor.karotz_status
+

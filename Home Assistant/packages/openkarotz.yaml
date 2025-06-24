@@ -40,13 +40,28 @@ sensor:
     scan_interval: 60
   # --- FIN RFID ---
   - platform: rest
-    name: karotz_dev_free_space
-    resource: "http://192.168.1.xxx/cgi-bin/get_free_space" # ⚠️ À MODIFIER : Même IP que karotz_dev_ip_address
-    value_template: "{{ value_json.karotz_percent_used_space }}"
+    name: Karotz Status
+    resource: "http://192.168.1.xxx/cgi-bin/status" # ⚠️ À MODIFIER : Même IP que karotz_dev_ip_address
+    value_template: "{{ value_json.version }}"
     json_attributes:
+      - ears_disabled
+      - sleep
+      - sleep_time
+      - led_color
+      - led_pulse
+      - tts_cache_size
+      - usb_free_space
+      - karotz_free_space
+      - eth_mac
+      - wlan_mac
+      - nb_tags
+      - nb_moods
+      - nb_sounds
+      - nb_stories
       - karotz_percent_used_space
       - usb_percent_used_space
-    #scan_interval: 3600 # toutes les heures, mais on va forcer le refresh avec un bouton
+      - data_dir
+    #scan_interval: 3600
 
 input_boolean:
   karotz_dev_awake:
@@ -106,14 +121,11 @@ template:
           {{ db | round(0) }}
         unit_of_measurement: "dB"
         icon: mdi:volume-high
-  - sensor:
-      - name: "Karotz_dev USB utilisée (%)"
-        state: "{{ state_attr('sensor.karotz_dev_free_space', 'usb_percent_used_space') }}"
-        unit_of_measurement: "%"
+
 
 rest_command:
-  karotz_dev_free_space:
-    url: "http://{{ states('input_text.karotz_dev_ip_address') }}/cgi-bin/get_free_space"
+  karotz_dev_status:
+    url: "http://{{ states('input_text.karotz_dev_ip_address') }}/cgi-bin/status"
   karotz_dev_clear_cache:
     url: "http://{{ states('input_text.karotz_dev_ip_address') }}/cgi-bin/clear_cache"
   karotz_dev_moods:
@@ -263,7 +275,7 @@ automation:
     alias: "karotz_dev - Clear cache si mémoire > 80%"
     trigger:
       - trigger: numeric_state
-        entity_id: sensor.karotz_dev_free_space
+        entity_id: sensor.karotz_dev_status
         above: 80
     action:
       - action: rest_command.karotz_dev_clear_cache
