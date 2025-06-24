@@ -43,7 +43,7 @@ sensor:
     name: Karotz Status
     resource: "http://192.168.1.xxx/cgi-bin/status" # ⚠️ À MODIFIER : Même IP que karotz_dev_ip_address
     value_template: "{{ value_json.version }}"
-    json_attributes:
+    json_attributes: # ⚠️ ne pas modifier les noms des attributs
       - ears_disabled
       - sleep
       - sleep_time

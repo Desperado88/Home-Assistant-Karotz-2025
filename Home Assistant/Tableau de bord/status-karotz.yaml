@@ -2,26 +2,26 @@
 type: vertical-stack
 cards:
   - type: markdown
-    title: "Status Karotz"
+    title: "Status karotz_dev"
     content: |
-      **Version :** {{ states('sensor.karotz_status') }}  
-      **Ears Disabled :** {{ state_attr('sensor.karotz_status', 'ears_disabled') }}  
-      **Sleep :** {{ state_attr('sensor.karotz_status', 'sleep') }}  
-      **Sleep Time :** {{ state_attr('sensor.karotz_status', 'sleep_time') }}  
-      **LED Color :** {{ state_attr('sensor.karotz_status', 'led_color') }}  
-      **LED Pulse :** {{ state_attr('sensor.karotz_status', 'led_pulse') }}  
-      **TTS Cache Size :** {{ state_attr('sensor.karotz_status', 'tts_cache_size') }}  
-      **USB Free Space :** {{ state_attr('sensor.karotz_status', 'usb_free_space') }}  
-      **Karotz Free Space :** {{ state_attr('sensor.karotz_status', 'karotz_free_space') }}  
-      **ETH MAC :** {{ state_attr('sensor.karotz_status', 'eth_mac') }}  
-      **WLAN MAC :** {{ state_attr('sensor.karotz_status', 'wlan_mac') }}  
-      **Nombre de tags :** {{ state_attr('sensor.karotz_status', 'nb_tags') }}  
-      **Nombre de moods :** {{ state_attr('sensor.karotz_status', 'nb_moods') }}  
-      **Nombre de sons :** {{ state_attr('sensor.karotz_status', 'nb_sounds') }}  
-      **Nombre d'histoires :** {{ state_attr('sensor.karotz_status', 'nb_stories') }}  
-      **% espace Karotz utilisé :** {{ state_attr('sensor.karotz_status', 'karotz_percent_used_space') }}%  
-      **% espace USB utilisé :** {{ state_attr('sensor.karotz_status', 'usb_percent_used_space') }}%  
-      **Répertoire data :** {{ state_attr('sensor.karotz_status', 'data_dir') }}
+      **Version :** {{ states('sensor.karotz_dev_status') }}  
+      **Ears Disabled :** {{ state_attr('sensor.karotz_dev_status', 'ears_disabled') }}  
+      **Sleep :** {{ state_attr('sensor.karotz_dev_status', 'sleep') }}  
+      **Sleep Time :** {{ state_attr('sensor.karotz_dev_status', 'sleep_time') }}  
+      **LED Color :** {{ state_attr('sensor.karotz_dev_status', 'led_color') }}  
+      **LED Pulse :** {{ state_attr('sensor.karotz_dev_status', 'led_pulse') }}  
+      **TTS Cache Size :** {{ state_attr('sensor.karotz_dev_status', 'tts_cache_size') }}  
+      **USB Free Space :** {{ state_attr('sensor.karotz_dev_status', 'usb_free_space') }}  
+      **karotz_dev Free Space :** {{ state_attr('sensor.karotz_dev_status', 'karotz_free_space') }}  
+      **ETH MAC :** {{ state_attr('sensor.karotz_dev_status', 'eth_mac') }}  
+      **WLAN MAC :** {{ state_attr('sensor.karotz_dev_status', 'wlan_mac') }}  
+      **Nombre de tags :** {{ state_attr('sensor.karotz_dev_status', 'nb_tags') }}  
+      **Nombre de moods :** {{ state_attr('sensor.karotz_dev_status', 'nb_moods') }}  
+      **Nombre de sons :** {{ state_attr('sensor.karotz_dev_status', 'nb_sounds') }}  
+      **Nombre d'histoires :** {{ state_attr('sensor.karotz_dev_status', 'nb_stories') }}  
+      **% espace karotz_dev utilisé :** {{ state_attr('sensor.karotz_dev_status', 'karotz_percent_used_space') }}%  
+      **% espace USB utilisé :** {{ state_attr('sensor.karotz_dev_status', 'usb_percent_used_space') }}%  
+      **Répertoire data :** {{ state_attr('sensor.karotz_dev_status', 'data_dir') }}
   - type: button
     name: Rafraîchir
     show_icon: true
@@ -29,5 +29,5 @@ cards:
       action: call-service
       service: homeassistant.update_entity
       target:
-        entity_id: sensor.karotz_status
+        entity_id: sensor.karotz_dev_status
 
