@@ -43,7 +43,7 @@ sensor:
     name: Karotz Status
     resource: "http://192.168.1.xxx/cgi-bin/status" # ⚠️ À MODIFIER : Même IP que karotz_dev_ip_address
     value_template: "{{ value_json.version }}"
-    json_attributes: # ⚠️ ne pas modifier les noms des attributs
+    json_attributes: # ⚠️ ne PAS modifier les noms des attributs
       - ears_disabled
       - sleep
       - sleep_time
@@ -111,7 +111,20 @@ input_number:
     min: 0
     max: 15
     step: 1
-    
+
+# --- Stories ---
+input_select:
+  karotz_dev_story:
+    name: Histoire à raconter
+    options:
+      - "Andre_Theuriet_-_Le_Conte_des_rois_mages"
+      - "Charles_Perrault_-_Cendrillon_ou_la_petite_pantoufle_de_vair"
+      - "Charles_Perrault_-_Le_maitre_chat_ou_le_chat_botte"
+      - "Charles_Perrault_-_Le_petit_poucet"
+      - "Charles_Perrault_-_Les_fees"
+      - "Geode_AM_-_Le_Vilain_petit_Ours_noir"
+    initial: "Andre_Theuriet_-_Le_Conte_des_rois_mages"
+
 template:
   - sensor:
       - name: "Karotz dev Volume (dB)"
@@ -162,6 +175,9 @@ rest_command:
     timeout: 10
   karotz_dev_replay_last_action:
     url: "http://{{ states('input_text.karotz_dev_ip_address') }}/cgi-bin/replay_last_action"
+  # --- Stories ---
+  karotz_dev_stories:
+    url: "http://{{ states('input_text.karotz_dev_ip_address') }}/cgi-bin/stories?id={{ id }}"
   # --- RFID ---
   karotz_dev_rfid_record_start:
     url: "http://{{ states('input_text.karotz_dev_ip_address') }}/cgi-bin/rfid_start_record"
@@ -202,6 +218,13 @@ script:
   karotz_dev_moods:
     sequence:
       - action: rest_command.karotz_dev_moods
+# ---- Stories ----
+  karotz_dev_play_story:
+    alias: "Lire l'histoire sélectionnée"
+    sequence:
+      - action: rest_command.karotz_dev_stories
+        data:
+          id: "{{ states('input_select.karotz_dev_story') }}"
 
 automation:
   - id: karotz_dev_on_automation

@@ -6,7 +6,7 @@ cards:
     content: |
       **Version :** {{ states('sensor.karotz_dev_status') }}  
       **Ears Disabled :** {{ state_attr('sensor.karotz_dev_status', 'ears_disabled') }}  
-      **Sleep :** {{ state_attr('sensor.karotz_dev_status', 'sleep') }}  
+      **Sleep :** {% if state_attr('sensor.karotz_dev_status', 'sleep') is none %}Inconnu{% elif state_attr('sensor.karotz_dev_status', 'sleep') %}Réveillé{% else %}Endormi{% endif %}
       **Sleep Time :** {{ state_attr('sensor.karotz_dev_status', 'sleep_time') }}  
       **LED Color :** {{ state_attr('sensor.karotz_dev_status', 'led_color') }}  
       **LED Pulse :** {{ state_attr('sensor.karotz_dev_status', 'led_pulse') }}  

@@ -1,0 +1,14 @@
+# === DEBUT CARTE AVEC INPUT_SELECT ET SCRIPT KAROTZ ===
+type: vertical-stack
+cards:
+  - type: entities
+    entities:
+      - entity: input_select.karotz_dev_story
+        name: Choisis une histoire
+  - type: button
+    name: Lire l'histoire sélectionnée
+    icon: mdi:book-open-page-variant
+    tap_action:
+      action: call-service
+      service: script.karotz_dev_play_story
+# === FIN CARTE AVEC INPUT_SELECT ET SCRIPT KAROTZ ===
