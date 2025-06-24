@@ -3,9 +3,9 @@ Pour utiliser les prévisions de demain vous devez :
 - ajouter ce template à votre "configuration.yaml"
 - copier "previsions_demain.yaml" et "météo_jour.yaml" dans vos automatisations
 
-# ------- Template pour la prévision météo ----------
+#### ------- Template pour la prévision météo ----------
 template:
-# ------- Template pour la méthéo aujourd'hui ----------
+#### ------- Template pour la méthéo aujourd'hui ----------
   - trigger:
       - trigger: time_pattern
         hours: "/23" # Met à jour chaque heure
@@ -30,7 +30,7 @@ template:
           wind_speed: "{{ daily['weather.forecast_maison'].forecast[0].wind_speed | default('n/a') }}"
           uv_index: "{{ daily['weather.forecast_maison'].forecast[0].uv_index | default('n/a') }}"
           datetime: "{{ daily['weather.forecast_maison'].forecast[0].datetime | default('n/a') }}"
-# ------- Template pour la méthéo de demain ----------
+#### ------- Template pour la méthéo de demain ----------
   - trigger:
       - trigger: time_pattern
         hours: "/23"  # Met à jour toutes les heures
