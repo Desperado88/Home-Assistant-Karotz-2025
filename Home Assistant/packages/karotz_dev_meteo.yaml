@@ -2,7 +2,7 @@ automation:
   # ----- MÉTÉO --------
   # Installer l'intégration "Météo-France" pour utiliser cette carte
   - id: karotz_dev_meteo_automation
-    alias: "karotz_dev - Réaction météo /30"
+    alias: "karotz_dev - Réaction météo h/30"
     description: "Adapte les oreilles, la LED et le clignotement selon les conditions météo"
     trigger:
       - trigger: time_pattern

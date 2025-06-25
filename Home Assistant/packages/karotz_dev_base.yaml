@@ -133,10 +133,10 @@ rest_command:
     url: "http://{{ states('input_text.karotz_dev_ip_address') }}/cgi-bin/leds?pulse=0&color={{ states('input_text.karotz_dev_color_1') }}"
   karotz_dev_say:
     url: "http://{{ states('input_text.karotz_dev_ip_address') }}/cgi-bin/tts?voice=2&text={{ text }}&nocache=1"
-    timeout: 30
+    timeout: 60
   karotz_dev_say_ha:
     url: "http://{{ states('input_text.karotz_dev_ip_address') }}/cgi-bin/tts?voice=2&text={{ states('input_text.karotz_dev_tts_text_ha') | urlencode }}&nocache=0"
-    timeout: 30
+    timeout: 60
   karotz_dev_sound:
     url: "http://{{ states('input_text.karotz_dev_ip_address') }}/cgi-bin/sound?id={{ sound }}"
   karotz_dev_tai_chi:
