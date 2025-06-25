@@ -32,11 +32,16 @@ dbus-monitor --system | while read -r line; do
 
     # Simple Click
     if echo "$line" | grep -q "member=click"; then
-        PlaySound "$CNF_DATADIR/Sounds/${SOUND2}"
-        /www/cgi-bin/apps/moods &
+        if ls /mnt/usbkey/*.mp3 1>/dev/null 2>&1; then
+            # Lecture du fichier mp3 avec madplay (volume ajustable avec la variable VOLUME)
+            madplay --adjust-volume=$VOLUME /mnt/usbkey/*.mp3 &
+        else
+            # Si aucun .mp3 trouvé, comportement par défaut
+            PlaySound "$CNF_DATADIR/Sounds/${SOUND2}"
+            /www/cgi-bin/apps/moods &
+        fi
         continue
     fi
-
     # Double Click
     if echo "$line" | grep -q "member=dclick"; then
         PlaySound "$CNF_DATADIR/Sounds/${SOUND1}"
