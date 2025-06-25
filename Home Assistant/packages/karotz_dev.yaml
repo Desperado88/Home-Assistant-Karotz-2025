@@ -1,7 +1,7 @@
 input_text:
   karotz_dev_ip_address:
     name: Karotz dev IP Address
-    initial: "192.168.1.103" # ⚠️ À MODIFIER : Remplacer par l'adresse IP de votre Karotz + lignes 63 et 69
+    initial: "192.168.1.xxx" # ⚠️ À MODIFIER : Remplacer par l'adresse IP de votre Karotz + lignes 63 et 69
   karotz_dev_color_1:
     name: Karotz dev Color 1
     initial: "00ff00" # ⚠️ OPTIONNEL : Couleur par défaut en hexadécimal
@@ -17,12 +17,12 @@ input_text:
 
 sensor:
   - platform: rest
-    resource: "http://192.168.1.103/cgi-bin/status" # ⚠️ À MODIFIER : Même IP que karotz_dev_ip_address
+    resource: "http://192.168.1.xxx/cgi-bin/status" # ⚠️ À MODIFIER : Même IP que karotz_dev_ip_address
     name: karotz_dev_sleep_sensor
     value_template: "{{ value_json.sleep }}"
   - platform: rest
     name: Karotz_dev Status
-    resource: "http://192.168.1.103/cgi-bin/status"
+    resource: "http://192.168.1.xxx/cgi-bin/status"
     value_template: "{{ value_json.version }}"
     json_attributes:
       - ears_disabled
