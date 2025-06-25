@@ -1,0 +1,44 @@
+input_text:
+  karotz_dev_rfid_id:
+    name: karotz dev ID du tag
+  karotz_dev_rfid_url:
+    name: karotz dev URL à assigner
+  karotz_dev_rfid_name:
+    name: karotz dev Nom du tag
+  karotz_dev_rfid_delete_id:
+    name: karotz dev ID du tag à supprimer
+
+sensor:
+  - platform: rest
+    name: karotz_dev_rfid_list
+    resource: "http://192.168.1.xxx/cgi-bin/rfid_list" # ⚠️ À MODIFIER : Même IP que karotz_dev_ip_address
+    value_template: "{{ value_json.return if value_json is defined else 'unknown' }}"
+    json_attributes:
+      - tags
+    #scan_interval: 60
+
+rest_command:
+  karotz_dev_rfid_record_start:
+    url: "http://{{ states('input_text.karotz_dev_ip_address') }}/cgi-bin/rfid_start_record"
+  karotz_dev_rfid_record_stop:
+    url: "http://{{ states('input_text.karotz_dev_ip_address') }}/cgi-bin/rfid_stop_record"
+  karotz_dev_rfid_assign:
+    url: "http://{{ states('input_text.karotz_dev_ip_address') }}/cgi-bin/rfid_assign_url?tag={{ states('input_text.karotz_dev_rfid_id') }}&url={{ states('input_text.karotz_dev_rfid_url') | urlencode }}&name={{ states('input_text.karotz_dev_rfid_name') | urlencode }}"
+  karotz_dev_rfid_list:
+    url:  "http://{{ states('input_text.karotz_dev_ip_address') }}/cgi-bin/rfid_list"
+  karotz_dev_rfid_delete:
+    url: "http://{{ states('input_text.karotz_dev_ip_address') }}/cgi-bin/rfid_delete?tag={{ states('input_text.karotz_dev_rfid_delete_id') }}"
+
+script:
+  karotz_dev_assign_rfid:
+    alias: karotz dev Assigner un tag RFID
+    sequence:
+      - action: rest_command.karotz_dev_rfid_assign
+  karotz_dev_delete_rfid:
+    alias: karotz dev Supprimer un tag RFID 
+    sequence:
+      - action: rest_command.karotz_dev_rfid_delete
+  karotz_dev_refresh_tags:
+    alias: karotz dev Rafraîchir liste des tags Karotz
+    sequence:
+      - action: rest.reload 

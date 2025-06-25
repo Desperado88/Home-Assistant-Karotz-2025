@@ -60,13 +60,23 @@ else
    WLAN_MAC="00:00:00:00:00:00"                                                                             
 fi 
 
+mkdir -p $CNF_DATADIR/Tmp
+
 find  $CNF_DATADIR/Tmp -name "*.txt" > $CNF_DATADIR/Tmp/tmplst 2>>/dev/null
-CS=$(cat $CNF_DATADIR/Tmp/tmplst | wc -l)
+if [ -f $CNF_DATADIR/Tmp/tmplst ]; then
+  CS=$(cat $CNF_DATADIR/Tmp/tmplst | wc -l)
+else
+  CS=0
+fi
 rm -f $CNF_DATADIR/Tmp/tmplst >> /dev/null 2>> /dev/null
 
-find  $CNF_DATADIR/Rfid -name "*.rfid" > $CNF_DATADIR/Tmp/tmplst 2>>/dev/null                                                
-NT=$(cat $CNF_DATADIR/Tmp/tmplst | wc -l)                                                                     
-rm -f $CNF_DATADIR/Tmp/tmplst >> /dev/null 2>> /dev/null         
+find  $CNF_DATADIR/Rfid -name "*.rfid" > $CNF_DATADIR/Tmp/tmplst 2>>/dev/null
+if [ -f $CNF_DATADIR/Tmp/tmplst ]; then
+  NT=$(cat $CNF_DATADIR/Tmp/tmplst | wc -l)
+else
+  NT=0
+fi
+rm -f $CNF_DATADIR/Tmp/tmplst >> /dev/null 2>> /dev/null     
 
 
 NM=$( ls -R -A $CNF_DATADIR/Moods/fr/ | grep ".mp3" | wc -l) 2>>/dev/null 

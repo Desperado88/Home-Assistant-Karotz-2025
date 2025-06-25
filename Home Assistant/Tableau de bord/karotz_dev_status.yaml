@@ -1,4 +1,4 @@
-# A coller dans le tableau de bord -----------------------------------------------------
+# A coller dans le tableau de bord pour afficher le status -----------------------------------------------------
 type: vertical-stack
 cards:
   - type: markdown

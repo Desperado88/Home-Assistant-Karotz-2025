@@ -1,0 +1,31 @@
+# Ajoute les fonctions pour lire des histoires près enregistrer sur le karotz et lire les mp3 d'une clé usb
+input_select:
+  karotz_dev_story:
+    name: Histoire à raconter
+    options:
+      - "Andre_Theuriet_-_Le_Conte_des_rois_mages"
+      - "Charles_Perrault_-_Cendrillon_ou_la_petite_pantoufle_de_vair"
+      - "Charles_Perrault_-_Le_maitre_chat_ou_le_chat_botte"
+      - "Charles_Perrault_-_Le_petit_poucet"
+      - "Charles_Perrault_-_Les_fees"
+      - "Geode_AM_-_Le_Vilain_petit_Ours_noir"
+    initial: "Andre_Theuriet_-_Le_Conte_des_rois_mages"
+
+rest_command:
+  # --- Stories ---
+  karotz_dev_stories:
+    url: "http://{{ states('input_text.karotz_dev_ip_address') }}/cgi-bin/stories?id={{ id }}"
+  # --- Play/Stop USB ---
+  karotz_dev_play_usb:
+    url: "http://{{ states('input_text.karotz_dev_ip_address') }}/cgi-bin/apps/play_usb"
+  karotz_dev_stop_usb:
+    url: "http://{{ states('input_text.karotz_dev_ip_address') }}/cgi-bin/apps/stop_usb"
+
+script:
+  # ---- Stories ----
+  karotz_dev_play_story:
+    alias: "Lire l'histoire sélectionnée"
+    sequence:
+      - action: rest_command.karotz_dev_stories
+        data:
+          id: "{{ states('input_select.karotz_dev_story') }}"

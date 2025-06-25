@@ -1,0 +1,190 @@
+automation:
+  # ----- MÉTÉO --------
+  # Installer l'intégration "Météo-France" pour utiliser cette carte
+  - id: karotz_dev_meteo_automation
+    alias: "karotz_dev - Réaction météo /30"
+    description: "Adapte les oreilles, la LED et le clignotement selon les conditions météo"
+    trigger:
+      - trigger: time_pattern
+        minutes: "30" # Déclenchement toutes les 30 minutes entre 7h et 19h
+    condition:
+      - condition: time
+        after: "07:00:00"
+        before: "19:00:00"
+    actions:
+      - action: rest_command.karotz_dev_say
+        data:
+          text: >-
+            Voici la météo.
+      - action: rest_command.karotz_dev_ears_reset
+      - action: input_number.set_value
+        data:
+          entity_id: input_number.karotz_dev_ear_left
+          value: > # Remplacez "[ville]" par votre ville
+            {% set rain = states('sensor.[ville]_rain_chance') | default(0) | float %} 
+            {% if rain < 5 %}
+              {{ 15 }}
+            {% elif rain > 60 %}
+              {{ 4 }}
+            {% else %}
+              {{ (15 - ((rain - 5) // 5)) | int }}
+            {% endif %}
+      - action: input_number.set_value
+        data:
+          entity_id: input_number.karotz_dev_ear_right
+          value: > # Remplacez "[ville]" par votre ville
+            {% set rain = states('sensor.[ville]_rain_chance') | default(0) | float %} 
+            {% if rain < 5 %}
+              {{ 15 }}
+            {% elif rain > 60 %}
+              {{ 4 }}
+            {% else %}
+              {{ (15 - ((rain - 5) // 5)) | int }}
+            {% endif %}
+      - action: input_text.set_value
+        data:
+          entity_id: input_text.karotz_dev_color_1
+          value: >
+            {% set temp = states('sensor.pac_atom_temp_ext') | default(20) | float %}
+            {% if temp <= -10 %}ADD8E6
+            {% elif temp <= -5 %}87CEFA
+            {% elif temp <= 0 %}00CED1
+            {% elif temp <= 5 %}40E0D0
+            {% elif temp <= 10 %}90EE90
+            {% elif temp <= 15 %}ADFF2F
+            {% elif temp <= 20 %}FFD700
+            {% elif temp <= 25 %}FFA500
+            {% elif temp <= 30 %}FF4500
+            {% else %}FF0000{% endif %}
+      - action: input_text.set_value
+        data:
+          entity_id: input_text.karotz_dev_color_2
+          value: "000000"
+      - action: input_number.set_value
+        data:
+          entity_id: input_number.karotz_dev_light_speed
+          value: >
+            {% set wind = states('sensor.weather_station_vitesse_moyenne_du_vent_km_h') | default(0) | float %}
+            {% set base = 2000 %}
+            {% set min_speed = 100 %}
+            {% set decrement = ((wind // 5) * 150) %}
+            {% set result = base - decrement %}
+            {% if result < min_speed %}{{ min_speed }}{% elif result > base %}{{ base }}{% else %}{{ result | int }}{% endif %}
+      - action: rest_command.karotz_dev_light
+      - action: rest_command.karotz_dev_ears
+      - action: rest_command.karotz_dev_say
+        data: # Remplacez "[ville]" par votre ville
+          text: >-
+            La température est de {{ states('sensor.pac_atom_temp_ext') | default(20) | float | round(0) }} degrés.
+            Le vent souffle à {{ states('sensor.weather_station_vitesse_moyenne_du_vent_km_h') | default(0) | float | round(0) }} kilomètres par heure.
+            Le risque de pluie est de {{ states('sensor.[ville]_rain_chance') | default(0) | float | round(0) }} pourcents.
+            {% set alerte = states('sensor.44_weather_alert') | default('') | lower %}
+            {% if 'orange' in alerte %}
+              Attention, une alerte météo **orange** est en cours.
+            {% elif 'rouge' in alerte %}
+              Attention, une alerte météo **rouge** est en cours. Restez vigilant.
+            {% endif %}
+    mode: single # Empêche le déclenchement multiple simultané
+
+# Annonce la météo du jour
+  - id: karotz_dev_meteo_jour
+    alias: karotz_dev - Météo du jour 7h15
+    description: Annonce la météo du jour à la ville via Karotz_dev
+    triggers:
+      - trigger: time
+        at: "07:15:00" # Modifiez l'heure ici
+    conditions: []
+    actions:
+      - action: rest_command.karotz_dev_say
+        metadata: {}
+        data:
+          text: >-
+            {% set conditions = {
+              'sunny': 'ensoleillé',
+              'clear-night': 'nuit dégagée',
+              'cloudy': 'nuageux',
+              'partlycloudy': 'partiellement nuageux',
+              'fog': 'brouillard',
+              'windy': 'venteux',
+              'windy-variant': 'variablement venteux',
+              'hail': 'grêle',
+              'lightning': 'orages',
+              'lightning-rainy': 'orages avec pluie',
+              'pouring': 'fortes pluies',
+              'rainy': 'pluvieux',
+              'snowy': 'enneigé',
+              'snowy-rainy': 'neige et pluie',
+              'exceptional': 'conditions exceptionnelles'
+            } %} {% set condition = states('sensor.prevision_meteo_aujourd_hui') %}
+            {% set condition_fr = conditions.get(condition, condition) %}
+
+            Voici la météo prévue pour aujourd'hui à [ville]. Le temps sera {{
+            condition_fr }}. Température maximale : {{
+              state_attr('sensor.prevision_meteo_aujourd_hui', 'temperature') | default(0) | float | round(0)
+            }} degrés. Température minimale : {{
+              state_attr('sensor.prevision_meteo_aujourd_hui', 'templow') | default(0) | float | round(0)
+            }} degrés. {% set pluie =
+            state_attr('sensor.prevision_meteo_aujourd_hui',
+            'precipitation_probability') %} {% if pluie != 'n/a' and pluie is not
+            none %}
+              Risque de pluie : {{ pluie }} pourcents.
+            {% endif %} {% set nuages =
+            state_attr('sensor.prevision_meteo_aujourd_hui', 'cloud_coverage') %} {%
+            if nuages != 'n/a' and nuages is not none %}
+              Couverture nuageuse : {{ nuages }} pourcents.
+            {% endif %} Vent : {{
+              state_attr('sensor.prevision_meteo_aujourd_hui', 'wind_speed') | default(0) | float | round(0)
+            }} kilomètres par heure. {% set uv =
+            state_attr('sensor.prevision_meteo_aujourd_hui', 'uv_index') |
+            default(0) %} Indice UV : {{ uv }} sur 10.
+    mode: single
+
+# Annonce de la météo du lendemain à 19h
+  - id : karotz_dev_meteo_demain
+    alias: "Karotz_dev - Météo de demain à 19h05"
+    description: "Annonce la météo de demain à [ville] via Karotz_dev"
+    triggers:
+      - trigger: time
+        at: "19:05:00" # Modifiez l'heure ici
+    conditions: []
+    actions:
+      - action: rest_command.karotz_dev_say
+        metadata: {}
+        data:
+          text: >-
+            {% set conditions = {
+              'sunny': 'ensoleillé',
+              'clear-night': 'nuit dégagée',
+              'cloudy': 'nuageux',
+              'partlycloudy': 'partiellement nuageux',
+              'fog': 'brouillard',
+              'windy': 'venteux',
+              'windy-variant': 'variablement venteux',
+              'hail': 'grêle',
+              'lightning': 'orages',
+              'lightning-rainy': 'orages avec pluie',
+              'pouring': 'fortes pluies',
+              'rainy': 'pluvieux',
+              'snowy': 'enneigé',
+              'snowy-rainy': 'neige et pluie',
+              'exceptional': 'conditions exceptionnelles'
+            } %} {% set condition = states('sensor.prevision_meteo_demain') %} {%
+            set condition_fr = conditions.get(condition, condition) %}
+
+            Voici la météo prévue pour demain à [ville]. Le temps sera {{
+            condition_fr }}.  Température maximale : {{
+            state_attr('sensor.prevision_meteo_demain', 'temperature') | default(0)
+            | float | round(0) }} degrés.  Température minimale : {{
+            state_attr('sensor.prevision_meteo_demain', 'templow') | default(0) |
+            float | round(0) }} degrés.  {% set pluie =
+            state_attr('sensor.prevision_meteo_demain', 'precipitation_probability')
+            %} {% if pluie != 'n/a' %}
+              Risque de pluie : {{ pluie }} pourcents. 
+            {% endif %} {% set nuages = state_attr('sensor.prevision_meteo_demain',
+            'cloud_coverage') %}  {% if nuages != 'n/a' %} 
+              Couverture nuageuse : {{ nuages }} pourcents. 
+            {% endif %}  Vent : {{ state_attr('sensor.prevision_meteo_demain',
+            'wind_speed') | default(0) | float | round(0) }} kilomètres par heure. 
+            Indice UV : {{ state_attr('sensor.prevision_meteo_demain', 'uv_index')
+            }} sur 10.
+    mode: single
