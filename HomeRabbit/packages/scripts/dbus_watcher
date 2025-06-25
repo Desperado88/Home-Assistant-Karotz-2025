@@ -42,6 +42,7 @@ dbus-monitor --system | while read -r line; do
         fi
         continue
     fi
+    
     # Double Click
     if echo "$line" | grep -q "member=dclick"; then
         PlaySound "$CNF_DATADIR/Sounds/${SOUND1}"

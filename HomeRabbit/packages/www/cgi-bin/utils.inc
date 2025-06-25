@@ -376,7 +376,7 @@ function PlaySound {
 
    CHECK=$(IsSoundPlaying)
    if [ $CHECK -eq 0 ]; then
-        madplay --adjust-volume=$VOLUME $1 &
+        madplay --adjust-volume=$VOLUME $1
    fi
 }
 
