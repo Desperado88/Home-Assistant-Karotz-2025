@@ -1,4 +1,4 @@
-![alt text](https://file%2B.vscode-resource.vscode-cdn.net/Users/mathieucourcelle/Git-perso/Home-Assistant-Karotz-2025/Home%20Assistant/Tableau%20de%20bord/karotz_dev_lovelace_ha.png?version%3D1750971349807)
+![karotz_dev_lovelace_ha](https://github.com/user-attachments/assets/328053a8-69f9-4882-b716-705f4d9aa0cc)
 
 # Tableau de Bord Karotz
 Ce dossier contient les fichiers nécessaires pour configurer le tableau de bord de votre Karotz dans Home Assistant.
