@@ -141,9 +141,7 @@ function SendResponse {
    echo "Server: OpenKarotz WebServer 1.0"
    echo "Connection: close"
    echo "Accept-Ranges: bytes"
-#   echo "Content-Length: "${#DT}
-   #echo "Content-type: application/json"
-   echo "Content-type: text/plain"
+   echo "Content-type: application/json"
    echo "Access-Control-Allow-Origin: *"
    echo ""
    echo -e $DT

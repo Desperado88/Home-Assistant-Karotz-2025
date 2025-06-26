@@ -36,8 +36,7 @@ dbus-monitor --system | while read -r line; do
             # Lecture du fichier mp3 avec madplay (volume ajustable avec la variable VOLUME)
             CHECK=$(IsSoundPlaying)
             if [ $CHECK -eq 0 ]; then
-                VOLUME=$(cat /usr/openkarotz/Run/volume 2>/dev/null)
-                madplay --adjust-volume=$VOLUME /mnt/usbkey/*.mp3 &
+                PlaySound /mnt/usbkey/*.mp3
             else
                 KillProcess SOUNDS
             fi
