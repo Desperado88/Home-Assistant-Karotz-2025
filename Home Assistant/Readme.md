@@ -33,9 +33,9 @@ Des exemples de cartes Lovelace sont disponibles dans le dossier `Tableau de bor
 - Lecture musique et histoire depuis une clé USB
 - Lecture d'histoires préenregistrées
 
-## Lecture mp3 depuis clé USB
+## Lecture mp3 depuis une clé USB
 
-La clé USB doit être au format FAT32 et ne contenir qu'un seul fichier mp3 (pour le moment).
+La clé USB doit être au format FAT32 et ne contenir que des fichiers mp3. (certains mp3 ne fonctionnent pas pour une raison inconnue et il y a parfois de petites coupures)
 - Insérez la clé dans le Karotz
 - Appuyez sur la tête ou utilisez Home Assistant pour lancer la lecture
 - Pour arrêter la lecture, il suffit d'appuyer sur la tête du Karotz ou d'utiliser Home Assistant.
