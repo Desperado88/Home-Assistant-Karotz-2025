@@ -15,7 +15,6 @@ else
 fi
 
 if [ ! -e "$CNF_DATADIR/Run/led.color" ]; then
-
     LED_COLOR=00FF00
 else
     LED_COLOR=`cat $CNF_DATADIR/Run/led.color`  
@@ -38,7 +37,6 @@ if [ ! -e "$CNF_DATADIR/Run/karotz.sleep" ]; then
 else
   SLEEP_TIME=`cat $CNF_DATADIR/Run/karotz.time.sleep`
 fi
-
 
 if [ ! -e "$CNF_DATADIR/Run/Vera.ip" ]; then
        VIP=0.0.0.0                                 
@@ -77,7 +75,6 @@ else
   NT=0
 fi
 rm -f $CNF_DATADIR/Tmp/tmplst >> /dev/null 2>> /dev/null     
-
 
 NM=$( ls -R -A $CNF_DATADIR/Moods/fr/ | grep ".mp3" | wc -l) 2>>/dev/null 
 NS=$( ls -A $CNF_DATADIR/Sounds/ | grep ".mp3" | wc -l) 2>>/dev/null  
