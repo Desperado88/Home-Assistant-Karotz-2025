@@ -10,6 +10,14 @@ Votre Karotz peut :
 - 🔔 Vous alerter en cas d'événements importants
 - 🏠 Tout cela en restant 100% local, sans dépendance à des services cloud externes
 - 🏷️ Lire des tags RFID pour déclencher des actions dans Home Assistant (scénarios, automatisations, etc.)
+- 📻 Contrôler le volume du Karotz
+- ⚡ Automatisations personnalisables
+- 🖥️ Interface utilisateur intuitive
+- 👂 Contrôler les oreilles et les lumières
+- 🗣️ Utiliser le serveur TTS (Text-to-Speech) pour faire parler le Karotz
+- 🎵 Lire de la musique et des histoires depuis une clé USB
+- 📚 Lire des histoires préenregistrées
+- 🧘 Proposer une animation Tai-Chi pour la relaxation
 
 ## 📚 Documentation
 
@@ -23,15 +31,27 @@ Chaque dossier du projet contient son propre README détaillant :
 
 ```
 Home-Assistant-Karotz-2025/
-├── Home Assistant/          # Intégration Home Assistant
-│   └── README.md            # Documentation de l'intégration
-├── HomeRabbit/              # Application principale
-│   └── README.md            # Guide d'utilisation
-├── karotz-tts-docker/       # Service TTS (text to speech) en Docker
-│   └── README.md            # Instructions d'installation
-├── karotz_fonctions.sh      # Fonctions de base du Karotz
-├── update.sh                # Script de mise à jour
-└── README.md                # Documentation principale
+├── Home Assistant/ # Intégration Home Assistant
+│ ├── Automatisations/ # Automatisations YAML
+│ ├── packages/ # Packages pour Karotz
+│ ├── Tableau de bord/ # Tableaux de bord personnalisés
+│ └── README.md # Documentation de l'intégration
+|
+├── HomeRabbit/ # Application principale pour Karotz
+│ ├── install_openkarotz.sh # Script d'installation OpenKarotz
+│ ├── installfirmware.sh # Script d'installation du firmware
+│ ├── packages/ # Fichiers de configuration, scripts, sons, apps, etc.
+│ └── README.md # Guide d'utilisation
+|
+├── karotz-tts-docker/ # Service TTS (text to speech) en Docker
+│ ├── Dockerfile # Dockerfile pour le service TTS
+│ ├── pico_tts.py # Script principal TTS
+│ ├── requirements.txt # Dépendances Python
+│ └── README.md # Instructions d'installation
+|
+├── karotz_fonctions.sh # Fonctions de base du Karotz
+├── LICENSE # Licence du projet
+├── README.md # Documentation principale
 ```
 
 ## 🔧 Installation Simple (configuration unique)
@@ -63,10 +83,10 @@ Home-Assistant-Karotz-2025/
 
 ---
 
-## 🏠 Intégration dans Home Assistant
+## 🏠 Intégration dans Home Assistant (voir le Readme du dossier 'packages' pour plus d'info)
 
-* Copiez le fichier `openkarotz.yaml` dans un dossier nommé `packages` dans le dossier de configuration de Home Assistant :
-  `/config/packages/openkarotz.yaml`
+* Copiez le contenu du dossier `packages` dans le dossier nommé `packages` dans le dossier de configuration de Home Assistant :
+  `/config/packages/karotz_dev_*****.yaml`
 
 * Dans votre fichier `configuration.yaml`, ajoutez (ou complétez) la section suivante :
 
@@ -155,15 +175,27 @@ Each project folder contains its own README detailing:
 
 ```
 Home-Assistant-Karotz-2025/
-├── Home Assistant/          # Home Assistant Integration
-│   └── README.md            # Integration documentation
-├── HomeRabbit/              # Main application
-│   └── README.md            # Usage guide
-├── karotz-tts-docker/       # TTS (text to speech) service in Docker
-│   └── README.md            # Installation instructions
-├── karotz_fonctions.sh      # Basic Karotz functions
-├── update.sh                # Update script
-└── README.md                # Main documentation
+├── Home Assistant/ # Home Assistant Integration
+│ ├── Automatisations/ # YAML automations
+│ ├── packages/ # Karotz packages
+│ ├── Tableau de bord/ # Custom dashboards
+│ └── README.md # Integration documentation
+|
+├── HomeRabbit/ # Main application for Karotz
+│ ├── install_openkarotz.sh # OpenKarotz install script
+│ ├── installfirmware.sh # Firmware install script
+│ ├── packages/ # Config files, scripts, sounds, apps, etc.
+│ └── README.md # Usage guide
+|
+├── karotz-tts-docker/ # TTS (text to speech) service in Docker
+│ ├── Dockerfile # Dockerfile for TTS service
+│ ├── pico_tts.py # Main TTS script
+│ ├── requirements.txt # Python dependencies
+│ └── README.md # Installation instructions
+|
+├── karotz_fonctions.sh # Basic Karotz functions
+├── LICENSE # Project license
+├── README.md # Main documentation
 ```
 
 ## 🔧 Simple Installation (one-time setup)

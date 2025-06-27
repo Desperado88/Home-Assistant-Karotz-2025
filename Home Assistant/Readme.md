@@ -24,14 +24,20 @@ Des exemples de cartes Lovelace sont disponibles dans le dossier `Tableau de bor
 
 ## Fonctionnalités
 
-- Gestion des tags RFID
-- Contrôle du volume du Karotz
-- Automatisations personnalisables
-- Interface utilisateur intuitive
-- Contrôle des oreilles et des lumières
-- Utilisation du serveur TTS (Text-to-Speech) pour faire parler le Karotz
-- Lecture musique et histoire depuis une clé USB
-- Lecture d'histoires préenregistrées
+Votre Karotz peut :
+- 🎙️ Annoncer vocalement l'état de vos capteurs (température, humidité, présence, etc.)
+- 💡 S'animer et changer de couleur lorsque l'état d'un capteur change
+- 🔔 Vous alerter en cas d'événements importants
+- 🏠 Tout cela en restant 100% local, sans dépendance à des services cloud externes
+- 🏷️ Lire des tags RFID pour déclencher des actions dans Home Assistant (scénarios, automatisations, etc.)
+- 📻 Contrôler le volume du Karotz
+- ⚡ Automatisations personnalisables
+- 🖥️ Interface utilisateur intuitive
+- 👂 Contrôler les oreilles et les lumières
+- 🗣️ Utiliser le serveur TTS (Text-to-Speech) pour faire parler le Karotz
+- 🎵 Lire de la musique et des histoires depuis une clé USB
+- 📚 Lire des histoires préenregistrées
+- 🧘 Proposer une animation Tai-Chi pour la relaxation
 
 ## Lecture mp3 depuis une clé USB
 

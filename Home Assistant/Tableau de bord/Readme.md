@@ -5,8 +5,10 @@ Ce dossier contient les fichiers nécessaires pour configurer le tableau de bord
 
 ## Carte Lovelace
 
-Le fichier `controles-karotz.yaml` contient la configuration d'une carte personnalisée pour gérer votre Karotz.
-Le fichier `controles-RFID.yaml` contient la configuration d'une carte personnalisée pour gérer les tag RFID.
+Le fichier `karotz_dev_base.yaml` contient la configuration d'une carte personnalisée pour gérer votre Karotz (la base).
+Le fichier `karotz_dev_rfid.yaml` contient la configuration d'une carte personnalisée pour gérer les tags RFID.
+Le fichier `karotz_dev_stories.yaml` contient la configuration d'une carte personnalisée pour gérer les histoires et la lecture depuis une clé USB.
+Le fichier `karotz_dev_status.yaml` contient la configuration d'une carte personnalisée pour afficher le statut du Karotz.
 
 ## Intégration
 
@@ -17,7 +19,7 @@ Pour intégrer la carte dans votre tableau de bord :
 3. Sélectionnez "Éditer le tableau de bord"
 4. Cliquez sur le "+" pour ajouter une nouvelle carte
 5. Choisissez "Carte personnalisée"
-6. Collez le contenu de `controles-karotz.yaml` ou `controles-RFID.yaml`
+6. Collez le contenu de `karotz_dev_****.yaml`
 7. Sauvegardez
 
 ## Configuration d'un Tag RFID avec Webhook
@@ -37,12 +39,12 @@ Pour configurer un tag RFID qui déclenche un webhook Home Assistant :
    - Cliquez sur "Rafraîchir la liste"
 
 3. Dans le tableau de bord Karotz :
-   - Entrez l'ID du tag RFID dans le champ "ID du tag" (L'ID s'affiche dans la liste une fois le tag enregistré)
+   - Entrez l'ID du tag RFID dans le champ "ID du tag" (l'ID s'affiche dans la liste une fois le tag enregistré)
    - Donnez un nom au tag dans le champ "Nom du tag"
    - Collez l'URL du webhook dans le champ "URL Webhook"
-   - Cliquez sur "Assigner le Tag"
+   - Cliquez sur "Assigner le tag"
      
-![Capture d’écran 2025-06-16 à 21 34 52](https://github.com/user-attachments/assets/8a52e96b-9b9e-4e6e-a374-da6aebef3390)
+![Capture d'écran 2025-06-16 à 21 34 52](https://github.com/user-attachments/assets/8a52e96b-9b9e-4e6e-a374-da6aebef3390)
 
 
 4. Pour tester :
@@ -60,4 +62,13 @@ Si le tag RFID ne fonctionne pas :
 1. Vérifiez que l'ID du tag est correctement enregistré
 2. Assurez-vous que l'URL du webhook est valide
 3. Vérifiez que le Karotz est bien connecté au réseau
-4. Consultez les logs du Karotz pour plus de détails 
+4. Consultez les logs du Karotz pour plus de détails
+
+## La lecture d'histoire et USB
+
+Pour démarrer la lecture, sélectionnez l'histoire dans la liste déroulante et démarrez la lecture.
+Un triple appui sur la tête du Karotz ou sur le bouton "stop" de la carte Lovelace arrête la lecture.
+
+Pour la lecture d'une clé USB, la clé doit être au format FAT32 et les fichiers en mp3.
+Insérez la clé dans le Karotz et appuyez sur la tête pour démarrer la lecture.
+Appuyez à nouveau sur la tête pour arrêter la lecture. (certains événements externes/scripts peuvent arrêter la lecture)
