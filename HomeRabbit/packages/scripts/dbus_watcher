@@ -58,7 +58,8 @@ dbus-monitor --system | while read -r line; do
     # Triple Click
     if echo "$line" | grep -q "member=tclick"; then
         PlaySound "$CNF_DATADIR/Sounds/flush.mp3"
-        /sbin/reboot
+        #/sbin/reboot
+        KillProcess
         continue
     fi
 

@@ -1,5 +1,5 @@
 alias: karotz_dev - météo du jour 7h15
-description: Annonce la météo du jour à ville via Karotz_dev
+description: Annonce la météo du jour via Karotz_dev
 triggers:
   - trigger: time
     at: "07:15:00"
@@ -28,7 +28,7 @@ actions:
         } %} {% set condition = states('sensor.prevision_meteo_aujourd_hui') %}
         {% set condition_fr = conditions.get(condition, condition) %}
 
-        Voici la météo prévue pour aujourd’hui à Treillières. Le temps sera {{
+        Voici la météo prévue pour aujourd’hui. Le temps sera {{
         condition_fr }}. Température maximale : {{
           state_attr('sensor.prevision_meteo_aujourd_hui', 'temperature') | default(0) | float | round(0)
         }} degrés. Température minimale : {{

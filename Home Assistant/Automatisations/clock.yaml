@@ -3,7 +3,7 @@
 # entre 7h et 20h lorsque le Karotz est en mode éveillé
 
 # Configuration de l'automatisation
-# À copier dans la section "automation" du fichier "openkarotz.yaml"
+# À copier dans la section "automation" du fichier "karotz_dev_base.yaml"
 
   - id: karotz_dev_horloge_parlante_automation
     alias: "Karotz dev - Annonce de l'heure"

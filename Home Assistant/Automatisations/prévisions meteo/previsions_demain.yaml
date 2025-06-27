@@ -1,5 +1,5 @@
 alias: Karotz_dev - Météo de demain à 19h05
-description: Annonce la météo de demain à ville via Karotz_dev
+description: Annonce la météo de demain via Karotz_dev
 triggers:
   - trigger: time
     at: "19:05:00"
@@ -28,7 +28,7 @@ actions:
         } %} {% set condition = states('sensor.prevision_meteo_demain') %} {%
         set condition_fr = conditions.get(condition, condition) %}
 
-        Voici la météo prévue pour demain à ville. Le temps sera {{
+        Voici la météo prévue pour demain. Le temps sera {{
         condition_fr }}.  Température maximale : {{
         state_attr('sensor.prevision_meteo_demain', 'temperature') | default(0)
         | float | round(0) }} degrés.  Température minimale : {{
