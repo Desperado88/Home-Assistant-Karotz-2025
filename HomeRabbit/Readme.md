@@ -40,7 +40,9 @@ Si vous rencontrez des problèmes :
 ## Pour ne pas empêcher le démarrage lorsque le réseau est coupé
 
 Modifiez le fichier de configuration du réseau avec la commande : vi /usr/scripts/waitfornetwork.sh  
-À la ligne 31, remplacez 8.8.8.8 par ${DNS} :  
+À la ligne 31, remplacez 8.8.8.8 par 192.168.1.1 ou ${DNS} si vous utiliser votre propre DNS:  
+for i in {1..5}; do ping -q -c1 192.168.1.1 >/dev/null 2>&1 && break; done
+ou 
 for i in {1..5}; do ping -q -c1 ${DNS} >/dev/null 2>&1 && break; done
 
 Vous pouvez maintenant utiliser votre Karotz normalement même si la connexion internet est coupée.  
