@@ -17,13 +17,10 @@ input_text:
 
 sensor:
   - platform: rest
-    resource: "http://192.168.1.xxx/cgi-bin/status" # ⚠️ À MODIFIER : Même IP que karotz_dev_ip_address
-    name: karotz_dev_sleep_sensor
-    value_template: "{{ value_json.sleep }}"
-  - platform: rest
     name: Karotz_dev Status
-    resource: "http://192.168.1.xxx/cgi-bin/status"
+    resource: "http://192.168.1.xxx/cgi-bin/status" # ⚠️ À MODIFIER : Même IP que karotz_dev_ip_address
     value_template: "{{ value_json.version }}"
+    scan_interval: 2592000  # Actualisation tous les mois (30 jours) ou 0 pour actualisation manuelle
     json_attributes:
       - ears_disabled
       - sleep
@@ -169,7 +166,8 @@ automation:
     alias: karotz_dev On
     trigger:
       - trigger: state
-        entity_id: sensor.karotz_dev_sleep_sensor
+        entity_id: sensor.karotz_dev_status
+        attribute: sleep
         to: "0"
     action:
       - action: input_boolean.turn_on
@@ -179,7 +177,8 @@ automation:
     alias: karotz_dev Off
     trigger:
       - trigger: state
-        entity_id: sensor.karotz_dev_sleep_sensor
+        entity_id: sensor.karotz_dev_status
+        attribute: sleep
         to: "1"
     action:
       - action: input_boolean.turn_off
