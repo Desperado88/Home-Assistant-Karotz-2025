@@ -36,3 +36,13 @@ Si vous rencontrez des problèmes :
 1. Vérifiez que tous les fichiers ont été copiés correctement
 2. Assurez-vous que les permissions des fichiers sont correctes
 3. Redémarrez votre Karotz
+
+## Pour ne pas empêcher le démarrage lorsque le réseau est coupé
+
+Modifiez le fichier de configuration du réseau avec la commande : vi /usr/scripts/waitfornetwork.sh  
+À la ligne 31, remplacez 8.8.8.8 par ${DNS} :  
+for i in {1..5}; do ping -q -c1 ${DNS} >/dev/null 2>&1 && break; done
+
+Vous pouvez maintenant utiliser votre Karotz normalement même si la connexion internet est coupée.  
+⚠️ Cependant, si vous n'avez pas configuré le serveur de temps et le TTS local, certaines fonctionnalités risquent de ne pas fonctionner.
+(voir le Readme du dossier "Home Assistant" pour le serveur NTP et le Readme du dossier "karotz-tts-docker" pour le serveur TTS)
