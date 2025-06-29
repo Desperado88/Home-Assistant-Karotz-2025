@@ -76,7 +76,7 @@ else
 fi
 rm -f $CNF_DATADIR/Tmp/tmplst >> /dev/null 2>> /dev/null     
 
-NM=$( ls -R -A $CNF_DATADIR/Moods/fr/ | grep ".mp3" | wc -l) 2>>/dev/null 
+NM=$( ls -R $CNF_DATADIR/Moods/fr/ | grep ".mp3" | wc -l) 2>>/dev/null 
 NS=$( ls -A $CNF_DATADIR/Sounds/ | grep ".mp3" | wc -l) 2>>/dev/null  
 NST=$( ls -A $CNF_DATADIR/Stories/ | grep ".mp3" | wc -l) 2>>/dev/null
 mount | grep usbkey >>/dev/null 2>>/dev/nul
