@@ -1,4 +1,4 @@
-# Annonce la météo du jour - Version corrigée (gère les valeurs 'n/a')
+# Annonce la météo du jour
 # À coller dans vos automatisations Home Assistant
 
 - id: karotz_dev_meteo_jour
