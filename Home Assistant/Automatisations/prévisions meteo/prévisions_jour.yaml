@@ -1,0 +1,136 @@
+# Annonce la météo du jour - Version corrigée (gère les valeurs 'n/a')
+# À coller dans vos automatisations Home Assistant
+
+- id: karotz_dev_meteo_jour
+  alias: karotz_dev - Météo du jour 7h15
+  description: Annonce la météo du jour via Karotz_dev
+  triggers:
+    - trigger: time
+      at: "07:15:00"
+  conditions: []
+  actions:
+    # Position des oreilles selon le risque de pluie (gère 'n/a')
+    - action: input_number.set_value
+      data:
+        entity_id: input_number.karotz_dev_ear_left
+        value: >
+          {% set pluie_str = state_attr('sensor.prevision_meteo_aujourd_hui', 'precipitation_probability') %}
+          {% set pluie = pluie_str if pluie_str not in ['unavailable', 'unknown', 'none', '', 'n/a'] else 0 %}
+          {% set pluie = pluie | float %}
+          {% if pluie < 5 %}
+            {{ 15 }}
+          {% elif pluie > 60 %}
+            {{ 4 }}
+          {% else %}
+            {{ (15 - ((pluie - 5) // 5)) | int }}
+          {% endif %}
+    - action: input_number.set_value
+      data:
+        entity_id: input_number.karotz_dev_ear_right
+        value: >
+          {% set pluie_str = state_attr('sensor.prevision_meteo_aujourd_hui', 'precipitation_probability') %}
+          {% set pluie = pluie_str if pluie_str not in ['unavailable', 'unknown', 'none', '', 'n/a'] else 0 %}
+          {% set pluie = pluie | float %}
+          {% if pluie < 5 %}
+            {{ 15 }}
+          {% elif pluie > 60 %}
+            {{ 4 }}
+          {% else %}
+            {{ (15 - ((pluie - 5) // 5)) | int }}
+          {% endif %}
+    # Couleur de la LED selon la température maximale (gère 'n/a')
+    - action: input_text.set_value
+      data:
+        entity_id: input_text.karotz_dev_color_1
+        value: >
+          {% set temp_str = state_attr('sensor.prevision_meteo_aujourd_hui', 'temperature') %}
+          {% set temp = temp_str if temp_str not in ['unavailable', 'unknown', 'none', '', 'n/a'] else 20 %}
+          {% set temp = temp | float %}
+          {% if temp <= -10 %}ADD8E6
+          {% elif temp <= -5 %}87CEFA
+          {% elif temp <= 0 %}00CED1
+          {% elif temp <= 5 %}40E0D0
+          {% elif temp <= 10 %}90EE90
+          {% elif temp <= 15 %}ADFF2F
+          {% elif temp <= 20 %}FFD700
+          {% elif temp <= 25 %}FFA500
+          {% elif temp <= 30 %}FF4500
+          {% else %}FF0000{% endif %}
+    # Vitesse de clignotement selon la vitesse du vent (gère 'n/a')
+    - action: input_number.set_value
+      data:
+        entity_id: input_number.karotz_dev_light_speed
+        value: >
+          {% set wind_str = state_attr('sensor.prevision_meteo_aujourd_hui', 'wind_speed') %}
+          {% set wind = wind_str if wind_str not in ['unavailable', 'unknown', 'none', '', 'n/a'] else 0 %}
+          {% set wind = wind | float %}
+          {% set base = 2000 %}
+          {% set min_speed = 100 %}
+          {% set decrement = ((wind // 5) * 150) %}
+          {% set result = base - decrement %}
+          {% if result < min_speed %}{{ min_speed }}{% elif result > base %}{{ base }}{% else %}{{ result | int }}{% endif %}
+    # Allume la LED et positionne les oreilles
+    - action: rest_command.karotz_dev_light
+    - action: rest_command.karotz_dev_ears
+    # Annonce météo avec gestion des valeurs 'n/a'
+    - action: rest_command.karotz_dev_say
+      metadata: {}
+      data:
+        text: >-
+          {% set conditions = {
+            'sunny': 'ensoleillé',
+            'clear-night': 'nuit dégagée',
+            'cloudy': 'nuageux',
+            'partlycloudy': 'partiellement nuageux',
+            'fog': 'brouillard',
+            'windy': 'venteux',
+            'windy-variant': 'variablement venteux',
+            'hail': 'grêle',
+            'lightning': 'orages',
+            'lightning-rainy': 'orages avec pluie',
+            'pouring': 'fortes pluies',
+            'rainy': 'pluvieux',
+            'snowy': 'enneigé',
+            'snowy-rainy': 'neige et pluie',
+            'exceptional': 'conditions exceptionnelles'
+          } %} {% set condition = states('sensor.prevision_meteo_aujourd_hui') %}
+          {% set condition_fr = conditions.get(condition, condition) %}
+
+          Voici la météo prévue pour aujourd'hui. Le temps sera {{
+          condition_fr }}. 
+          
+          {% set temp_str = state_attr('sensor.prevision_meteo_aujourd_hui', 'temperature') %}
+          {% if temp_str not in ['unavailable', 'unknown', 'none', '', 'n/a'] %}
+            Température maximale : {{ temp_str | float | round(0) }} degrés.
+          {% endif %}
+          
+          {% set temp_min_str = state_attr('sensor.prevision_meteo_aujourd_hui', 'templow') %}
+          {% if temp_min_str not in ['unavailable', 'unknown', 'none', '', 'n/a'] %}
+            Température minimale : {{ temp_min_str | float | round(0) }} degrés.
+          {% endif %}
+          
+          {% set pluie_str = state_attr('sensor.prevision_meteo_aujourd_hui', 'precipitation_probability') %}
+          {% if pluie_str not in ['unavailable', 'unknown', 'none', '', 'n/a'] %}
+            Risque de pluie : {{ pluie_str }} pourcents.
+          {% endif %}
+          
+          {% set nuages_str = state_attr('sensor.prevision_meteo_aujourd_hui', 'cloud_coverage') %}
+          {% if nuages_str not in ['unavailable', 'unknown', 'none', '', 'n/a'] %}
+            Couverture nuageuse : {{ nuages_str }} pourcents.
+          {% endif %}
+          
+          {% set vent_str = state_attr('sensor.prevision_meteo_aujourd_hui', 'wind_speed') %}
+          {% if vent_str not in ['unavailable', 'unknown', 'none', '', 'n/a'] %}
+            Vent : {{ vent_str | float | round(0) }} kilomètres par heure.
+          {% endif %}
+          
+          {% set uv_str = state_attr('sensor.prevision_meteo_aujourd_hui', 'uv_index') %}
+          {% if uv_str not in ['unavailable', 'unknown', 'none', '', 'n/a'] %}
+            Indice UV : {{ uv_str }} sur 10.
+          {% endif %}
+          
+          {% set source = state_attr('sensor.prevision_meteo_aujourd_hui', 'source') | default('Météo-France') %}
+          {% if source == 'Sauvegarde de la veille' %}
+            Données basées sur les prévisions de la veille.
+          {% endif %}
+  mode: single 

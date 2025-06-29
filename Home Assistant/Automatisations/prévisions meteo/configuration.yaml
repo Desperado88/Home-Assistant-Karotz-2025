@@ -1,0 +1,147 @@
+# Ajouter ce code à la suite dans le fichier "configuration.yaml" de Home Assistant
+
+#### ------- Template pour la prévision météo ----------
+template:
+#### ------- Template pour sauvegarder les prévisions de demain ----------
+  - trigger:
+      - trigger: time_pattern
+        hours: "5" # Sauvegarde à 5h du matin (avant la mise à jour à 6h)
+      - trigger: homeassistant
+        event: start  # Sauvegarde au démarrage de Home Assistant
+    action:
+      - action: weather.get_forecasts
+        data:
+          type: daily
+        target:
+          entity_id: weather.forecast_maison
+        response_variable: daily
+    sensor:
+      - name: "Prévision météo demain sauvegardée"
+        unique_id: weather_forecast_demain_sauvegarde
+        state: "{{ daily['weather.forecast_maison'].forecast[1].condition | default('n/a') }}"
+        attributes:
+          temperature: "{{ daily['weather.forecast_maison'].forecast[1].temperature }}"
+          templow: "{{ daily['weather.forecast_maison'].forecast[1].templow | default('n/a') }}"
+          precipitation_probability: "{{ daily['weather.forecast_maison'].forecast[1].precipitation_probability | default('n/a') }}"
+          cloud_coverage: "{{ daily['weather.forecast_maison'].forecast[1].cloud_coverage | default('n/a') }}"
+          wind_speed: "{{ daily['weather.forecast_maison'].forecast[1].wind_speed | default('n/a') }}"
+          uv_index: "{{ daily['weather.forecast_maison'].forecast[1].uv_index | default('n/a') }}"
+          datetime: "{{ daily['weather.forecast_maison'].forecast[1].datetime }}"
+          date_sauvegarde: "{{ now().strftime('%Y-%m-%d') }}"
+
+#### ------- Template pour la méthéo aujourd'hui (utilise la sauvegarde) ----------
+  - trigger:
+      - trigger: time_pattern
+        hours: "6" # Met à jour à 6h du matin
+      - trigger: homeassistant
+        event: start  # Met à jour au démarrage de Home Assistant
+    action:
+      - action: weather.get_forecasts
+        data:
+          type: daily
+        target:
+          entity_id: weather.forecast_maison
+        response_variable: daily
+    sensor:
+      - name: "Prévision météo aujourd'hui"
+        unique_id: weather_forecast_jour_aujourdhui
+        state: >
+          {% set date_sauvegarde = state_attr('sensor.prevision_meteo_demain_sauvegardee', 'date_sauvegarde') %}
+          {% set aujourd_hui = now().strftime('%Y-%m-%d') %}
+          {% if date_sauvegarde == aujourd_hui %}
+            {{ state_attr('sensor.prevision_meteo_demain_sauvegardee', 'condition') | default(daily['weather.forecast_maison'].forecast[0].condition) }}
+          {% else %}
+            {{ daily['weather.forecast_maison'].forecast[0].condition | default('n/a') }}
+          {% endif %}
+        attributes:
+          temperature: >
+            {% set date_sauvegarde = state_attr('sensor.prevision_meteo_demain_sauvegardee', 'date_sauvegarde') %}
+            {% set aujourd_hui = now().strftime('%Y-%m-%d') %}
+            {% if date_sauvegarde == aujourd_hui %}
+              {{ state_attr('sensor.prevision_meteo_demain_sauvegardee', 'temperature') | default(daily['weather.forecast_maison'].forecast[0].temperature) }}
+            {% else %}
+              {{ daily['weather.forecast_maison'].forecast[0].temperature | default('n/a') }}
+            {% endif %}
+          templow: >
+            {% set date_sauvegarde = state_attr('sensor.prevision_meteo_demain_sauvegardee', 'date_sauvegarde') %}
+            {% set aujourd_hui = now().strftime('%Y-%m-%d') %}
+            {% if date_sauvegarde == aujourd_hui %}
+              {{ state_attr('sensor.prevision_meteo_demain_sauvegardee', 'templow') | default(daily['weather.forecast_maison'].forecast[0].templow) }}
+            {% else %}
+              {{ daily['weather.forecast_maison'].forecast[0].templow | default('n/a') }}
+            {% endif %}
+          precipitation_probability: >
+            {% set date_sauvegarde = state_attr('sensor.prevision_meteo_demain_sauvegardee', 'date_sauvegarde') %}
+            {% set aujourd_hui = now().strftime('%Y-%m-%d') %}
+            {% if date_sauvegarde == aujourd_hui %}
+              {{ state_attr('sensor.prevision_meteo_demain_sauvegardee', 'precipitation_probability') | default(daily['weather.forecast_maison'].forecast[0].precipitation_probability) }}
+            {% else %}
+              {{ daily['weather.forecast_maison'].forecast[0].precipitation_probability | default('n/a') }}
+            {% endif %}
+          cloud_coverage: >
+            {% set date_sauvegarde = state_attr('sensor.prevision_meteo_demain_sauvegardee', 'date_sauvegarde') %}
+            {% set aujourd_hui = now().strftime('%Y-%m-%d') %}
+            {% if date_sauvegarde == aujourd_hui %}
+              {{ state_attr('sensor.prevision_meteo_demain_sauvegardee', 'cloud_coverage') | default(daily['weather.forecast_maison'].forecast[0].cloud_coverage) }}
+            {% else %}
+              {{ daily['weather.forecast_maison'].forecast[0].cloud_coverage | default('n/a') }}
+            {% endif %}
+          wind_speed: >
+            {% set date_sauvegarde = state_attr('sensor.prevision_meteo_demain_sauvegardee', 'date_sauvegarde') %}
+            {% set aujourd_hui = now().strftime('%Y-%m-%d') %}
+            {% if date_sauvegarde == aujourd_hui %}
+              {{ state_attr('sensor.prevision_meteo_demain_sauvegardee', 'wind_speed') | default(daily['weather.forecast_maison'].forecast[0].wind_speed) }}
+            {% else %}
+              {{ daily['weather.forecast_maison'].forecast[0].wind_speed | default('n/a') }}
+            {% endif %}
+          uv_index: >
+            {% set date_sauvegarde = state_attr('sensor.prevision_meteo_demain_sauvegardee', 'date_sauvegarde') %}
+            {% set aujourd_hui = now().strftime('%Y-%m-%d') %}
+            {% if date_sauvegarde == aujourd_hui %}
+              {{ state_attr('sensor.prevision_meteo_demain_sauvegardee', 'uv_index') | default(daily['weather.forecast_maison'].forecast[0].uv_index) }}
+            {% else %}
+              {{ daily['weather.forecast_maison'].forecast[0].uv_index | default('n/a') }}
+            {% endif %}
+          datetime: >
+            {% set date_sauvegarde = state_attr('sensor.prevision_meteo_demain_sauvegardee', 'date_sauvegarde') %}
+            {% set aujourd_hui = now().strftime('%Y-%m-%d') %}
+            {% if date_sauvegarde == aujourd_hui %}
+              {{ state_attr('sensor.prevision_meteo_demain_sauvegardee', 'datetime') | default(daily['weather.forecast_maison'].forecast[0].datetime) }}
+            {% else %}
+              {{ daily['weather.forecast_maison'].forecast[0].datetime | default('n/a') }}
+            {% endif %}
+          source: >
+            {% set date_sauvegarde = state_attr('sensor.prevision_meteo_demain_sauvegardee', 'date_sauvegarde') %}
+            {% set aujourd_hui = now().strftime('%Y-%m-%d') %}
+            {% if date_sauvegarde == aujourd_hui %}
+              "Sauvegarde de la veille"
+            {% else %}
+              "Météo-France direct"
+            {% endif %}
+
+#### ------- Template pour la méthéo de demain ----------
+  - trigger:
+      - trigger: time_pattern
+        hours: "18"  # Met à jour à 6 du soir
+      - trigger: homeassistant
+        event: start  # Met à jour au redémarrage
+    action:
+      - action: weather.get_forecasts
+        data:
+          type: daily
+        target:
+          entity_id: weather.forecast_maison
+        response_variable: daily
+    sensor:
+      - name: "Prévision météo demain"
+        unique_id: weather_forecast_jour_demain
+        state: "{{ daily['weather.forecast_maison'].forecast[1].condition }}"
+        attributes:
+          temperature: "{{ daily['weather.forecast_maison'].forecast[1].temperature }}"
+          templow: "{{ daily['weather.forecast_maison'].forecast[1].templow | default('n/a') }}"
+          precipitation_probability: "{{ daily['weather.forecast_maison'].forecast[1].precipitation_probability | default('n/a') }}"
+          cloud_coverage: "{{ daily['weather.forecast_maison'].forecast[1].cloud_coverage | default('n/a') }}"
+          wind_speed: "{{ daily['weather.forecast_maison'].forecast[1].wind_speed | default('n/a') }}"
+          uv_index: "{{ daily['weather.forecast_maison'].forecast[1].uv_index | default('n/a') }}"
+          datetime: "{{ daily['weather.forecast_maison'].forecast[1].datetime }}"
+
