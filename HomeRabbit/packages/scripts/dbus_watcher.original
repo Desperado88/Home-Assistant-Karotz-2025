@@ -167,7 +167,7 @@ do
              RFID_DETECTED=7
              
           fi
-          # PlaySound $CNF_DATADIR/Sounds/rfid_ok.mp3 
+          PlaySound $CNF_DATADIR/Sounds/rfid_ok.mp3 
       fi
       
       # ---------------------      
