@@ -32,18 +32,18 @@ Chaque dossier du projet contient son propre README détaillant :
 ```
 Home-Assistant-Karotz-2025/
 ├── Home Assistant/ # Intégration Home Assistant
-│ ├── Automatisations/ # Automatisations YAML
-│ ├── packages/ # Packages pour Karotz
-│ ├── Tableau de bord/ # Tableaux de bord personnalisés
+│ ├── Automatisations/ # Automatisations YAML (Ajout des Automatisations)
+│ ├── packages/ # Packages pour Karotz (Installation)
+│ ├── Tableau de bord/ # Tableaux de bord personnalisés (Ajout de Tag RFID avec Webhook, lecture d'histoire et USB)
 │ └── README.md # Documentation de l'intégration
 |
 ├── HomeRabbit/ # Application principale pour Karotz
 │ ├── install_openkarotz.sh # Script d'installation OpenKarotz
 │ ├── installfirmware.sh # Script d'installation du firmware
 │ ├── packages/ # Fichiers de configuration, scripts, sons, apps, etc.
-│ └── README.md # Guide d'utilisation
+│ └── README.md # Guide d'utilisation (Installation sur le karotz)
 |
-├── karotz-tts-docker/ # Service TTS (text to speech) en Docker
+├── karotz-tts-docker/ # Service TTS (text to speech) en Docker (Via extension Home Assistant ou serveur docker)
 │ ├── Dockerfile # Dockerfile pour le service TTS
 │ ├── pico_tts.py # Script principal TTS
 │ ├── requirements.txt # Dépendances Python

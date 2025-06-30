@@ -29,7 +29,7 @@ Pour configurer un tag RFID qui déclenche un webhook Home Assistant :
 1. Dans Home Assistant, créez un webhook :
    - Allez dans Configuration > Automatisations & Scènes
    - Cliquez sur "+ Créer une automatisation"
-   - Choisissez "Utiliser un webhook"
+   - Choisissez "Utiliser un webhook" et sélectionnez via la roue de paramètre ⚙️ du webhook la méthode "GET"
    - Copiez l'URL du webhook générée
 
 2. Pour enregistrer le tag :
