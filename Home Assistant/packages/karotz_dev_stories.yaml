@@ -20,12 +20,15 @@ rest_command:
     url: "http://{{ states('input_text.karotz_dev_ip_address') }}/cgi-bin/apps/play_usb"
   karotz_dev_stop_usb:
     url: "http://{{ states('input_text.karotz_dev_ip_address') }}/cgi-bin/apps/stop_usb"
+  karotz_dev_pause_usb:
+    url: "http://{{ states('input_text.karotz_dev_ip_address') }}/cgi-bin/sound_control?cmd=pause"
+    method: get
 
 script:
   # ---- Stories ----
   karotz_dev_play_story:
     alias: "Lire l'histoire sélectionnée"
     sequence:
-      - action: rest_command.karotz_dev_stories
+      - service: rest_command.karotz_dev_stories
         data:
           id: "{{ states('input_select.karotz_dev_story') }}"

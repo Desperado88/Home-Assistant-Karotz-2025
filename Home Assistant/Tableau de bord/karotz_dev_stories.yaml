@@ -5,18 +5,19 @@ cards:
     entities:
       - entity: input_select.karotz_dev_story
         name: Choisis une histoire
-  - type: button
+  - show_name: true
+    show_icon: true
+    type: button
     name: 📚 Lire l'histoire sélectionnée 📖
     tap_action:
       action: call-service
       service: script.karotz_dev_play_story
-# === Controle de la lecture des fichier usb (mp3) ===
   - type: horizontal-stack
     cards:
       - show_name: true
         show_icon: true
         type: button
-        name: Lancer lecture USB ▶️
+        name: Lecture USB ▶️
         icon: ""
         tap_action:
           action: call-service
@@ -24,7 +25,15 @@ cards:
       - show_name: true
         show_icon: true
         type: button
-        name: Arrêter lecture ⏹️
+        name: Pause ⏸️
+        icon: ""
+        tap_action:
+          action: call-service
+          service: rest_command.karotz_dev_pause_usb
+      - show_name: true
+        show_icon: true
+        type: button
+        name: Stop ⏹️
         icon: ""
         tap_action:
           action: call-service
