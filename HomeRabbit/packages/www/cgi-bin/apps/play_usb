@@ -9,7 +9,7 @@ ReadUrlParam
 
 if [ ! -e "$CNF_DATADIR/Run/karotz.sleep" ]; then
     if ls /mnt/usbkey/*.mp3 1> /dev/null 2>&1; then
-        PlaySound /mnt/usbkey/*.mp3
+        PlaySoundEx /mnt/usbkey/*.mp3 1 >>/dev/null
         DATA='{"return":"0"}'
     else
         PlaySound $CNF_DATADIR/Sounds/usb-no-mp3.mp3

@@ -374,7 +374,7 @@ function PlaySound {
 
    CHECK=$(IsSoundPlaying)
    if [ $CHECK -eq 0 ]; then
-        madplay --adjust-volume=$VOLUME $1
+        madplay --adjust-volume=$VOLUME $1 >>/dev/null 2>>/dev/null
    fi
 }
 
@@ -425,9 +425,9 @@ function PlaySoundEx {
           mknod /tmp/mplayer-control p  >>/dev/null 2>>/dev/null
         fi
         if [ "$2" == "1" ]; then
-          mplayer -quiet -slave -input file=/tmp/mplayer-control -af volume=$VOLUME $1 & 
+          mplayer -quiet -slave -input file=/tmp/mplayer-control -af volume=$VOLUME $1 >>/dev/null &
         else
-          mplayer -quiet -slave -input file=/tmp/mplayer-control -af volume=$VOLUME $1
+          mplayer -quiet -slave -input file=/tmp/mplayer-control -af volume=$VOLUME $1 >>/dev/null
         fi
    fi
 }                                            

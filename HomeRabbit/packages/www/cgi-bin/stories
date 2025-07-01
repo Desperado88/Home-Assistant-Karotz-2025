@@ -16,7 +16,7 @@ if [ ! -e "$CNF_DATADIR/Run/karotz.sleep" ]; then
    fi    
 
    if [ -e "$CNF_DATADIR/Stories/${STORY_ID}".mp3 ]; then
-      PlaySoundEx $CNF_DATADIR/Stories/${STORY_ID}.mp3 1
+      PlaySoundEx $CNF_DATADIR/Stories/${STORY_ID}.mp3 1 >>/dev/null
       DATA='{"return":"0"}' 
    else
       DATA='{"return":"1","msg":"Unable to find sound : '${SOUND_ID}'"}'
