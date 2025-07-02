@@ -96,9 +96,9 @@ automation:
             Le vent souffle à {{ wind | round(0) }} kilomètres par heure.
             Le risque de pluie est de {{ rain | round(0) }} pourcents.
             {% if 'orange' in alerte %}
-              Attention, une alerte météo **orange** est en cours.
+              Attention, une alerte météo orange est en cours.
             {% elif 'rouge' in alerte %}
-              Attention, une alerte météo **rouge** est en cours. Restez vigilant.
+              Attention, une alerte météo rouge est en cours. Restez vigilant.
             {% endif %}
     mode: single # Empêche le déclenchement multiple simultané
 
