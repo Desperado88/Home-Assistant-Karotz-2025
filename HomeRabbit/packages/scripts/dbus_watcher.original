@@ -21,14 +21,14 @@ do
      # Start or stop Tag Recording
      # ---------------------          
      echo $line | grep "member=lclick_start"                                          
-     if [ $? -eq 0 ]; then                                                     
+      if [ $? -eq 0 ]; then                                                     
         KillProcess
-        if [ -e "$CNF_DATADIR/Run/rfid.record" ]; then 
+         if [ -e "$CNF_DATADIR/Run/rfid.record" ]; then 
             StopTagRecording
-        else
+         else
             StartTagRecording
-	fi        
-     fi
+	      fi        
+      fi
      
      # --------------------- 
      # Single Click  Detected
@@ -87,21 +87,21 @@ do
               echo "$CNF_DATADIR/Rfid/${RFID_ID}.rfid"
  	      if [ -e "$CNF_DATADIR/Rfid/${RFID_ID}.rfid" ]; then	         
  	          if [ ! -e "$CNF_DATADIR/Rfid/${RFID_ID}.action" ]; then 
- 	             if [ ! -e "$CNF_DATADIR/Run/karotz.sleep" ]; then
- 	             	PlaySound $CNF_DATADIR/Sounds/rfid_error.mp3
- 	             	PlaySound $CNF_DATADIR/Voice/Rfid_objet_pas_action.mp3
- 	             fi
+               if [ ! -e "$CNF_DATADIR/Run/karotz.sleep" ]; then
+               PlaySound $CNF_DATADIR/Sounds/rfid_error.mp3
+               PlaySound $CNF_DATADIR/Voice/Rfid_objet_pas_action.mp3
+               fi
  	          else
- 	             Leds FF0000 000000 0 1
- 	             if [ ! -e "$CNF_DATADIR/Run/karotz.sleep" ]; then
- 	                 PlaySound $CNF_DATADIR/Sounds/${SOUND1}
- 	             fi
- 	             SCENE_ID$(cat CNF_DATADIR/Rfid/${RFID_ID}.rfid)
-                     SCENE_CMD=$(cat $CNF_DATADIR/Rfid/${RFID_ID}.cmd)
- 	             Log "[Rfid]" "Calling external action : $(GetCmdName $SCENE_CMD)"
-		     LedsRestore
-              	     eval $(cat $CNF_DATADIR/Rfid/${RFID_ID}.action | busybox base64 -d)
-              	  fi
+               Leds FF0000 000000 0 1
+               if [ ! -e "$CNF_DATADIR/Run/karotz.sleep" ]; then
+                  PlaySound $CNF_DATADIR/Sounds/${SOUND1}
+               fi
+               SCENE_ID$(cat CNF_DATADIR/Rfid/${RFID_ID}.rfid)
+                  SCENE_CMD=$(cat $CNF_DATADIR/Rfid/${RFID_ID}.cmd)
+               Log "[Rfid]" "Calling external action : $(GetCmdName $SCENE_CMD)"
+               LedsRestore
+               eval $(cat $CNF_DATADIR/Rfid/${RFID_ID}.action | busybox base64 -d)
+               fi
               else
               	    if [ ! -e "$CNF_DATADIR/Run/karotz.sleep" ]; then
                     	PlaySound $CNF_DATADIR/Sounds/rfid_error.mp3
