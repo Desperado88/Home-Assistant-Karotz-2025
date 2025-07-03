@@ -374,7 +374,7 @@ function PlaySound {
 
    CHECK=$(IsSoundPlaying)
    if [ $CHECK -eq 0 ]; then
-        madplay --adjust-volume=$VOLUME $1 >>/dev/null 2>>/dev/null
+        madplay --adjust-volume=$VOLUME $1 >>/dev/null 2>>/dev/null &
    fi
 }
 
@@ -407,7 +407,7 @@ function PlaySoundEx {
 #BG    $2
 
    # Récupération du volume configuré
-   VOLUME=$(cat /usr/openkarotz/Run/volume 2>/dev/null)
+   VOLUME=$(cat /usr/openkarotz/Run/volume >>/dev/null 2>>/dev/null)
    if [ -z "$VOLUME" ]; then
        VOLUME=0  # Volume par défaut
    fi
@@ -422,12 +422,12 @@ function PlaySoundEx {
    CHECK=$(IsSoundPlaying)
    if [ $CHECK -eq 0 ]; then
         if [ ! -f /tmp/mplayer-control ]; then
-          mknod /tmp/mplayer-control p  >>/dev/null 2>>/dev/null
+          mknod /tmp/mplayer-control p >>/dev/null 2>>/dev/null
         fi
         if [ "$2" == "1" ]; then
-          mplayer -quiet -slave -input file=/tmp/mplayer-control -af volume=$VOLUME $1 >>/dev/null &
+          mplayer -quiet -slave -input file=/tmp/mplayer-control -af volume=$VOLUME $1 >>/dev/null 2>>/dev/null &
         else
-          mplayer -quiet -slave -input file=/tmp/mplayer-control -af volume=$VOLUME $1 >>/dev/null
+          mplayer -quiet -slave -input file=/tmp/mplayer-control -af volume=$VOLUME $1 >>/dev/null 2>>/dev/null
         fi
    fi
 }                                            
