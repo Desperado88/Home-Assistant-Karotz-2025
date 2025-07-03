@@ -94,7 +94,7 @@ do
  	          else
  	             Leds FF0000 000000 0 1
  	             if [ ! -e "$CNF_DATADIR/Run/karotz.sleep" ]; then
- 	                 PlaySound $CNF_DATADIR/Sounds/${SOUND}
+ 	                 PlaySound $CNF_DATADIR/Sounds/${SOUND1}
  	             fi
  	             SCENE_ID$(cat CNF_DATADIR/Rfid/${RFID_ID}.rfid)
                      SCENE_CMD=$(cat $CNF_DATADIR/Rfid/${RFID_ID}.cmd)
