@@ -38,7 +38,7 @@ dbus-monitor --system | while read -r line; do
             if [ $CHECK -eq 0 ]; then
                 PlaySoundEx /mnt/usbkey/*.mp3 >>/dev/null 2>>/dev/null &
             else
-                KillProcess SOUNDS
+                echo pause > /tmp/mplayer-control
             fi
         else
             # Si aucun .mp3 trouve, comportement par defaut
@@ -50,8 +50,13 @@ dbus-monitor --system | while read -r line; do
 
     # Double Click
     if echo "$line" | grep -q "member=dclick"; then
-        PlaySound "$CNF_DATADIR/Sounds/${SOUND1}"
-        /www/cgi-bin/apps/tai-chi &
+        CHECK=$(IsSoundPlaying)
+        if [ $CHECK -eq 0 ]; then
+            KillProcess SOUNDS
+        else
+            PlaySound "$CNF_DATADIR/Sounds/${SOUND1}"
+            /www/cgi-bin/apps/tai-chi &
+        fi
         continue
     fi
 
