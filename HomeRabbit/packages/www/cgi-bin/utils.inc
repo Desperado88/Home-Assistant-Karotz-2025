@@ -363,7 +363,7 @@ function IsSoundPlaying {
 #                                                                            
 # ---------------------------------------------------------------------------
 function PlaySound { 
-# lecteur madplay est plus simple et plus léger, mais moins flexible (idéal pour les sons simples sans besoin de contrôle)
+# lecteur madplay est plus simple et plus leger, mais moins flexible (ideal pour les sons simples sans besoin de controle)
 #SOUND $1
 
    # Récupération du volume configuré
@@ -402,7 +402,7 @@ function StopTagRecording {
 #                                                                            
 # ---------------------------------------------------------------------------
 function PlaySoundEx {
-# lecteur mplayer est plus sophistiqué et permet un contrôle plus fin de la lecture (idéal pour les applications interactives)
+# lecteur mplayer est plus sophistiqué et permet un controle plus fin de la lecture (ideal pour les applications interactives)
 #SOUND $1
 #BG    $2
 
