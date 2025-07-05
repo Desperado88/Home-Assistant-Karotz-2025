@@ -12,7 +12,7 @@ f.close()
 
 ftp = FTP('192.168.253.243')   # connect to host, default port
 ftp.login('admin','password')               # user anonymous, passwd anonymous@
-rep=ftp.sendcmd('CWD web/arotz')
+rep=ftp.sendcmd('CWD web/karotz')
 fichier = "/usr/www/snapshots/"+fname
 print os.path.basename(fichier)
 file = open(fichier, 'rb') # ici, j'ouvre le fichier ftp.py
