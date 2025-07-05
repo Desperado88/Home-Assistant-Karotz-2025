@@ -37,6 +37,7 @@ Thumbs.db
 *.swp
 *.swo
 *~
+._*
 
 # Fichiers de logs
 *.log
