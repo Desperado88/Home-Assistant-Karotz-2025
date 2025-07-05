@@ -79,6 +79,5 @@ var/
 *.egg
 
 # Fichiers spécifiques au projet
-update.sh
 .DS_Store
 
