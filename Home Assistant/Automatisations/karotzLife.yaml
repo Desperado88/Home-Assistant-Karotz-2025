@@ -1,0 +1,139 @@
+###################################
+# INPUT_SELECT - Listes de phrases
+###################################
+input_select:
+  karotz_jokes:
+    name: Blagues Karotz
+    options:
+      - "Pourquoi les plongeurs plongent-ils toujours en arrière ? Parce que sinon ils tombent dans le bateau !"
+      - "Que dit une imprimante dans l’eau ? J’ai papier !"
+      - "Pourquoi les squelettes ne se battent jamais ? Parce qu’ils n’ont pas les tripes."
+      - "Quelle est la femelle du hamster ? L’Amsterdam."
+      - "Docteur, j’ai mal partout ! Quand je touche ma tête, ça fait mal, quand je touche mon ventre, ça fait mal… Le docteur répond : votre doigt est cassé."
+
+  karotz_weather_phrases:
+    name: Phrases météo
+    options:
+      - "La météo aujourd'hui est {{ states('weather.home') }}."
+      - "Aujourd'hui, il fera {{ state_attr('weather.home','temperature') }} degrés."
+      - "Le ciel est {{ state_attr('weather.home','condition') }}, prends tes précautions."
+      - "Météo rapide : {{ states('weather.home') }}."
+
+  karotz_meal_phrases:
+    name: Rappel déjeuner
+    options:
+      - "Il est temps d'aller manger, bon appétit !"
+      - "Midi trente, l'heure du repas !"
+      - "Ton estomac va me remercier si tu vas déjeuner maintenant."
+      - "C’est l’heure de recharger les batteries ! Direction la cuisine."
+
+  karotz_departure_phrases:
+    name: Rappel départ
+    options:
+      - "C'est l'heure de partir !"
+      - "Allez, la journée est finie."
+      - "Il est 16h30, range tes affaires et file !"
+      - "La cloche a sonné, direction la sortie."
+
+###################################
+# SCRIPTS - Actions Karotz
+###################################
+script:
+  karotz_intro_effect:
+    alias: Karotz - Effet avant parole
+    sequence:
+      - service: rest_command.karotz_dev_light
+      - delay: "00:00:02"
+      - service: rest_command.karotz_dev_ears_random
+      - delay: "00:00:01"
+
+  karotz_random_action:
+    alias: Karotz - Action aléatoire
+    sequence:
+      - variables:
+          random_action: "{{ range(1,6) | random }}"
+      - choose:
+          - conditions: "{{ random_action == 1 }}"
+            sequence:
+              - service: script.karotz_intro_effect
+              - service: rest_command.karotz_dev_moods
+
+          - conditions: "{{ random_action == 2 }}"
+            sequence:
+              - service: script.karotz_intro_effect
+              - service: rest_command.karotz_dev_ears_random
+
+          - conditions: "{{ random_action == 3 }}"
+            sequence:
+              - service: script.karotz_intro_effect
+              - service: rest_command.karotz_dev_say
+                data:
+                  text: "{{ state_attr('input_select.karotz_jokes','options') | random }}"
+
+          - conditions: "{{ random_action == 4 }}"
+            sequence:
+              - service: script.karotz_intro_effect
+              - service: rest_command.karotz_dev_light
+
+          - conditions: "{{ random_action == 5 }}"
+            sequence:
+              - service: script.karotz_intro_effect
+              - service: rest_command.karotz_dev_say
+                data:
+                  text: "{{ state_attr('input_select.karotz_weather_phrases','options') | random }}"
+
+  karotz_daily_loop:
+    alias: Karotz - Boucle quotidienne aléatoire
+    mode: restart
+    sequence:
+      - repeat:
+          while:
+            - condition: time
+              after: "08:00:00"
+              before: "17:00:00"
+          sequence:
+            - service: script.karotz_random_action
+            - delay:
+                minutes: "{{ range(30, 61) | random }}"   # délai aléatoire entre 30 et 60 minutes
+
+###################################
+# AUTOMATISATIONS - Vie du Karotz
+###################################
+automation:
+  - alias: Karotz - Réveil à 8h
+    trigger:
+      - platform: time
+        at: "08:00:00"
+    action:
+      - service: rest_command.karotz_dev_wakeup
+      - delay: "00:00:05"
+      - service: script.karotz_daily_loop
+
+  - alias: Karotz - Rappel déjeuner (12h30)
+    trigger:
+      - platform: time
+        at: "12:30:00"
+    action:
+      - service: script.karotz_intro_effect
+      - delay: "00:00:01"
+      - service: rest_command.karotz_dev_say
+        data:
+          text: "{{ state_attr('input_select.karotz_meal_phrases','options') | random }}"
+
+  - alias: Karotz - Rappel départ (16h30)
+    trigger:
+      - platform: time
+        at: "16:30:00"
+    action:
+      - service: script.karotz_intro_effect
+      - delay: "00:00:01"
+      - service: rest_command.karotz_dev_say
+        data:
+          text: "{{ state_attr('input_select.karotz_departure_phrases','options') | random }}"
+
+  - alias: Karotz - Sommeil à 17h
+    trigger:
+      - platform: time
+        at: "17:00:00"
+    action:
+      - service: rest_command.karotz_dev_sleep
