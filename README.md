@@ -134,7 +134,7 @@ Un Addon est disponible pour faire du TTS localement via Home Assistant, pour pl
 
 11. Connectez-vous en FTP à votre Karotz avec le mot de passe précédemment renseigné
 
-12. Copiez le contenu du dossier "HomeRabbit" aux bons emplacements sur le Karotz
+12. Copiez le contenu du dossier "HomeRabbit" aux bons emplacements sur le Karotz (cf: STRUCTURE_DETAILED.md)
 
 13. Redémarrez le Karotz
 
