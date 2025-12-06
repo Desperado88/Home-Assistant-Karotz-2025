@@ -97,16 +97,16 @@
           {% set condition_fr = conditions.get(condition, condition) %}
 
           Voici la météo prévue pour aujourd'hui. Le temps sera {{
-          condition_fr }}. 
-          
-          {% set temp_str = state_attr('sensor.prevision_meteo_aujourd_hui', 'temperature') %}
-          {% if temp_str not in ['unavailable', 'unknown', 'none', '', 'n/a'] %}
-            Température maximale : {{ temp_str | float | round(0) }} degrés.
-          {% endif %}
-          
+          condition_fr }}.
+
           {% set temp_min_str = state_attr('sensor.prevision_meteo_aujourd_hui', 'templow') %}
           {% if temp_min_str not in ['unavailable', 'unknown', 'none', '', 'n/a'] %}
             Température minimale : {{ temp_min_str | float | round(0) }} degrés.
+          {% endif %}
+
+          {% set temp_str = state_attr('sensor.prevision_meteo_aujourd_hui', 'temperature') %}
+          {% if temp_str not in ['unavailable', 'unknown', 'none', '', 'n/a'] %}
+            Température maximale : {{ temp_str | float | round(0) }} degrés.
           {% endif %}
           
           {% set pluie_str = state_attr('sensor.prevision_meteo_aujourd_hui', 'precipitation_probability') %}
@@ -129,8 +129,4 @@
             Indice UV : {{ uv_str }} sur 10.
           {% endif %}
           
-          {% set source = state_attr('sensor.prevision_meteo_aujourd_hui', 'source') | default('Météo-France') %}
-          {% if source == 'Sauvegarde de la veille' %}
-            Données basées sur les prévisions de la veille.
-          {% endif %}
   mode: single 
