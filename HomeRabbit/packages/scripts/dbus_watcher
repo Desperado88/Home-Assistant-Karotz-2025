@@ -19,13 +19,25 @@ dbus-monitor --system | while read -r line; do
     # GESTION BOUTONS
     # ---------------------
     
-    # Long Click - Mode enregistrement
+    # Long Click - Voice recording if configured, otherwise RFID recording mode
     if echo "$line" | grep -q "member=lclick_start"; then
         KillProcess
-        if [ -e "$CNF_DATADIR/Run/rfid.record" ]; then 
-            StopTagRecording
+        if [ -e "$CNF_DATADIR/Run/voice.addon_url" ]; then
+            /usr/www/cgi-bin/voice_start >/dev/null 2>&1 &
         else
-            StartTagRecording
+            if [ -e "$CNF_DATADIR/Run/rfid.record" ]; then 
+                StopTagRecording
+            else
+                StartTagRecording
+            fi
+        fi
+        continue
+    fi
+
+    # Long Click release - stop voice recording
+    if echo "$line" | grep -q "member=lclick_end" || echo "$line" | grep -q "member=lclick"; then
+        if [ -e "$CNF_DATADIR/Run/voice.addon_url" ]; then
+            /usr/www/cgi-bin/voice_stop >/dev/null 2>&1 &
         fi
         continue
     fi

@@ -1,0 +1,46 @@
+name: Karotz Voice
+version: "0.1.0"
+slug: karotz_voice
+description: Voice pipeline for Karotz/OpenKarotz with Home Assistant conversation agents.
+url: https://github.com/Desperado88/Home-Assistant-Karotz-2025
+arch:
+  - aarch64
+  - amd64
+  - armhf
+  - armv7
+  - i386
+startup: services
+boot: auto
+init: false
+hassio_api: true
+homeassistant_api: true
+ports:
+  5000/tcp: 5000
+ports_description:
+  5000/tcp: Karotz voice and TTS HTTP API
+options:
+  karotz_url: "http://192.168.1.xxx"
+  voice_pipeline: true
+  conversation_agent: ""
+  stt_language: "fr"
+  stt_model: "small"
+  input_audio_format: "karotz_raw"
+  tts_engine: "piper"
+  tts_entity: "tts.piper"
+  voice_pitch: 0
+  auto_listen: false
+  wake_chime: "start_record"
+  log_level: "info"
+schema:
+  karotz_url: url
+  voice_pipeline: bool
+  conversation_agent: "str?"
+  stt_language: str
+  stt_model: "list(tiny|base|small)"
+  input_audio_format: "list(auto|karotz_raw|wav|flac)"
+  tts_engine: "list(espeak|piper|ha)"
+  tts_entity: "str?"
+  voice_pitch: "int(0,60)"
+  auto_listen: bool
+  wake_chime: "str?"
+  log_level: "list(debug|info|warning|error)"
