@@ -15,7 +15,7 @@ TDIR=$CNF_DATADIR"/Snapshots/"
 SILENT=${URLParam[silent]}
             
 FN="snapshot"_`date +'%Y_%m_%d_%H_%M_%S'`
-TakeSnapshot
+TakeSnapshot > /dev/null 2>&1
 
 if [ ! -e "$CNF_DATADIR/Run/karotz.sleep" ]; then
   LedsRestore
