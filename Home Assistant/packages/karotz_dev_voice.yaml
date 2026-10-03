@@ -1,0 +1,50 @@
+input_text:
+  karotz_dev_voice_addon_url:
+    name: Karotz Voice add-on URL
+    initial: "http://homeassistant.local:5000"
+  karotz_dev_voice_recorder_cmd:
+    name: Karotz recorder command
+    initial: "/usr/scripts/k2k/rec > /tmp/karotz_voice.raw"
+
+input_boolean:
+  karotz_dev_passive_listening:
+    name: Nabi passive listening
+    initial: false
+
+rest_command:
+  karotz_dev_voice_config:
+    url: "http://{{ states('input_text.karotz_dev_ip_address') }}/cgi-bin/voice_config?addon_url={{ states('input_text.karotz_dev_voice_addon_url') | urlencode }}&recorder_cmd={{ states('input_text.karotz_dev_voice_recorder_cmd') | urlencode }}"
+    timeout: 10
+  karotz_dev_voice_start:
+    url: "http://{{ states('input_text.karotz_dev_ip_address') }}/cgi-bin/voice_start"
+    timeout: 10
+  karotz_dev_voice_stop:
+    url: "http://{{ states('input_text.karotz_dev_ip_address') }}/cgi-bin/voice_stop"
+    timeout: 60
+  karotz_dev_listen_on:
+    url: "{{ states('input_text.karotz_dev_voice_addon_url') }}/api/mic?on=1"
+    timeout: 10
+  karotz_dev_listen_off:
+    url: "{{ states('input_text.karotz_dev_voice_addon_url') }}/api/mic?on=0"
+    timeout: 10
+
+automation:
+  - id: karotz_dev_passive_listening_toggle
+    alias: Karotz dev Passive Listening Toggle
+    trigger:
+      - trigger: state
+        entity_id: input_boolean.karotz_dev_passive_listening
+    action:
+      - choose:
+          - conditions:
+              - condition: state
+                entity_id: input_boolean.karotz_dev_passive_listening
+                state: "on"
+            sequence:
+              - action: rest_command.karotz_dev_listen_on
+          - conditions:
+              - condition: state
+                entity_id: input_boolean.karotz_dev_passive_listening
+                state: "off"
+            sequence:
+              - action: rest_command.karotz_dev_listen_off

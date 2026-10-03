@@ -1,0 +1,25 @@
+#!/bin/bash
+
+source /usr/www/cgi-bin/setup.inc
+source /usr/www/cgi-bin/url.inc
+source /usr/www/cgi-bin/utils.inc
+
+ReadUrlParam
+
+ADDON_URL=${URLParam[addon_url]}
+RECORDER_CMD=${URLParam[recorder_cmd]}
+
+if [ ! -d "$CNF_DATADIR/Run" ]; then
+    mkdir -p "$CNF_DATADIR/Run"
+fi
+
+if [ "$ADDON_URL" != "" ]; then
+    echo "$ADDON_URL" > "$CNF_DATADIR/Run/voice.addon_url"
+fi
+
+if [ "$RECORDER_CMD" != "" ]; then
+    echo "$RECORDER_CMD" > "$CNF_DATADIR/Run/voice.recorder_cmd"
+fi
+
+DATA='{"return":"0","voice_enabled":"'$(test -f "$CNF_DATADIR/Run/voice.addon_url" && echo 1 || echo 0)'"}'
+SendResponse "$DATA"

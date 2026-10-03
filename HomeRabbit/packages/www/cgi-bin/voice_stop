@@ -1,0 +1,55 @@
+#!/bin/bash
+
+source /usr/www/cgi-bin/setup.inc
+source /usr/www/cgi-bin/utils.inc
+source /usr/www/cgi-bin/leds.inc
+
+VOICE_FILE="/tmp/karotz_voice.raw"
+PID_FILE="$CNF_DATADIR/Run/voice.record.pid"
+URL_FILE="$CNF_DATADIR/Run/voice.addon_url"
+
+if [ -f "$PID_FILE" ]; then
+    kill "$(cat "$PID_FILE")" >/dev/null 2>&1
+    rm -f "$PID_FILE"
+fi
+killall rec >/dev/null 2>&1
+
+Leds FFFF00 000000 1 1 250
+
+if [ ! -f "$VOICE_FILE" ]; then
+    LedsRestore
+    DATA='{"return":"1","msg":"No voice recording found"}'
+    SendResponse "$DATA"
+    exit 0
+fi
+
+if [ ! -f "$URL_FILE" ]; then
+    LedsRestore
+    DATA='{"return":"1","msg":"Missing add-on URL in Run/voice.addon_url"}'
+    SendResponse "$DATA"
+    exit 0
+fi
+
+ADDON_URL=$(cat "$URL_FILE")
+RESPONSE="/tmp/karotz_voice_response.json"
+curl -s -X POST --data-binary "@$VOICE_FILE" "$ADDON_URL/api/voice" > "$RESPONSE"
+RC=$?
+
+LedsRestore
+
+if [ $RC -ne 0 ]; then
+    DATA='{"return":"'$RC'","msg":"Voice upload failed"}'
+else
+    AUDIO_URL=$(sed -n 's/.*"audio_url":"\([^"]*\)".*/\1/p' "$RESPONSE")
+    if [ "$AUDIO_URL" != "" ]; then
+        case "$AUDIO_URL" in
+            http*) PLAY_URL="$AUDIO_URL" ;;
+            /*) PLAY_URL="$ADDON_URL$AUDIO_URL" ;;
+            *) PLAY_URL="$ADDON_URL/$AUDIO_URL" ;;
+        esac
+        PlaySoundEx "$PLAY_URL" 1 >/dev/null 2>&1
+    fi
+    DATA='{"return":"0","msg":"Voice upload complete"}'
+fi
+
+SendResponse "$DATA"
