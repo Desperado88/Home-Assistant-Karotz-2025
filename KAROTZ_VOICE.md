@@ -182,45 +182,18 @@ Dans l'interface de configuration de l'add-on:
 
 Voir [Configuration Détaillée](#-configuration-détaillée) pour toutes les options.
 
-### Étape 4: Installer les Scripts sur le Karotz
+### Étape 4: Installer les Scripts sur le Karotz avec OpenKarotz
 
-**⚠️ IMPORTANT:** Sur la plupart des firmwares Karotz, `/karotz/Run/` et `/usr/www/cgi-bin/` sont **en lecture seule**.
+**Avec OpenKarotz, utilisez les chemins `/usr/openkarotz/Run/` et `/usr/openkarotz/www/cgi-bin/`**
 
-**Utilisez ces solutions:**
-
-#### ✅ Option A: Utiliser /tmp/ (Recommandé)
 ```bash
 # Se connecter au Karotz
 ssh karotz@<KAROTZ_IP>
 
-# Créer les répertoires dans /tmp (accessible en écriture)
-mkdir -p /tmp/cgi-bin
+# Créer les répertoires pour OpenKarotz
+mkdir -p /usr/openkarotz/Run /usr/openkarotz/www/cgi-bin /usr/openkarotz/tmp /usr/openkarotz/Sounds
 
 # Copier les scripts (depuis votre machine)
-scp Karotz_Scripts/voice.recorder_cmd karotz@<KAROTZ_IP>:/tmp/
-scp Karotz_Scripts/voice_start karotz@<KAROTZ_IP>:/tmp/cgi-bin/
-scp Karotz_Scripts/voice_stop karotz@<KAROTZ_IP>:/tmp/cgi-bin/
-
-# Créer des liens symboliques vers les emplacements standards
-ln -sf /tmp/cgi-bin/voice_start /usr/www/cgi-bin/voice_start
-ln -sf /tmp/cgi-bin/voice_stop /usr/www/cgi-bin/voice_stop
-
-# Donner les permissions
-chmod +x /tmp/voice.recorder_cmd /tmp/cgi-bin/voice_start /tmp/cgi-bin/voice_stop
-
-# Configurer l'URL de l'add-on
-echo "http://<HOME_ASSISTANT_IP>:8000" > /tmp/voice.addon_url
-```
-
-#### ✅ Option B: Utiliser /usr/openkarotz/ (Si OpenKarotz est installé)
-```bash
-# Se connecter au Karotz
-ssh karotz@<KAROTZ_IP>
-
-# Créer les répertoires
-mkdir -p /usr/openkarotz/Run /usr/openkarotz/www/cgi-bin
-
-# Copier les scripts
 scp Karotz_Scripts/voice.recorder_cmd karotz@<KAROTZ_IP>:/usr/openkarotz/Run/
 scp Karotz_Scripts/voice_start karotz@<KAROTZ_IP>:/usr/openkarotz/www/cgi-bin/
 scp Karotz_Scripts/voice_stop karotz@<KAROTZ_IP>:/usr/openkarotz/www/cgi-bin/
@@ -229,12 +202,21 @@ scp Karotz_Scripts/voice_stop karotz@<KAROTZ_IP>:/usr/openkarotz/www/cgi-bin/
 chmod +x /usr/openkarotz/Run/voice.recorder_cmd
 chmod +x /usr/openkarotz/www/cgi-bin/voice_start
 chmod +x /usr/openkarotz/www/cgi-bin/voice_stop
+chown www-data:www-data /usr/openkarotz/www/cgi-bin/voice_start
+chown www-data:www-data /usr/openkarotz/www/cgi-bin/voice_stop
 
 # Configurer l'URL de l'add-on
 echo "http://<HOME_ASSISTANT_IP>:8000" > /usr/openkarotz/Run/voice.addon_url
+
+# Créer des liens symboliques pour que le serveur web trouve les scripts
+ln -sf /usr/openkarotz/www/cgi-bin/voice_start /usr/www/cgi-bin/voice_start
+ln -sf /usr/openkarotz/www/cgi-bin/voice_stop /usr/www/cgi-bin/voice_stop
+
+# Redémarrer OpenKarotz pour appliquer les changements
+/etc/init.d/openkarotz restart
 ```
 
-**Voir [Karotz_Scripts/README.md](Karotz_Scripts/README.md) pour plus de détails sur la gestion du système de fichiers en lecture seule.**
+**Voir [Karotz_Scripts/README.md](Karotz_Scripts/README.md) pour plus de détails.**
 
 ### Étape 5: Démarrer et Tester
 

@@ -1,18 +1,16 @@
 #!/bin/sh
 # Script CGI pour arrêter l'enregistrement vocal et envoyer à l'add-on
-# Doit être placé dans /usr/www/cgi-bin/voice_stop
+# Doit être placé dans /usr/openkarotz/www/cgi-bin/voice_stop
+# OpenKarotz uniquement
 
-# Configurer les chemins - utiliser /tmp/ qui est accessible en écriture
-VOICE_PID_FILE="/tmp/voice.pid"
-VOICE_WAV_FILE="/tmp/voice.wav"
-VOICE_ADDON_URL_FILE="/tmp/voice.addon_url"
-LED_COLOR_CMD="/tmp/led.color"
+# Configurer les chemins pour OpenKarotz
+VOICE_PID_FILE="/usr/openkarotz/tmp/voice.pid"
+VOICE_WAV_FILE="/usr/openkarotz/tmp/voice.wav"
+VOICE_ADDON_URL_FILE="/usr/openkarotz/Run/voice.addon_url"
+LED_COLOR_CMD="/usr/openkarotz/Run/led.color"
 
-# Vérifier les chemins alternatifs sur OpenKarotz
-if [ -d "/usr/openkarotz/Run" ]; then
-    VOICE_ADDON_URL_FILE="/usr/openkarotz/Run/voice.addon_url"
-    LED_COLOR_CMD="/usr/openkarotz/Run/led.color"
-fi
+# Créer le répertoire tmp s'il n'existe pas
+mkdir -p /usr/openkarotz/tmp
 
 # Fonction pour restaurer la couleur LED par défaut
 restore_led() {
@@ -79,7 +77,7 @@ if [ -z "$ADDON_URL" ]; then
 fi
 
 # Envoyer le fichier audio à l'add-on via curl
-RESPONSE_FILE="/tmp/voice_response.json"
+RESPONSE_FILE="/usr/openkarotz/tmp/voice_response.json"
 HTTP_CODE=0
 
 # Utiliser curl avec multipart/form-data

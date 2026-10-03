@@ -1,20 +1,16 @@
 #!/bin/sh
-# Script CGI pour démarrer l'enregistrement vocal sur Karotz
-# Doit être placé dans /usr/www/cgi-bin/voice_start
+# Script CGI pour démarrer l'enregistrement vocal sur Karotz avec OpenKarotz
+# Doit être placé dans /usr/openkarotz/www/cgi-bin/voice_start
 
-# Configurer les chemins - utiliser /tmp/ et /usr/openkarotz/ qui sont accessibles en écriture
-VOICE_RECORDER_CMD="/tmp/voice.recorder_cmd"
-VOICE_PID_FILE="/tmp/voice.pid"
-VOICE_WAV_FILE="/tmp/voice.wav"
-LED_COLOR_CMD="/tmp/led.color"
-BIP_SOUND="/tmp/bip1.mp3"
+# Configurer les chemins pour OpenKarotz
+VOICE_RECORDER_CMD="/usr/openkarotz/Run/voice.recorder_cmd"
+VOICE_PID_FILE="/usr/openkarotz/tmp/voice.pid"
+VOICE_WAV_FILE="/usr/openkarotz/tmp/voice.wav"
+LED_COLOR_CMD="/usr/openkarotz/Run/led.color"
+BIP_SOUND="/usr/openkarotz/Sounds/bip1.mp3"
 
-# Vérifier les chemins alternatifs sur OpenKarotz
-if [ -d "/usr/openkarotz/Run" ]; then
-    VOICE_RECORDER_CMD="/usr/openkarotz/Run/voice.recorder_cmd"
-    LED_COLOR_CMD="/usr/openkarotz/Run/led.color"
-    BIP_SOUND="/usr/openkarotz/Sounds/bip1.mp3"
-fi
+# Créer le répertoire tmp s'il n'existe pas
+mkdir -p /usr/openkarotz/tmp
 
 # Tuer tout processus d'enregistrement existant
 if [ -f "$VOICE_PID_FILE" ]; then
@@ -54,7 +50,6 @@ else
 fi
 
 # Enregistrer le PID du processus d'enregistrement
-# On récupère le PID du dernier processus en arrière-plan
 RECORDER_PID=$!
 echo "$RECORDER_PID" > "$VOICE_PID_FILE"
 
