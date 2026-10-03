@@ -4,3 +4,24 @@ build_from:
   armhf: ghcr.io/home-assistant/armhf-base:latest
   armv7: ghcr.io/home-assistant/armv7-base:latest
   i386: ghcr.io/home-assistant/i386-base:latest
+
+# Configuration pour le build Docker
+args:
+  # Version de Python
+  PYTHON_VERSION: "3.11"
+  
+  # Configuration des dépendances
+  INSTALL_FFMPEG: "true"
+  INSTALL_ESPEAK: "true"
+  INSTALL_CURL: "true"
+  INSTALL_GIT: "true"
+
+labels:
+  # Métadonnées du conteneur
+  maintainer: "Mathieu Courcelle"
+  description: "Karotz Voice Add-on with LLM and Home Assistant integration"
+  version: "2.0.0"
+  
+  # Informations de compatibilité
+  home-assistant: ">=2024.0.0"
+  python: "3.11"

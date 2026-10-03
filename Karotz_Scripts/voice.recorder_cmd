@@ -1,0 +1,12 @@
+#!/bin/sh
+# Commande d'enregistrement audio pour Karotz
+# Utilise ALSA arecord ou le binaire natif /usr/scripts/k2k/rec
+# Format: S16_LE, 16000 Hz, mono
+
+# Vérifier si arecord est disponible
+if command -v arecord >/dev/null 2>&1; then
+    arecord -D hw:0,0 -f S16_LE -r 16000 -c 1 /tmp/voice.wav
+else
+    # Utiliser le binaire natif du Karotz
+    /usr/scripts/k2k/rec > /tmp/voice.wav
+fi

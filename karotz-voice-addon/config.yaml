@@ -1,7 +1,9 @@
-name: Karotz Voice
-version: "0.1.0"
-slug: karotz_voice
-description: Voice pipeline for Karotz/OpenKarotz with Home Assistant conversation agents.
+name: Karotz Voice Complete
+version: "2.0.0"
+slug: karotz_voice_complete
+description: >
+  Add-on vocal complet pour Karotz/OpenKarotz avec intégration LLM et Home Assistant.
+  Fonctionnalités: STT via Open WebUI, traitement Home Assistant, fallback LLM, TTS Piper.
 url: https://github.com/Desperado88/Home-Assistant-Karotz-2025
 arch:
   - aarch64
@@ -15,32 +17,82 @@ init: false
 hassio_api: true
 homeassistant_api: true
 ports:
-  5000/tcp: 5000
+  8000/tcp: 8000
 ports_description:
-  5000/tcp: Karotz voice and TTS HTTP API
+  8000/tcp: API HTTP pour le traitement vocal Karotz
 options:
-  karotz_url: "http://192.168.1.103"
+  # Configuration Home Assistant
+  ha_url: "http://supervisor/core"
+  ha_token: ""
+  
+  # Configuration Open WebUI (STT et LLM)
+  openwebui_stt_url: "http://192.168.1.51:8080/v1/audio/transcriptions"
+  openwebui_llm_url: "http://192.168.1.51:8080/v1/chat/completions"
+  openwebui_api_key: ""
+  
+  # Modèles IA
+  llm_model: "llama3:8b"
+  stt_model: "whisper-1"
+  stt_language: "fr"
+  
+  # Configuration TTS Piper
+  piper_tts_url: "http://192.168.1.100:8001"
+  
+  # Configuration Karotz
+  karotz_ip: "192.168.1.103"
+  
+  # Configuration pipeline vocal
   voice_pipeline: true
   conversation_agent: ""
-  stt_language: "fr"
-  stt_model: "small"
-  input_audio_format: "karotz_raw"
+  input_audio_format: "wav"
   tts_engine: "piper"
   tts_entity: "tts.piper"
   voice_pitch: 0
   auto_listen: false
   wake_chime: "start_record"
+  
+  # Options de pipeline
+  use_ha_conversation: true
+  use_openwebui_stt: true
+  use_openwebui_llm: true
+  
+  # Journalisation
   log_level: "info"
 schema:
-  karotz_url: url
+  # Home Assistant
+  ha_url: url
+  ha_token: password
+  
+  # Open WebUI
+  openwebui_stt_url: url
+  openwebui_llm_url: url
+  openwebui_api_key: password
+  
+  # Modèles
+  llm_model: str
+  stt_model: str
+  stt_language: str
+  
+  # TTS Piper
+  piper_tts_url: url
+  
+  # Karotz
+  karotz_ip: str
+  
+  # Pipeline
   voice_pipeline: bool
   conversation_agent: "str?"
-  stt_language: str
-  stt_model: "list(tiny|base|small)"
   input_audio_format: "list(auto|karotz_raw|wav|flac)"
   tts_engine: "list(espeak|piper|ha)"
   tts_entity: "str?"
-  voice_pitch: "int(0,60)"
+  voice_pitch: "int(-60,60)"
   auto_listen: bool
   wake_chime: "str?"
+  
+  # Options de pipeline
+  use_ha_conversation: bool
+  use_openwebui_stt: bool
+  use_openwebui_llm: bool
+  
+  # Journalisation
   log_level: "list(debug|info|warning|error)"

@@ -1,0 +1,37 @@
+# Karotz Voice Add-on - Dependencies
+# Serveur FastAPI avec intégration LLM et Home Assistant
+
+# Web Framework
+fastapi>=0.109.0
+uvicorn[standard]>=0.27.0
+python-multipart>=0.0.6
+
+# HTTP Client
+httpx>=0.26.0
+requests>=2.31.0
+
+# Configuration et validation
+pydantic>=2.5.0
+pydantic-settings>=2.1.0
+
+# Utilitaires
+python-jose[cryptography]>=3.3.0
+passlib[bcrypt]>=1.7.4
+
+# Audio processing (optionnel)
+aiofiles>=23.0.0
+
+# Logging
+python-json-logger>=2.0.7
+
+# CORS
+fastapi-cors>=0.0.1
+
+# Version spécifique pour la compatibilité
+# Note: Ces versions sont testées et fonctionnent avec l'architecture actuelle
+# fastapi>=0.109.0 - Framework web asynchrone
+# uvicorn>=0.27.0 - Serveur ASGI
+# httpx>=0.26.0 - Client HTTP asynchrone avec support multipart
+# requests>=2.31.0 - Client HTTP synchrone pour fallback
+# pydantic>=2.5.0 - Validation des modèles de données
+# python-multipart>=0.0.6 - Support multipart/form-data pour FastAPI

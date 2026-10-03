@@ -1,0 +1,70 @@
+#!/bin/sh
+# Script CGI pour démarrer l'enregistrement vocal sur Karotz
+# Doit être placé dans /usr/www/cgi-bin/voice_start
+
+# Configurer les chemins
+VOICE_RECORDER_CMD="/karotz/Run/voice.recorder_cmd"
+VOICE_PID_FILE="/tmp/voice.pid"
+VOICE_WAV_FILE="/tmp/voice.wav"
+LED_COLOR_CMD="/karotz/Run/led.color"
+BIP_SOUND="/karotz/Sounds/bip1.mp3"
+
+# Tuer tout processus d'enregistrement existant
+if [ -f "$VOICE_PID_FILE" ]; then
+    PID=$(cat "$VOICE_PID_FILE")
+    if kill -0 "$PID" 2>/dev/null; then
+        kill "$PID" 2>/dev/null
+    fi
+    rm -f "$VOICE_PID_FILE"
+fi
+
+# Nettoyer les fichiers temporaires
+rm -f "$VOICE_WAV_FILE"
+
+# Vérifier si le fichier de commande d'enregistrement existe
+if [ ! -x "$VOICE_RECORDER_CMD" ]; then
+    echo "Content-type: text/plain"
+    echo ""
+    echo "Erreur: Fichier de commande d'enregistrement non trouvé: $VOICE_RECORDER_CMD"
+    exit 1
+fi
+
+# Allumer la LED en bleu pour indiquer l'enregistrement
+if [ -x "$LED_COLOR_CMD" ]; then
+    echo "0000FF" > "$LED_COLOR_CMD"
+fi
+
+# Jouer le son de bip d'initialisation
+if [ -f "$BIP_SOUND" ]; then
+    /usr/bin/madplay "$BIP_SOUND" >/dev/null 2>&1 &
+fi
+
+# Lancer l'enregistrement en arrière-plan
+if command -v nohup >/dev/null 2>&1; then
+    nohup sh "$VOICE_RECORDER_CMD" >/dev/null 2>&1 &
+else
+    sh "$VOICE_RECORDER_CMD" >/dev/null 2>&1 &
+fi
+
+# Enregistrer le PID du processus d'enregistrement
+# On récupère le PID du dernier processus en arrière-plan
+RECORDER_PID=$!
+echo "$RECORDER_PID" > "$VOICE_PID_FILE"
+
+# Attendre un peu pour s'assurer que l'enregistrement a démarré
+sleep 0.5
+
+# Vérifier si le processus est toujours en cours
+if ! kill -0 "$RECORDER_PID" 2>/dev/null; then
+    rm -f "$VOICE_PID_FILE"
+    echo "Content-type: text/plain"
+    echo ""
+    echo "Erreur: Impossible de démarrer l'enregistrement"
+    exit 1
+fi
+
+# Retourner une réponse réussie
+echo "Content-type: text/plain"
+echo ""
+echo "Enregistrement démarré avec succès (PID: $RECORDER_PID)"
+exit 0

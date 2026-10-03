@@ -18,6 +18,24 @@ Votre Karotz peut :
 - 🎵 Lire de la musique et des histoires depuis une clé USB
 - 📚 Lire des histoires préenregistrées
 - 🧘 Proposer une animation Tai-Chi pour la relaxation
+- 🤖 **NOUVEAU: Contrôle vocal complet avec LLM, Home Assistant et TTS**
+
+## 🎯 NOUVEAUTÉS v2.0 - Contrôle Vocal Complet
+
+La version 2.0 introduit un système de **contrôle vocal intelligent** complet avec :
+
+- ✅ **Speech-To-Text (STT)** via Open WebUI / Ollama - Transcription précise de votre voix
+- ✅ **Home Assistant Intent Detection** - Compréhension des commandes domotiques
+- ✅ **LLM Fallback** avec Open WebUI - Réponses intelligentes aux questions générales
+- ✅ **Text-To-Speech (TTS)** via Piper - Voix naturelle pour le Karotz
+- ✅ **Intégration complète** - De l'appui sur le bouton à la réponse vocale
+
+**Architecture:**
+```
+Bouton Karotz → Enregistrement → Add-on vocal → STT → HA/LLM → TTS → Karotz parle
+```
+
+Voir la [documentation complète](KAROTZ_VOICE.md) pour les détails d'installation et de configuration.
 
 ## 📚 Documentation
 
@@ -31,32 +49,48 @@ Chaque dossier du projet contient son propre README détaillant :
 
 ```
 Home-Assistant-Karotz-2025/
-├── Home Assistant/ # Intégration Home Assistant
-│ ├── Automatisations/ # Automatisations YAML (Ajout des Automatisations)
-│ ├── packages/ # Packages pour Karotz (Installation)
-│ ├── Tableau de bord/ # Tableaux de bord personnalisés (Ajout de Tag RFID avec Webhook, lecture d'histoire et USB)
-│ └── README.md # Documentation de l'intégration
-|
-├── HomeRabbit/ # Application principale pour Karotz
-│ ├── install_openkarotz.sh # Script d'installation OpenKarotz
-│ ├── installfirmware.sh # Script d'installation du firmware
-│ ├── packages/ # Fichiers de configuration, scripts, sons, apps, etc.
-│ └── README.md # Guide d'utilisation (Installation sur le karotz)
-|
-├── karotz-tts-docker/ # Service TTS (text to speech) en Docker (Via extension Home Assistant ou serveur docker)
-│ ├── Dockerfile # Dockerfile pour le service TTS
-│ ├── pico_tts.py # Script principal TTS
-│ ├── requirements.txt # Dépendances Python
-│ └── README.md # Instructions d'installation
-|
-├── karotz_fonctions.sh # Fonctions de base du Karotz
-├── LICENSE # Licence du projet
-├── README.md # Documentation principale
+├── Karotz_Scripts/                          # NOUVEAU: Scripts Bash pour le contrôle vocal
+│   ├── voice.recorder_cmd                   # Commande d'enregistrement audio
+│   ├── voice_start                          # CGI: Démarre l'enregistrement
+│   ├── voice_stop                           # CGI: Arrête et envoie à l'add-on
+│   └── README.md                             # Instructions d'installation
+│
+├── Home Assistant/                          # Intégration Home Assistant
+│ ├── Automatisations/                      # Automatisations YAML
+│ ├── packages/                             # Packages pour Karotz
+│ ├── Tableau de bord/                       # Tableaux de bord personnalisés
+│ └── README.md                              # Documentation de l'intégration
+│
+├── HomeRabbit/                              # Application principale pour Karotz
+│ ├── install_openkarotz.sh                  # Script d'installation OpenKarotz
+│ ├── installfirmware.sh                    # Script d'installation du firmware
+│ ├── packages/                             # Fichiers de configuration, scripts, sons, apps
+│ └── README.md                              # Guide d'utilisation
+│
+├── karotz-voice-addon/                      # NOUVEAU: Add-on vocal complet
+│ ├── app.py                                # Serveur FastAPI avec flux STT→HA→LLM→TTS
+│ ├── config.yaml                           # Configuration de l'add-on
+│ ├── build.yaml                            # Configuration de build
+│ ├── Dockerfile                            # Dockerfile pour le conteneur
+│ ├── requirements.txt                      # Dépendances Python
+│ ├── run.sh                                # Script de démarrage
+│ └── README.md                             # Documentation de l'add-on
+│
+├── karotz-tts-docker/                       # Service TTS (text to speech)
+│ ├── Dockerfile                            # Dockerfile pour le service TTS
+│ ├── pico_tts.py                           # Script principal TTS
+│ ├── requirements.txt                      # Dépendances Python
+│ └── README.md                             # Instructions d'installation
+│
+├── KAROTZ_VOICE.md                          # NOUVEAU: Documentation complète du contrôle vocal
+├── karotz_fonctions.sh                     # Fonctions de base du Karotz
+├── STRUCTURE_DETAILED.md                    # Structure détaillée du projet
+└── LICENSE                                  # Licence du projet
 ```
 
-## 🔧 Installation Simple (configuration unique)
+## 🚀 Installation Simple (configuration unique)
 
-1. Téléchargez le firmware FreeRabbit depuis le site officiel et copiez-le sur une clé USB formatée en FAT32 :
+1. **Téléchargez le firmware FreeRabbit** depuis le site officiel et copiez-le sur une clé USB formatée en FAT32 :
    [https://www.freerabbit.nl](https://www.freerabbits.nl)
 
 2. **Avant d'insérer la clé USB dans le Karotz**, modifiez le fichier `waitfornetwork.sh` pour y saisir :
@@ -83,7 +117,62 @@ Home-Assistant-Karotz-2025/
 
 ---
 
-## 🏠 Intégration dans Home Assistant (voir le Readme du dossier 'packages' pour plus d'info)
+## 🤖 NOUVEAU: Installation du Contrôle Vocal Complet
+
+Pour activer le **contrôle vocal complet avec LLM et Home Assistant**, suivez ces étapes supplémentaires :
+
+### Étape 1: Installer les prérequis
+
+1. **Serveur Open WebUI/Ollama** sur Proxmox ou autre serveur
+   - URL: `http://192.168.1.51:8080`
+   - Modèles: `llama3:8b`, `mistral:7b`, `whisper-1`
+
+2. **Add-on Piper TTS** sur Raspberry Pi 5 ou Home Assistant
+   - URL: `http://192.168.1.100:8001`
+
+### Étape 2: Installer l'add-on vocal
+
+```bash
+# Copier l'add-on dans votre Home Assistant
+cp -r karotz-voice-addon/ /path/to/homeassistant/addons/karotz_voice_complete/
+
+# Redémarrer Home Assistant
+```
+
+### Étape 3: Installer les scripts sur le Karotz
+
+```bash
+# Copier les scripts
+scp Karotz_Scripts/voice.recorder_cmd karotz@<KAROTZ_IP>:/karotz/Run/
+scp Karotz_Scripts/voice_start karotz@<KAROTZ_IP>:/usr/www/cgi-bin/
+scp Karotz_Scripts/voice_stop karotz@<KAROTZ_IP>:/usr/www/cgi-bin/
+
+# Donner les permissions
+ssh karotz@<KAROTZ_IP> "chmod +x /karotz/Run/voice.recorder_cmd /usr/www/cgi-bin/voice_start /usr/www/cgi-bin/voice_stop"
+
+# Configurer l'URL de l'add-on
+echo "http://<HOME_ASSISTANT_IP>:8000" > /karotz/Run/voice.addon_url
+```
+
+### Étape 4: Configurer l'add-on dans Home Assistant
+
+Dans l'interface Supervisor, configurez l'add-on avec :
+- `ha_url`: `http://supervisor/core`
+- `ha_token`: Votre token Long Lived
+- `openwebui_stt_url`: `http://192.168.1.51:8080/v1/audio/transcriptions`
+- `openwebui_llm_url`: `http://192.168.1.51:8080/v1/chat/completions`
+- `piper_tts_url`: `http://192.168.1.100:8001`
+- `karotz_ip`: `192.168.1.103`
+- `llm_model`: `llama3:8b`
+- `stt_language`: `fr`
+
+Voir [KAROTZ_VOICE.md](KAROTZ_VOICE.md) pour la configuration complète.
+
+---
+
+## 🏠 Intégration dans Home Assistant
+
+### Packages Home Assistant
 
 * Copiez le contenu du dossier `packages` dans le dossier nommé `packages` dans le dossier de configuration de Home Assistant :
   `/config/packages/karotz_dev_*****.yaml`
@@ -97,10 +186,69 @@ homeassistant:
 
 * Redémarrez Home Assistant depuis Paramètres → Système → Redémarrer.
 
+### NOUVEAU: Package de Contrôle Vocal
+
+Un nouveau package est disponible pour le contrôle vocal :
+- `Home Assistant/packages/karotz_dev_voice.yaml`
+
+Ce package inclut :
+- Configuration de l'add-on vocal
+- Variables d'entrée pour l'URL de l'add-on et la commande d'enregistrement
+- Scripts pour le test et la configuration
+
 ## 🔊 Karotz TTS via Home Assistant
 
-Un Addon est disponible pour faire du TTS localement via Home Assistant, pour plus d'informations :
-[https://github.com/Desperado88/Home-Assistant-Karotz-2025/tree/master/karotz-tts-docker](https://github.com/Desperado88/karotz-tts-addon-rpi)
+Un Add-on est disponible pour faire du TTS localement via Home Assistant, pour plus d'informations :
+[https://github.com/Desperado88/Home-Assistant-Karotz-2025/tree/master/karotz-tts-docker](https://github.com/Desperado88/Home-Assistant-Karotz-2025/tree/master/karotz-tts-docker)
+
+**NOUVEAU: L'add-on vocal complet** (`karotz-voice-addon/`) inclut l'intégration avec Piper TTS pour une solution tout-en-un.
+
+## 🎤 NOUVELLE FONCTIONNALITÉ: Contrôle Vocal
+
+### Fonctionnement
+
+1. **Appuyez sur le bouton** de la tête du Karotz
+2. **La LED devient bleue** - L'enregistrement commence
+3. **Parlez votre demande** - "Allume la lumière du salon"
+4. **Relâchez le bouton** - L'enregistrement s'arrête
+5. **Traitement automatique** :
+   - Transcription de votre voix → texte
+   - Analyse par Home Assistant (intents domotiques)
+   - Ou fallback vers LLM pour les questions générales
+   - Synthèse vocale de la réponse
+6. **Le Karotz répond** vocalement
+
+### Exemples de commandes
+
+**Commandes domotiques (traitées par Home Assistant):**
+- "Allume la lumière du salon"
+- "Éteins toutes les lumières"
+- "Quelle est la température ?"
+- "Ouvre la porte du garage"
+- "Active le scénario bonsoir"
+
+**Questions générales (traitées par LLM):**
+- "Quelle est la capitale de la France ?"
+- "Raconte une blague"
+- "Quel temps fait-il demain ?"
+- "Qui a gagné la coupe du monde en 2022 ?"
+- "Explique-moi comment fonctionne un frigo"
+
+**Commandes Karotz:**
+- "Fais danser le lapin"
+- "Allume la LED en rouge"
+- "Bouge les oreilles"
+
+### Intégration avec OpenKarotz DBus
+
+Si vous utilisez OpenKarotz avec le moniteur DBus, le contrôle vocal est automatiquement intégré :
+- `lclick_start` → Démarre l'enregistrement
+- `lclick_end` → Arrête et traite la voix
+
+**Configuration:**
+1. Assurez-vous que `/karotz/Run/voice.addon_url` contient l'URL de votre add-on
+2. Redémarrez OpenKarotz
+3. Le moniteur DBus utilisera automatiquement les scripts `voice_start` et `voice_stop`
 
 ## 🔧 Installation détaillée (FreeRabbit, openkarotz, ssh)
 
@@ -132,126 +280,181 @@ Un Addon est disponible pour faire du TTS localement via Home Assistant, pour pl
 
 10. Connectez-vous en SSH et faites les commandes "passwd" et "passwd karotz" pour initialiser des mots de passe
 
-11. Connectez-vous en FTP à votre Karotz avec le mot de passe précédemment renseigné
+11. **NOUVEAU: Installer les scripts vocaux**
+    ```bash
+    # Se connecter au Karotz
+    ssh karotz@<KAROTZ_IP>
+    
+    # Créer les répertoires
+    mkdir -p /karotz/Run /usr/www/cgi-bin
+    
+    # Copier les scripts (depuis votre machine locale)
+    # scp Karotz_Scripts/voice.* karotz@<KAROTZ_IP>:/destination/
+    
+    # Donner les permissions
+    chmod +x /karotz/Run/voice.recorder_cmd /usr/www/cgi-bin/voice_start /usr/www/cgi-bin/voice_stop
+    
+    # Configurer l'URL de l'add-on
+    echo "http://<HOME_ASSISTANT_IP>:8000" > /karotz/Run/voice.addon_url
+    ```
 
-12. Copiez le contenu du dossier "HomeRabbit" aux bons emplacements sur le Karotz (cf: STRUCTURE_DETAILED.md)
+12. Connectez-vous en FTP à votre Karotz avec le mot de passe précédemment renseigné
 
-13. Redémarrez le Karotz
+13. Copiez le contenu du dossier "HomeRabbit" aux bons emplacements sur le Karotz (cf: STRUCTURE_DETAILED.md)
 
-14. Passez à l'intégration avec Home Assistant
+14. Redémarrez le Karotz
+
+15. Passez à l'intégration avec Home Assistant
 
 ## 🧠 API Karotz
 
 Vous pouvez consulter l'ensemble des commandes disponibles via l'API OpenKarotz ici :
 👉 [Documentation API OpenKarotz](https://www.openkarotz.org/api/)
 
-## Sources
-* www.freerabbits.nl
-* https://github.com/ClementNoiville/Home-Assistant-Karotz
-* www.openkarotz.org
+## 📖 Documentation Complète
 
-# English - Home Assistant Karotz 2025
+- **[KAROTZ_VOICE.md](KAROTZ_VOICE.md)** - Guide complet du contrôle vocal
+- **[karotz-voice-addon/README.md](karotz-voice-addon/README.md)** - Documentation de l'add-on vocal
+- **[Karotz_Scripts/README.md](Karotz_Scripts/README.md)** - Guide d'installation des scripts Karotz
+- **[Home Assistant/Readme.md](Home%20Assistant/Readme.md)** - Intégration Home Assistant
+- **[HomeRabbit/Readme.md](HomeRabbit/Readme.md)** - Guide d'utilisation sur le Karotz
 
-Give voice and personality to your Home Assistant with your Karotz! 🐰✨
-
-This project transforms your Karotz into an intelligent voice assistant, offering a unique and personalized experience in your connected home. Through integration with Home Assistant, your connected rabbit becomes the spokesperson for your smart home, capable of speaking to you, responding to your commands, and animating your daily life with its colored LED.
-
-Your Karotz can:
-- 🎙️ Verbally announce the state of your sensors (temperature, humidity, presence, etc.)
-- 💡 Animate and change color when a sensor state changes
-- 🔔 Alert you of important events
-- 🏠 All while remaining 100% local, without dependency on external cloud services
-- 🏷️ Read RFID tags to trigger actions in Home Assistant (scenarios, automations, etc.)
-
-## 📚 Documentation
-
-Each project folder contains its own README detailing:
-- The purpose of the files it contains
-- How to use them
-- Required dependencies
-- Usage examples
-
-## 📁 Project Structure
+## 🔄 Flux de Traitement Vocal
 
 ```
-Home-Assistant-Karotz-2025/
-├── Home Assistant/ # Home Assistant Integration
-│ ├── Automatisations/ # YAML automations
-│ ├── packages/ # Karotz packages
-│ ├── Tableau de bord/ # Custom dashboards
-│ └── README.md # Integration documentation
-|
-├── HomeRabbit/ # Main application for Karotz
-│ ├── install_openkarotz.sh # OpenKarotz install script
-│ ├── installfirmware.sh # Firmware install script
-│ ├── packages/ # Config files, scripts, sounds, apps, etc.
-│ └── README.md # Usage guide
-|
-├── karotz-tts-docker/ # TTS (text to speech) service in Docker
-│ ├── Dockerfile # Dockerfile for TTS service
-│ ├── pico_tts.py # Main TTS script
-│ ├── requirements.txt # Python dependencies
-│ └── README.md # Installation instructions
-|
-├── karotz_fonctions.sh # Basic Karotz functions
-├── LICENSE # Project license
-├── README.md # Main documentation
+┌─────────────┐     ┌─────────────────┐     ┌─────────────────┐
+│   Bouton    │────▶│ Enregistrement  │────▶│ Fichier WAV     │
+│   (Press)   │     │  Audio          │     │ /tmp/voice.wav  │
+└─────────────┘     └─────────────────┘     └────────┬────────┘
+                                                      │
+                              ┌────────────────────────────────────┐
+                              │ POST /api/voice                     │
+                              │ (Add-on karotz-voice)               │
+                              └────────────────────────────────────┘
+                                                      │
+┌─────────────────────────────────────────────────────────────────┐
+│                        ADD-ON VOCAL                                  │
+│  ┌─────────────┐    ┌─────────────┐    ┌─────────────┐              │
+│  │ 1. STT      │───▶│ 2. HA       │───▶│ 3. LLM      │              │
+│  │ Open WebUI  │    │ Intent     │    │ Fallback   │              │
+│  │ Transcription│    │ Detection  │    │ Open WebUI │              │
+│  └─────────────┘    └─────────────┘    └─────────────┘              │
+│                      │                        │                        │
+│                      ▼                        ▼                        │
+│                 ┌─────────────────────────┐                         │
+│                 │ Texte transcrit          │                         │
+│                 └─────────────────────────┘                         │
+│                      │                                              │
+│                      ▼                                              │
+│                 ┌─────────────────────────┐                         │
+│                 │ Réponse finale           │                         │
+│                 └─────────────────────────┘                         │
+│                      │                                              │
+│                      ▼                                              │
+│  ┌─────────────┐    ┌─────────────┐                                       │
+│  │ 4. TTS      │───▶│ 5. Play     │                                       │
+│  │ Piper      │    │ on Karotz  │                                       │
+│  │ Synthèse   │    │ /cgi-bin/   │                                       │
+│  └─────────────┘    └─────────────┘                                       │
+└─────────────────────────────────────────────────────────────────┘
+        │
+        ▼
+Le Karotz parle ! 🎵
 ```
 
-## 🔧 Simple Installation (one-time setup)
+## 🎉 NOUVEAUTÉS v2.0.0
 
-1. Download the FreeRabbit firmware from the official website and copy it to a FAT32 formatted USB key:
-   [https://www.freerabbit.nl](https://www.freerabbits.nl)
+### ✨ Nouvelle Architecture
+- **Passage de Flask à FastAPI** pour de meilleures performances
+- **Traitement asynchrone** pour une meilleure réactivité
+- **Intégration native avec Open WebUI** pour STT et LLM
+- **Fallback intelligent** entre Home Assistant et LLM
 
-2. **Before inserting the USB key into the Karotz**, modify the `waitfornetwork.sh` file to enter:
-   * The **IP** you want to assign to your Karotz
-   * The **DNS**, generally 8.8.8.8
-   * The **GW** (gateway), generally 192.168.1.1
-   * The **SSID** of your Wi-Fi
-   * The corresponding **password**
+### 🎯 Nouvelles Fonctionnalités
+- **Speech-To-Text** via Open WebUI/Ollama
+- **Home Assistant Intent Detection** native
+- **LLM Fallback** pour les questions générales
+- **Text-To-Speech** via Piper
+- **Gestion des actions** (LED, oreilles) via balises
+- **Cache audio** pour optimiser les performances
 
-(Optional: you can specify the IP address of your TTS/HA server in the `HomeRabbit/packages/www/cgi-bin/tts` file on line 66, and comment out line 67 if necessary.)
+### 📊 Améliorations
+- Meilleure détection des intents
+- Réponses plus naturelles
+- Support multi-langues
+- Configuration plus flexible
+- Meilleure gestion des erreurs
 
-3. Copy the contents of the "HomeRabbit" folder to the USB key (replacing existing files if necessary)
+## 💡 Astuces pour le Contrôle Vocal
 
-4. Reset the Karotz by plugging it in while holding the head button until the LED turns blue, then release the button and wait for the LED to become cyan fixed
+### Optimiser la reconnaissance
+1. **Parlez clairement** et distinctement
+2. **Évitez le bruit de fond** - L'enregistrement est plus sensible
+3. **Attendez le bip** avant de parler
+4. **Parlez à distance raisonnable** (30-50 cm)
 
-5. Disconnect the Karotz, insert the USB key into the Karotz and reconnect it (switch on ON). It will indicate that it is updating. Then restart. Wait for the LED to become green, it should connect automatically to Wi-Fi. (Do not remove the USB key yet)
+### Personnaliser les réponses
+- Modifiez le `system_prompt` dans `karotz-voice-addon/app.py`
+- Créez des agents conversation spécifiques dans Home Assistant
+- Configurez des réponses personnalisées pour les intents
 
-6. Connect to the Karotz via SSH with the terminal command:
-   `ssh karotz@[Karotz IP]`
+### Gérer plusieurs langues
+- Configurez `stt_language` et `llm_model` en conséquence
+- Modèles multilingues: `llama3:8b`, `mistral:7b`
+- Pour l'anglais: `stt_language: "en"`
 
-7. Once connected in SSH, execute the commands `passwd` and `passwd karotz` to initialize passwords
+### Sécurité
+- Ne pas exposer l'add-on sur Internet
+- Utilisez des réseaux locaux sécurisés
+- Configurez le firewall de votre routeur
 
-8. Proceed to integration with Home Assistant
+## 🐛 Dépannage
+
+Pour les problèmes liés au contrôle vocal, consultez :
+- **[KAROTZ_VOICE.md - Section Dépannage](KAROTZ_VOICE.md#-dépannage)**
+- **[karotz-voice-addon/README.md - Dépannage](karotz-voice-addon/README.md#-dépannage)**
+
+Pour les problèmes généraux, consultez les forums :
+- [OpenKarotz Forum](https://www.openkarotz.org/forum/)
+- [Home Assistant Community](https://community.home-assistant.io/)
+
+## 📞 Support
+
+Pour toute question ou problème spécifique à ce projet :
+- **Créer une issue sur GitHub:** [Issues](https://github.com/Desperado88/Home-Assistant-Karotz-2025/issues)
+- **Discord:** [Serveur OpenKarotz](https://discord.gg/openkarotz)
+
+## 📜 Licence
+
+MIT License - Copyright (c) 2024 Mathieu Courcelle
+
+Tous les droits réservés.
+
+## 🏆 Remerciements
+
+- **ClementNoiville** pour le projet original Home Assistant Karotz
+- **OpenKarotz Team** pour le firmware OpenKarotz
+- **Home Assistant Team** pour la plateforme domotique
+- **Ollama Team** pour les modèles LLM locaux
+- **All contributors** pour leurs retours et suggestions
 
 ---
 
-## 🏠 Integration into Home Assistant
+## 🌟 Conclusion
 
-* Copy the `openkarotz.yaml` file to a folder named `packages` in the Home Assistant configuration folder:
-  `/config/packages/openkarotz.yaml`
+Transformez votre Karotz en un **assistant vocal intelligent** avec ce projet complet !
 
-* In your `configuration.yaml` file, add (or complete) the following section:
+Que vous souhaitiez :
+- ✅ Contrôler votre maison par la voix
+- ✅ Poser des questions à votre Karotz
+- ✅ Créer des automatisations vocales
+- ✅ Intégrer LLM et IA locale
 
-```yaml
-homeassistant:
-  packages: !include_dir_named packages
-```
+Ce projet vous offre tout ce dont vous avez besoin pour donner une **voix intelligente** à votre lapin connecté !
 
-* Restart Home Assistant from Settings → System → Restart.
+**Bon usage et amusez-vous bien !** 🎉
 
-## 🔊 Karotz TTS via Home Assistant
+---
 
-An Addon is available to do TTS locally via Home Assistant, for more information:
-https://github.com/Desperado88/Home-Assistant-Karotz-2025/tree/master/karotz-tts-docker
-
-## 🧠 API Karotz
-
-You can view the complete list of commands available via the OpenKarotz API here:
-👉 [OpenKarotz API Documentation](https://www.openkarotz.org/api/)
-
-## Sources
-* www.freerabbits.nl
-* https://github.com/ClementNoiville/Home-Assistant-Karotz
-* www.openkarotz.org
+*Dernière mise à jour: 3 octobre 2026*
+*Version: 2.0.0*

@@ -1,0 +1,134 @@
+#!/bin/sh
+# Script CGI pour arrêter l'enregistrement vocal et envoyer à l'add-on
+# Doit être placé dans /usr/www/cgi-bin/voice_stop
+
+# Configurer les chemins
+VOICE_PID_FILE="/tmp/voice.pid"
+VOICE_WAV_FILE="/tmp/voice.wav"
+VOICE_ADDON_URL_FILE="/karotz/Run/voice.addon_url"
+LED_COLOR_CMD="/karotz/Run/led.color"
+KAROTZ_IP_FILE="/karotz/Run/karotz_ip.txt"
+
+# Fonction pour restaurer la couleur LED par défaut
+restore_led() {
+    if [ -x "$LED_COLOR_CMD" ]; then
+        # Retour à la couleur par défaut (blanc)
+        echo "FFFFFF" > "$LED_COLOR_CMD"
+    fi
+}
+
+# Vérifier si un PID est en cours
+if [ ! -f "$VOICE_PID_FILE" ]; then
+    echo "Content-type: text/plain"
+    echo ""
+    echo "Erreur: Aucun processus d'enregistrement en cours"
+    restore_led
+    exit 1
+fi
+
+# Récupérer le PID et tuer le processus
+PID=$(cat "$VOICE_PID_FILE")
+if kill -0 "$PID" 2>/dev/null; then
+    kill "$PID" 2>/dev/null
+    # Attendre la fin du processus
+    for i in 1 2 3 4 5; do
+        if ! kill -0 "$PID" 2>/dev/null; then
+            break
+        fi
+        sleep 0.2
+    done
+    # Forcer la terminaison si nécessaire
+    kill -9 "$PID" 2>/dev/null
+fi
+
+# Supprimer le fichier PID
+rm -f "$VOICE_PID_FILE"
+
+# Vérifier si le fichier audio existe
+if [ ! -f "$VOICE_WAV_FILE" ]; then
+    echo "Content-type: text/plain"
+    echo ""
+    echo "Erreur: Fichier audio non trouvé: $VOICE_WAV_FILE"
+    restore_led
+    exit 1
+fi
+
+# Vérifier si l'URL de l'add-on est configurée
+if [ ! -f "$VOICE_ADDON_URL_FILE" ]; then
+    echo "Content-type: text/plain"
+    echo ""
+    echo "Erreur: URL de l'add-on non configurée: $VOICE_ADDON_URL_FILE"
+    restore_led
+    exit 1
+fi
+
+# Lire l'URL de l'add-on
+ADDON_URL=$(cat "$VOICE_ADDON_URL_FILE" | tr -d '[:space:]')
+
+if [ -z "$ADDON_URL" ]; then
+    echo "Content-type: text/plain"
+    echo ""
+    echo "Erreur: URL de l'add-on vide"
+    restore_led
+    exit 1
+fi
+
+# Envoyer le fichier audio à l'add-on via curl
+RESPONSE_FILE="/tmp/voice_response.json"
+HTTP_CODE=0
+
+# Utiliser curl avec multipart/form-data
+if command -v curl >/dev/null 2>&1; then
+    HTTP_CODE=$(curl -s -o "$RESPONSE_FILE" -w "%{http_code}" \
+        -X POST \
+        -F "audio=@$VOICE_WAV_FILE;filename=voice.wav" \
+        "$ADDON_URL/api/voice")
+else
+    # Fallback avec wget si curl n'est pas disponible
+    wget -q --post-file="$VOICE_WAV_FILE" \
+        --header="Content-Type: multipart/form-data" \
+        -O "$RESPONSE_FILE" \
+        "$ADDON_URL/api/voice"
+    HTTP_CODE=$?
+fi
+
+# Traiter la réponse
+if [ "$HTTP_CODE" -ge 200 ] && [ "$HTTP_CODE" -lt 300 ]; then
+    # Succès - analyser la réponse JSON pour obtenir l'URL audio
+    AUDIO_URL=$(grep -o '"audio_url"[[:space:]]*:[[:space:]]*"[^"]*"' "$RESPONSE_FILE" | sed 's/"audio_url"[[:space:]]*:[[:space:]]*"//;s/"//g')
+    
+    if [ -n "$AUDIO_URL" ]; then
+        # Envoyer la commande au Karotz pour lire le son
+        if command -v curl >/dev/null 2>&1; then
+            curl -s "http://localhost/cgi-bin/sound?url=$AUDIO_URL" >/dev/null 2>&1
+        else
+            wget -q -O /dev/null "http://localhost/cgi-bin/sound?url=$AUDIO_URL"
+        fi
+    fi
+    
+    # Extraire et exécuter les actions si présentes
+    ACTIONS=$(grep -o '"actions"[[:space:]]*:[[:space:]]*\[[^]]*\]' "$RESPONSE_FILE")
+    if [ -n "$ACTIONS" ]; then
+        echo "Actions détectées: $ACTIONS"
+    fi
+    
+    # Message de succès
+    echo "Content-type: text/plain"
+    echo ""
+    echo "Audio envoyé et traité avec succès"
+    
+    # Nettoyer les fichiers temporaires
+    rm -f "$VOICE_WAV_FILE" "$RESPONSE_FILE"
+    
+else
+    # Erreur - afficher la réponse
+    echo "Content-type: text/plain"
+    echo ""
+    echo "Erreur: Code HTTP $HTTP_CODE"
+    cat "$RESPONSE_FILE"
+fi
+
+# Toujours restaurer la LED
+restore_led
+
+exit 0
