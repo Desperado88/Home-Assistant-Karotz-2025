@@ -160,21 +160,40 @@ voice_pitch: 0             # Hauteur de voix (-60 à 60)
 
 ### 3. Installer les scripts sur le Karotz
 
-Voir le dossier `Karotz_Scripts/` dans ce dépôt pour les scripts nécessaires:
-- `/karotz/Run/voice.recorder_cmd`
-- `/usr/www/cgi-bin/voice_start`
-- `/usr/www/cgi-bin/voice_stop`
+**⚠️ IMPORTANT:** Sur la plupart des firmwares Karotz, `/karotz/Run/` et `/usr/www/cgi-bin/` sont **en lecture seule**.
 
-Consultez `Karotz_Scripts/README.md` pour les instructions détaillées.
+Voir le dossier `Karotz_Scripts/` dans ce dépôt pour les scripts nécessaires et les **solutions pour contourner le système de fichiers en lecture seule**:
+- **Option A (recommandée):** Utiliser `/tmp/cgi-bin/` avec des liens vers `/usr/www/cgi-bin/`
+- **Option B:** Utiliser `/usr/openkarotz/Run/` et `/usr/openkarotz/www/cgi-bin/`
+
+Consultez **[Karotz_Scripts/README.md](../Karotz_Scripts/README.md)** pour les **instructions détaillées et solutions au problème de lecture seule**.
 
 ### 4. Configurer l'URL de l'add-on sur le Karotz
 
+**Selon votre option d'installation:**
+
+#### Pour Option A (/tmp/):
 ```bash
 # Créer le fichier de configuration
-echo "http://<HOME_ASSISTANT_IP>:8000" > /karotz/Run/voice.addon_url
+echo "http://<HOME_ASSISTANT_IP>:8000" > /tmp/voice.addon_url
+```
 
-# Remplacer <HOME_ASSISTANT_IP> par l'adresse de votre serveur Home Assistant
-# Exemple: echo "http://192.168.1.100:8000" > /karotz/Run/voice.addon_url
+#### Pour Option B (/usr/openkarotz/):
+```bash
+# Créer le fichier de configuration
+echo "http://<HOME_ASSISTANT_IP>:8000" > /usr/openkarotz/Run/voice.addon_url
+```
+
+**Remplacer `<HOME_ASSISTANT_IP>` par l'adresse de votre serveur Home Assistant**
+
+Exemple pour Option A:
+```bash
+echo "http://192.168.1.100:8000" > /tmp/voice.addon_url
+```
+
+Exemple pour Option B:
+```bash
+echo "http://192.168.1.100:8000" > /usr/openkarotz/Run/voice.addon_url
 ```
 
 ## 🎚️ Configuration des scripts Karotz

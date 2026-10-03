@@ -3,10 +3,13 @@
 # Utilise ALSA arecord ou le binaire natif /usr/scripts/k2k/rec
 # Format: S16_LE, 16000 Hz, mono
 
+# Utiliser /tmp/ qui est toujours accessible en écriture sur Karotz
+OUTPUT_FILE="/tmp/voice.wav"
+
 # Vérifier si arecord est disponible
 if command -v arecord >/dev/null 2>&1; then
-    arecord -D hw:0,0 -f S16_LE -r 16000 -c 1 /tmp/voice.wav
+    arecord -D hw:0,0 -f S16_LE -r 16000 -c 1 "$OUTPUT_FILE"
 else
     # Utiliser le binaire natif du Karotz
-    /usr/scripts/k2k/rec > /tmp/voice.wav
+    /usr/scripts/k2k/rec > "$OUTPUT_FILE"
 fi

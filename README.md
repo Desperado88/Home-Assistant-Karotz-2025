@@ -141,18 +141,51 @@ cp -r karotz-voice-addon/ /path/to/homeassistant/addons/karotz_voice_complete/
 
 ### Étape 3: Installer les scripts sur le Karotz
 
+**⚠️ IMPORTANT:** Sur la plupart des firmwares Karotz, `/karotz/Run/` et `/usr/www/cgi-bin/` sont **en lecture seule**.
+
+**Utilisez ces solutions:**
+
+#### ✅ Option A: Utiliser /tmp/ (Recommandé)
 ```bash
+# Créer les répertoires dans /tmp (accessible en écriture)
+mkdir -p /tmp/cgi-bin
+
 # Copier les scripts
-scp Karotz_Scripts/voice.recorder_cmd karotz@<KAROTZ_IP>:/karotz/Run/
-scp Karotz_Scripts/voice_start karotz@<KAROTZ_IP>:/usr/www/cgi-bin/
-scp Karotz_Scripts/voice_stop karotz@<KAROTZ_IP>:/usr/www/cgi-bin/
+scp Karotz_Scripts/voice.recorder_cmd karotz@<KAROTZ_IP>:/tmp/
+scp Karotz_Scripts/voice_start karotz@<KAROTZ_IP>:/tmp/cgi-bin/
+scp Karotz_Scripts/voice_stop karotz@<KAROTZ_IP>:/tmp/cgi-bin/
+
+# Créer des liens symboliques vers les emplacements standards
+ssh karotz@<KAROTZ_IP> "ln -sf /tmp/cgi-bin/voice_start /usr/www/cgi-bin/voice_start"
+ssh karotz@<KAROTZ_IP> "ln -sf /tmp/cgi-bin/voice_stop /usr/www/cgi-bin/voice_stop"
 
 # Donner les permissions
-ssh karotz@<KAROTZ_IP> "chmod +x /karotz/Run/voice.recorder_cmd /usr/www/cgi-bin/voice_start /usr/www/cgi-bin/voice_stop"
+ssh karotz@<KAROTZ_IP> "chmod +x /tmp/voice.recorder_cmd /tmp/cgi-bin/voice_start /tmp/cgi-bin/voice_stop"
 
 # Configurer l'URL de l'add-on
-echo "http://<HOME_ASSISTANT_IP>:8000" > /karotz/Run/voice.addon_url
+echo "http://<HOME_ASSISTANT_IP>:8000" > /tmp/voice.addon_url
 ```
+
+#### ✅ Option B: Utiliser /usr/openkarotz/ (Si OpenKarotz est installé)
+```bash
+# Créer les répertoires
+mkdir -p /usr/openkarotz/Run /usr/openkarotz/www/cgi-bin
+
+# Copier les scripts
+scp Karotz_Scripts/voice.recorder_cmd karotz@<KAROTZ_IP>:/usr/openkarotz/Run/
+scp Karotz_Scripts/voice_start karotz@<KAROTZ_IP>:/usr/openkarotz/www/cgi-bin/
+scp Karotz_Scripts/voice_stop karotz@<KAROTZ_IP>:/usr/openkarotz/www/cgi-bin/
+
+# Donner les permissions
+ssh karotz@<KAROTZ_IP> "chmod +x /usr/openkarotz/Run/voice.recorder_cmd"
+ssh karotz@<KAROTZ_IP> "chmod +x /usr/openkarotz/www/cgi-bin/voice_start"
+ssh karotz@<KAROTZ_IP> "chmod +x /usr/openkarotz/www/cgi-bin/voice_stop"
+
+# Configurer l'URL de l'add-on
+echo "http://<HOME_ASSISTANT_IP>:8000" > /usr/openkarotz/Run/voice.addon_url
+```
+
+**Voir [Karotz_Scripts/README.md](Karotz_Scripts/README.md) pour plus de détails sur la gestion du système de fichiers en lecture seule.**
 
 ### Étape 4: Configurer l'add-on dans Home Assistant
 

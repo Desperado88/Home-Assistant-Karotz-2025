@@ -2,12 +2,17 @@
 # Script CGI pour arrêter l'enregistrement vocal et envoyer à l'add-on
 # Doit être placé dans /usr/www/cgi-bin/voice_stop
 
-# Configurer les chemins
+# Configurer les chemins - utiliser /tmp/ qui est accessible en écriture
 VOICE_PID_FILE="/tmp/voice.pid"
 VOICE_WAV_FILE="/tmp/voice.wav"
-VOICE_ADDON_URL_FILE="/karotz/Run/voice.addon_url"
-LED_COLOR_CMD="/karotz/Run/led.color"
-KAROTZ_IP_FILE="/karotz/Run/karotz_ip.txt"
+VOICE_ADDON_URL_FILE="/tmp/voice.addon_url"
+LED_COLOR_CMD="/tmp/led.color"
+
+# Vérifier les chemins alternatifs sur OpenKarotz
+if [ -d "/usr/openkarotz/Run" ]; then
+    VOICE_ADDON_URL_FILE="/usr/openkarotz/Run/voice.addon_url"
+    LED_COLOR_CMD="/usr/openkarotz/Run/led.color"
+fi
 
 # Fonction pour restaurer la couleur LED par défaut
 restore_led() {
