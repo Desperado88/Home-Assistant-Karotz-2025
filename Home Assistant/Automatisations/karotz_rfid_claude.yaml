@@ -1,0 +1,38 @@
+# Ajouter cette automatisation dans Home Assistant pour interagir avec le Karotz_dev via RFID et Claude LLM.
+# Dans Home Assistant Paramètres > Automatisations et scènes > Automatisations, créer une nouvelle automatisation et cliquer sur "Éditer en YAML" pour coller le code ci-dessous.
+# puis coller le contenu du fichier karotz_rfid_claude.yaml ci-dessous.
+# http://IP_HOME_ASSISTANT:8123/api/webhook/Karotz_dev_rfid_scan
+
+alias: "Karotz_dev - Interaction RFID & Claude LLM"
+description: ""
+triggers:
+  - webhook_id: Karotz_dev_rfid_scan
+    allowed_methods:
+      - POST
+      - GET
+    local_only: true
+    trigger: webhook
+
+conditions: []
+
+actions:
+  - action: rest_command.Karotz_dev_dev_light
+    data:
+      color_1: "FF5500"
+      color_2: "000000"
+
+  - action: conversation.process
+    data:
+      agent_id: conversation.claude
+      text: "Fais-moi un résumé concis de la maison et dis-moi s'il faut fermer les volets."
+    response_variable: claude_response
+
+  - action: rest_command.Karotz_dev_say
+    data:
+      text: "{{ claude_response.response.speech.plain.speech }}"
+
+  - action: rest_command.karotz_dev_light_fixed
+    data:
+      color_1: "00FF00"
+
+mode: single
