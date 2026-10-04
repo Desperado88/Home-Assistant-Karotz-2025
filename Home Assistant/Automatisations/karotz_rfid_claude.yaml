@@ -6,7 +6,7 @@
 alias: "Karotz_dev - Interaction RFID & Claude LLM"
 description: ""
 triggers:
-  - webhook_id: Karotz_dev_rfid_scan
+  - webhook_id: karotz_dev_rfid_scan
     allowed_methods:
       - POST
       - GET
@@ -16,18 +16,20 @@ triggers:
 conditions: []
 
 actions:
-  - action: rest_command.Karotz_dev_light
+  - action: rest_command.karotz_dev_light
     data:
       color_1: "FF5500"
       color_2: "000000"
 
   - action: conversation.process
     data:
-      agent_id: conversation.claude
-      text: "Fais-moi un résumé concis de la maison et dis-moi s'il faut fermer les volets."
+      text: >-
+        Fais-moi un résumé concis de la maison et dis-moi s'il faut fermer les
+        volets.
+      agent_id: conversation.llama3_1
     response_variable: claude_response
 
-  - action: rest_command.Karotz_dev_say
+  - action: rest_command.karotz_dev_say
     data:
       text: "{{ claude_response.response.speech.plain.speech }}"
 
