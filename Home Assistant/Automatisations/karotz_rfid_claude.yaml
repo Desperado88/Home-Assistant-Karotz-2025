@@ -16,7 +16,7 @@ triggers:
 conditions: []
 
 actions:
-  - action: rest_command.Karotz_dev_dev_light
+  - action: rest_command.Karotz_dev_light
     data:
       color_1: "FF5500"
       color_2: "000000"
