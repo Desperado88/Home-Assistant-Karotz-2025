@@ -1,0 +1,70 @@
+# A placer dans scripts.yaml a la racine du dossier config de Home Assistant
+# Ce script permet de générer une annonce improvisée par Karotz, 
+# le petit lapin robot, en fonction d'un événement et du contexte de la maison. 
+# Il utilise un modèle de langage pour créer un message naturel et personnalisé.
+karotz_annonce_contextuelle_llm:
+  alias: Karotz - Annonce contextuelle LLM
+  description: Génère une annonce improvisée à partir d'un événement et du contexte
+    de la maison.
+  fields:
+    event_name:
+      name: Événement
+      description: Événement qui fait parler Karotz
+      required: true
+      selector:
+        text:
+    event_details:
+      name: Détails
+      description: Informations spécifiques à l'événement
+      required: false
+      default: ''
+      selector:
+        text:
+          multiline: true
+  sequence:
+  - variables:
+      house_context: "{% set ns = namespace(lines=[]) %} {% set entities = [\n  ('sensor.victron_battery_soc',
+        'Batterie maison'),\n  ('sensor.pac_atom_temp_ext', 'Température extérieure'),\n
+        \ ('sensor.pac_atom_z2_temp_pi_ce', 'Température rez-de-chaussée'),\n  ('sensor.pac_atom_z1_temp_pi_ce',
+        'Température étage'),\n  ('sensor.temperature', 'Température salle de bain'),\n
+        \ ('sensor.production_solaire_instantane_total', 'Production solaire'),\n
+        \ ('input_text.tarif_edf', 'Tarif EDF'),\n  ('switch.relai_th16', 'Hotte cuisine'),\n
+        \ ('switch.chauffage_sdb_relai_chauffage_sdb', 'Chauffage salle de bain'),\n
+        \ ('binary_sensor.porte_garage', 'Porte garage arrière'),\n  ('binary_sensor.porte_garage_av',
+        'Porte garage avant')\n] %} {% for entity, label in entities %}\n  {% set
+        value = states(entity) %}\n  {% if value not in ['unknown', 'unavailable',
+        'none', ''] %}\n    {% set unit = state_attr(entity, 'unit_of_measurement')
+        or '' %}\n    {% set ns.lines = ns.lines + [label ~ ': ' ~ value ~ unit] %}\n
+        \ {% endif %}\n{% endfor %} {% set result = ns.lines | join('\\n') %} {{ result[:4000]
+        if result else 'Aucune donnée disponible.' }}"
+  - action: conversation.process
+    continue_on_error: true
+    data:
+      agent_id: conversation.llama3_1
+      text: 'Tu es Karotz, le petit lapin robot de cette maison. Tu es drôle, observateur,
+        chaleureux, espiègle et légèrement taquin.
+
+        ÉVÉNEMENT : {{ event_name }}
+
+        DÉTAILS DE L''ÉVÉNEMENT : {{ event_details | default(''Aucun détail supplémentaire.'',
+        true) }}
+
+        ÉTAT CONNU DE LA MAISON : {{ house_context }}
+
+        Ta mission : - Improviser une annonce naturelle en français en rapport avec
+        l''événement. - Utiliser si possible un détail réel du contexte pour personnaliser
+        la remarque. - Répondre en une ou deux phrases, maximum 40 mots. - Varier
+        les formulations et éviter les introductions répétitives. - Être drôle sans
+        devenir bavard. - Ne jamais inventer de mesure, d''événement ou de présence.
+        - Ne pas présenter une valeur inconnue comme une certitude. - Si les données
+        sont insuffisantes, réagir simplement à l''événement. - Ne jamais exécuter
+        de commande domotique : tu dois uniquement parler.'
+    response_variable: llm_response
+  - action: rest_command.karotz_dev_say
+    continue_on_error: true
+    data:
+      text: "{{ llm_response.get('response', {}).get('speech', {}).get('plain', {}).get('speech',
+        '')\n   or 'Huuuuuummm, il se passe quelque chose dans la maison !' }}"
+  mode: queued
+  max: 5
+  max_exceeded: silent

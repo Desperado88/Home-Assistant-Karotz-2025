@@ -1,54 +1,49 @@
 automation:
   # ----- METEO --------
-  - id: karotz_dev_meteo_automation
-    alias: "karotz_dev - Réaction météo h/30"
-    description: "Adapte les oreilles, la LED et le clignotement selon les conditions météo"
-    trigger:
+  - id : karotz_dev - Réaction météo h/30
+    alias: karotz_dev - Réaction météo h/30
+    description: Adapte les oreilles et les LED à la météo, puis annonce les conditions avec Llama.
+    triggers:
       - trigger: time_pattern
-        minutes: "30" # Déclenche à la trentième minute de chaque heure
-    condition:
+        minutes: "30"
+
+    conditions:
       - condition: time
         after: "07:00:00"
         before: "19:00:00"
+
     actions:
-      - action: rest_command.karotz_dev_say
-        data:
-          text: >-
-            Voici la météo.
-      - action: rest_command.karotz_dev_ears_reset
       - action: input_number.set_value
         data:
           entity_id: input_number.karotz_dev_ear_left
           value: >
-            {% set rain_str = states('sensor.[ville]_rain_chance') %}
-            {% set rain = rain_str if rain_str not in ['unavailable', 'unknown', 'none', ''] else 0 %}
-            {% set rain = rain | float %}
+            {% set rain = states('sensor.treillieres_rain_chance') | float(0) %}
             {% if rain < 5 %}
-              {{ 15 }}
+              15
             {% elif rain > 60 %}
-              {{ 4 }}
+              4
             {% else %}
               {{ (15 - ((rain - 5) // 5)) | int }}
             {% endif %}
+
       - action: input_number.set_value
         data:
           entity_id: input_number.karotz_dev_ear_right
           value: >
-            {% set rain_str = states('sensor.[ville]_rain_chance') %}
-            {% set rain = rain_str if rain_str not in ['unavailable', 'unknown', 'none', ''] else 0 %}
-            {% set rain = rain | float %}
+            {% set rain = states('sensor.treillieres_rain_chance') | float(0) %}
             {% if rain < 5 %}
-              {{ 15 }}
+              15
             {% elif rain > 60 %}
-              {{ 4 }}
+              4
             {% else %}
               {{ (15 - ((rain - 5) // 5)) | int }}
             {% endif %}
+
       - action: input_text.set_value
         data:
           entity_id: input_text.karotz_dev_color_1
           value: >
-            {% set temp = states('sensor.pac_atom_temp_ext') | default(20) | float %}
+            {% set temp = states('sensor.pac_atom_temp_ext') | float(20) %}
             {% if temp <= -10 %}ADD8E6
             {% elif temp <= -5 %}87CEFA
             {% elif temp <= 0 %}00CED1
@@ -58,94 +53,118 @@ automation:
             {% elif temp <= 20 %}FFD700
             {% elif temp <= 25 %}FFA500
             {% elif temp <= 30 %}FF4500
-            {% else %}FF0000{% endif %}
+            {% else %}FF0000
+            {% endif %}
+
       - action: input_text.set_value
         data:
           entity_id: input_text.karotz_dev_color_2
           value: "000000"
+
       - action: input_number.set_value
         data:
           entity_id: input_number.karotz_dev_light_speed
           value: >
-            {% set wind = states('sensor.weather_station_vitesse_moyenne_du_vent_km_h') | default(0) | float %}
-            {% set base = 2000 %}
-            {% set min_speed = 100 %}
-            {% set decrement = ((wind // 5) * 150) %}
-            {% set result = base - decrement %}
-            {% if result < min_speed %}{{ min_speed }}{% elif result > base %}{{ base }}{% else %}{{ result | int }}{% endif %}
+            {% set wind = states('sensor.weather_station_vitesse_moyenne_du_vent_km_h') | float(0) %}
+            {% set result = 2000 - ((wind // 5) * 150) %}
+            {% if result < 100 %}
+              100
+            {% else %}
+              {{ [result, 2000] | min | int }}
+            {% endif %}
+
       - action: rest_command.karotz_dev_light
+        data: {}
+
       - action: rest_command.karotz_dev_ears
+        data: {}
+
+      - action: conversation.process
+        data:
+          agent_id: conversation.llama3_1
+          text: >-
+            Tu es Karotz, un petit lapin robot drôle, chaleureux et attachant.
+            Tu annonces la météo à la personne qui habite dans la maison.
+
+            Voici les mesures actuelles fournies par Home Assistant :
+            - Température extérieure : {{ states('sensor.pac_atom_temp_ext') }} °C
+            - Vitesse moyenne du vent : {{ states('sensor.weather_station_vitesse_moyenne_du_vent_km_h') }} km/h
+            - Probabilité de pluie : {{ states('sensor.treillieres_rain_chance') }} %
+            - Alerte météo : {{ states('sensor.44_weather_alert') }}
+
+            Compose une annonce orale naturelle en français, en une ou deux
+            phrases, de 25 à 45 mots maximum.
+            Parle comme un compagnon qui donne un conseil utile avant de sortir.
+            Interprète les mesures disponibles : indique si le vent est faible,
+            modéré ou fort, si le risque de pluie est faible, modéré ou élevé,
+            et adapte ton conseil vestimentaire à la température.
+            Si une alerte météo orange ou rouge est indiquée, mentionne-la
+            clairement et donne un conseil de prudence.
+            Ne confonds pas probabilité de pluie et prévision horaire :
+            n'affirme pas qu'il ne pleuvra pas dans les prochaines heures,
+            car aucune prévision horaire n'est fournie ici.
+            N'invente aucune mesure, prévision ou alerte.
+            Si une mesure est indisponible, ignore-la.
+            Évite de réciter simplement les chiffres : transforme-les en
+            une phrase fluide, vivante et parfois légèrement amusante.
+        response_variable: llm_response
+
       - action: rest_command.karotz_dev_say
         data:
           text: >-
-            {% set temp_str = states('sensor.pac_atom_temp_ext') %}
-            {% set temp = temp_str if temp_str not in ['unavailable', 'unknown', 'none', ''] else 20 %}
-            {% set temp = temp | float %}
+            {{ llm_response.get('response', {}).get('speech', {}).get('plain', {}).get('speech', '')
+              or "La météo est un peu mystérieuse aujourd'hui. Vérifie les conditions avant de sortir !" }}
 
-            {% set wind_str = states('sensor.weather_station_vitesse_moyenne_du_vent_km_h') %}
-            {% set wind = wind_str if wind_str not in ['unavailable', 'unknown', 'none', ''] else 0 %}
-            {% set wind = wind | float %}
-
-            {% set rain_str = states('sensor.[ville]_rain_chance') %}
-            {% set rain = rain_str if rain_str not in ['unavailable', 'unknown', 'none', ''] else 0 %}
-            {% set rain = rain | float %}
-
-            {% set alerte = states('sensor.44_weather_alert') | default('') | lower %}
-
-            La température est de {{ temp | round(0) }} degrés.
-            Le vent souffle à {{ wind | round(0) }} kilomètres par heure.
-            Le risque de pluie est de {{ rain | round(0) }} pourcents.
-            {% if 'orange' in alerte %}
-              Attention, une alerte météo orange est en cours.
-            {% elif 'rouge' in alerte %}
-              Attention, une alerte météo rouge est en cours. Restez vigilant.
-            {% endif %}
-    mode: single # Empêche le déclenchement multiple simultané
+    mode: single
 
   # Annonce la météo du jour
   - id: karotz_dev_meteo_jour
     alias: karotz_dev - Météo du jour 7h15
-    description: Annonce la météo du jour via Karotz_dev
+    description: Annonce les prévisions du jour avec Llama et adapte les animations de Karotz.
     triggers:
       - trigger: time
         at: "07:15:00"
+
     conditions: []
+
     actions:
-      # Position des oreilles selon le risque de pluie
+      # Oreille gauche selon le risque de pluie
       - action: input_number.set_value
         data:
           entity_id: input_number.karotz_dev_ear_left
           value: >
-            {% set rain_str = states('sensor.[ville]_rain_chance') %}
-            {% set rain = rain_str if rain_str not in ['unavailable', 'unknown', 'none', ''] else 0 %}
-            {% set rain = rain | float %}
-            {% if rain < 5 %}
-              {{ 15 }}
-            {% elif rain > 60 %}
-              {{ 4 }}
+            {% set pluie = state_attr('sensor.prevision_meteo_aujourd_hui', 'precipitation_probability') %}
+            {% set pluie = pluie | float(0) if pluie not in [none, 'unavailable', 'unknown', '', 'n/a'] else 0 %}
+            {% if pluie < 5 %}
+              15
+            {% elif pluie > 60 %}
+              4
             {% else %}
-              {{ (15 - ((rain - 5) // 5)) | int }}
+              {{ (15 - ((pluie - 5) // 5)) | int }}
             {% endif %}
+
+      # Oreille droite selon le risque de pluie
       - action: input_number.set_value
         data:
           entity_id: input_number.karotz_dev_ear_right
           value: >
-            {% set rain_str = states('sensor.[ville]_rain_chance') %}
-            {% set rain = rain_str if rain_str not in ['unavailable', 'unknown', 'none', ''] else 0 %}
-            {% set rain = rain | float %}
-            {% if rain < 5 %}
-              {{ 15 }}
-            {% elif rain > 60 %}
-              {{ 4 }}
+            {% set pluie = state_attr('sensor.prevision_meteo_aujourd_hui', 'precipitation_probability') %}
+            {% set pluie = pluie | float(0) if pluie not in [none, 'unavailable', 'unknown', '', 'n/a'] else 0 %}
+            {% if pluie < 5 %}
+              15
+            {% elif pluie > 60 %}
+              4
             {% else %}
-              {{ (15 - ((rain - 5) // 5)) | int }}
+              {{ (15 - ((pluie - 5) // 5)) | int }}
             {% endif %}
+
       # Couleur de la LED selon la température maximale
       - action: input_text.set_value
         data:
           entity_id: input_text.karotz_dev_color_1
           value: >
-            {% set temp = state_attr('sensor.prevision_meteo_aujourd_hui', 'temperature') | default(20) | float %}
+            {% set temp = state_attr('sensor.prevision_meteo_aujourd_hui', 'temperature') %}
+            {% set temp = temp | float(20) if temp not in [none, 'unavailable', 'unknown', '', 'n/a'] else 20 %}
             {% if temp <= -10 %}ADD8E6
             {% elif temp <= -5 %}87CEFA
             {% elif temp <= 0 %}00CED1
@@ -155,172 +174,144 @@ automation:
             {% elif temp <= 20 %}FFD700
             {% elif temp <= 25 %}FFA500
             {% elif temp <= 30 %}FF4500
-            {% else %}FF0000{% endif %}
-      # Vitesse de clignotement selon la vitesse du vent
+            {% else %}FF0000
+            {% endif %}
+
+      # Couleur secondaire éteinte
+      - action: input_text.set_value
+        data:
+          entity_id: input_text.karotz_dev_color_2
+          value: "000000"
+
+      # Vitesse de clignotement selon le vent
       - action: input_number.set_value
         data:
           entity_id: input_number.karotz_dev_light_speed
           value: >
-            {% set wind = state_attr('sensor.prevision_meteo_aujourd_hui', 'wind_speed') | default(0) | float %}
-            {% set base = 2000 %}
-            {% set min_speed = 100 %}
-            {% set decrement = ((wind // 5) * 150) %}
-            {% set result = base - decrement %}
-            {% if result < min_speed %}{{ min_speed }}{% elif result > base %}{{ base }}{% else %}{{ result | int }}{% endif %}
-      # Allume la LED et positionne les oreilles
+            {% set wind = state_attr('sensor.prevision_meteo_aujourd_hui', 'wind_speed') %}
+            {% set wind = wind | float(0) if wind not in [none, 'unavailable', 'unknown', '', 'n/a'] else 0 %}
+            {% set result = 2000 - ((wind // 5) * 150) %}
+            {{ [[result, 100] | max, 2000] | min | int }}
+
+      # Appliquer les réglages de Karotz
       - action: rest_command.karotz_dev_light
+        data: {}
+
       - action: rest_command.karotz_dev_ears
-      # Annonce météo
-      - action: rest_command.karotz_dev_say
-        metadata: {}
+        data: {}
+
+      # Générer une annonce météo naturelle avec Llama
+      - action: conversation.process
         data:
+          agent_id: conversation.llama3_1
           text: >-
-            {% set conditions = {
+            Tu es Karotz, un petit lapin robot drôle, chaleureux et attachant.
+            Tu annonces la météo du jour à la personne qui habite dans la maison.
+
+            Voici les prévisions disponibles :
+            Conditions : {{ {
               'sunny': 'ensoleillé',
               'clear-night': 'nuit dégagée',
               'cloudy': 'nuageux',
               'partlycloudy': 'partiellement nuageux',
               'fog': 'brouillard',
               'windy': 'venteux',
-              'windy-variant': 'variablement venteux',
+              'windy-variant': 'vent variable',
               'hail': 'grêle',
               'lightning': 'orages',
-              'lightning-rainy': 'orages avec pluie',
+              'lightning-rainy': 'orages et pluie',
               'pouring': 'fortes pluies',
               'rainy': 'pluvieux',
-              'snowy': 'enneigé',
+              'snowy': 'neige',
               'snowy-rainy': 'neige et pluie',
               'exceptional': 'conditions exceptionnelles'
-            } %} {% set condition = states('sensor.prevision_meteo_aujourd_hui') %}
-            {% set condition_fr = conditions.get(condition, condition) %}
+            }.get(states('sensor.prevision_meteo_aujourd_hui'), states('sensor.prevision_meteo_aujourd_hui')) }}
+            Température minimale : {{ state_attr('sensor.prevision_meteo_aujourd_hui', 'templow') if state_attr('sensor.prevision_meteo_aujourd_hui', 'templow') not in [none, 'unavailable', 'unknown', '', 'n/a'] else 'indisponible' }} °C.
+            Température maximale : {{ state_attr('sensor.prevision_meteo_aujourd_hui', 'temperature') if state_attr('sensor.prevision_meteo_aujourd_hui', 'temperature') not in [none, 'unavailable', 'unknown', '', 'n/a'] else 'indisponible' }} °C.
+            Probabilité de pluie : {{ state_attr('sensor.prevision_meteo_aujourd_hui', 'precipitation_probability') if state_attr('sensor.prevision_meteo_aujourd_hui', 'precipitation_probability') not in [none, 'unavailable', 'unknown', '', 'n/a'] else 'indisponible' }} %.
+            Couverture nuageuse : {{ state_attr('sensor.prevision_meteo_aujourd_hui', 'cloud_coverage') if state_attr('sensor.prevision_meteo_aujourd_hui', 'cloud_coverage') not in [none, 'unavailable', 'unknown', '', 'n/a'] else 'indisponible' }} %.
+            Vent : {{ state_attr('sensor.prevision_meteo_aujourd_hui', 'wind_speed') if state_attr('sensor.prevision_meteo_aujourd_hui', 'wind_speed') not in [none, 'unavailable', 'unknown', '', 'n/a'] else 'indisponible' }} km/h.
+            Indice UV : {{ state_attr('sensor.prevision_meteo_aujourd_hui', 'uv_index') if state_attr('sensor.prevision_meteo_aujourd_hui', 'uv_index') not in [none, 'unavailable', 'unknown', '', 'n/a'] else 'indisponible' }}.
 
-            Voici la météo prévue pour aujourd'hui. Le temps sera {{
-            condition_fr }}. Température maximale : {{
-              state_attr('sensor.prevision_meteo_aujourd_hui', 'temperature') | default(0) | float | round(0)
-            }} degrés. Température minimale : {{
-              state_attr('sensor.prevision_meteo_aujourd_hui', 'templow') | default(0) | float | round(0)
-            }} degrés. {% set pluie =
-            state_attr('sensor.prevision_meteo_aujourd_hui',
-            'precipitation_probability') %} {% if pluie != 'n/a' and pluie is not
-            none %}
-              Risque de pluie : {{ pluie }} pourcents.
-            {% endif %} {% set nuages =
-            state_attr('sensor.prevision_meteo_aujourd_hui', 'cloud_coverage') %} {%
-            if nuages != 'n/a' and nuages is not none %}
-              Couverture nuageuse : {{ nuages }} pourcents.
-            {% endif %} Vent : {{
-              state_attr('sensor.prevision_meteo_aujourd_hui', 'wind_speed') | default(0) | float | round(0)
-            }} kilomètres par heure. {% set uv =
-              state_attr('sensor.prevision_meteo_aujourd_hui', 'uv_index') |
-              default(0) %} Indice UV : {{ uv }} sur 10.
+            Formule une annonce orale naturelle en français de deux ou trois phrases,
+            entre 30 et 50 mots maximum.
+            Commence par une formule variée, pas toujours par « Voici la météo ».
+            Résume les conditions, les températures, le vent et le risque de pluie.
+            Donne un conseil concret sur les vêtements ou le parapluie si les données
+            le justifient. Si l'indice UV est élevé, conseille de se protéger du soleil.
+            Tu peux ajouter une petite plaisanterie de lapin.
+            Ne récite pas simplement une liste de chiffres.
+            N'invente aucune donnée ni prévision horaire.
+            Ignore les mesures indisponibles.
+        response_variable: llm_response
+
+      # Faire parler Karotz avec la réponse de Llama
+      - action: rest_command.karotz_dev_say
+        data:
+          text: >-
+            {{ llm_response.get('response', {}).get('speech', {}).get('plain', {}).get('speech', '')
+              or "Bonjour ! Pense à vérifier la météo avant de sortir et à choisir une tenue adaptée." }}
+
     mode: single
 
   # Annonce de la meteo du lendemain à 19h
   - id: karotz_dev_meteo_demain
-    alias: "Karotz_dev - Météo de demain à 19h05"
-    description: "Annonce la météo de demain via Karotz_dev"
+    alias: karotz_dev - Météo de demain à 19h05
+    description: Annonce les prévisions du lendemain avec une phrase naturelle générée par Llama.
     triggers:
       - trigger: time
         at: "19:05:00"
+
     conditions: []
+
     actions:
-      # Position des oreilles selon le risque de pluie
-      - action: input_number.set_value
+      - action: conversation.process
         data:
-          entity_id: input_number.karotz_dev_ear_left
-          value: >
-            {% set rain_str = states('sensor.[ville]_rain_chance') %}
-            {% set rain = rain_str if rain_str not in ['unavailable', 'unknown', 'none', ''] else 0 %}
-            {% set rain = rain | float %}
-            {% if rain < 5 %}
-              {{ 15 }}
-            {% elif rain > 60 %}
-              {{ 4 }}
-            {% else %}
-              {{ (15 - ((rain - 5) // 5)) | int }}
-            {% endif %}
-      - action: input_number.set_value
-        data:
-          entity_id: input_number.karotz_dev_ear_right
-          value: >
-            {% set rain_str = states('sensor.[ville]_rain_chance') %}
-            {% set rain = rain_str if rain_str not in ['unavailable', 'unknown', 'none', ''] else 0 %}
-            {% set rain = rain | float %}
-            {% if rain < 5 %}
-              {{ 15 }}
-            {% elif rain > 60 %}
-              {{ 4 }}
-            {% else %}
-              {{ (15 - ((rain - 5) // 5)) | int }}
-            {% endif %}
-      # Couleur de la LED selon la température maximale
-      - action: input_text.set_value
-        data:
-          entity_id: input_text.karotz_dev_color_1
-          value: >
-            {% set temp = state_attr('sensor.prevision_meteo_aujourd_hui', 'temperature') | default(20) | float %}
-            {% if temp <= -10 %}ADD8E6
-            {% elif temp <= -5 %}87CEFA
-            {% elif temp <= 0 %}00CED1
-            {% elif temp <= 5 %}40E0D0
-            {% elif temp <= 10 %}90EE90
-            {% elif temp <= 15 %}ADFF2F
-            {% elif temp <= 20 %}FFD700
-            {% elif temp <= 25 %}FFA500
-            {% elif temp <= 30 %}FF4500
-            {% else %}FF0000{% endif %}
-      # Vitesse de clignotement selon la vitesse du vent
-      - action: input_number.set_value
-        data:
-          entity_id: input_number.karotz_dev_light_speed
-          value: >
-            {% set wind = state_attr('sensor.prevision_meteo_aujourd_hui', 'wind_speed') | default(0) | float %}
-            {% set base = 2000 %}
-            {% set min_speed = 100 %}
-            {% set decrement = ((wind // 5) * 150) %}
-            {% set result = base - decrement %}
-            {% if result < min_speed %}{{ min_speed }}{% elif result > base %}{{ base }}{% else %}{{ result | int }}{% endif %}
-      # Allume la LED et positionne les oreilles
-      - action: rest_command.karotz_dev_light
-      - action: rest_command.karotz_dev_ears
-      # Annonce la météo
-      - action: rest_command.karotz_dev_say
-        metadata: {}
-        data:
+          agent_id: conversation.llama3_1
           text: >-
-            {% set conditions = {
+            Tu es Karotz, un petit lapin robot drôle, chaleureux et attachant.
+            Il est environ 19 heures et tu présentes la météo de demain.
+
+            Voici les prévisions disponibles :
+            Conditions : {{ {
               'sunny': 'ensoleillé',
               'clear-night': 'nuit dégagée',
               'cloudy': 'nuageux',
               'partlycloudy': 'partiellement nuageux',
               'fog': 'brouillard',
               'windy': 'venteux',
-              'windy-variant': 'variablement venteux',
+              'windy-variant': 'vent variable',
               'hail': 'grêle',
               'lightning': 'orages',
-              'lightning-rainy': 'orages avec pluie',
+              'lightning-rainy': 'orages et pluie',
               'pouring': 'fortes pluies',
               'rainy': 'pluvieux',
-              'snowy': 'enneigé',
+              'snowy': 'neige',
               'snowy-rainy': 'neige et pluie',
               'exceptional': 'conditions exceptionnelles'
-            } %} {% set condition = states('sensor.prevision_meteo_demain') %} {%
-            set condition_fr = conditions.get(condition, condition) %}
+            }.get(states('sensor.prevision_meteo_demain'), states('sensor.prevision_meteo_demain')) }}
+            Température minimale : {{ state_attr('sensor.prevision_meteo_demain', 'templow') if state_attr('sensor.prevision_meteo_demain', 'templow') not in [none, 'unavailable', 'unknown', '', 'n/a'] else 'indisponible' }} °C.
+            Température maximale : {{ state_attr('sensor.prevision_meteo_demain', 'temperature') if state_attr('sensor.prevision_meteo_demain', 'temperature') not in [none, 'unavailable', 'unknown', '', 'n/a'] else 'indisponible' }} °C.
+            Probabilité de pluie : {{ state_attr('sensor.prevision_meteo_demain', 'precipitation_probability') if state_attr('sensor.prevision_meteo_demain', 'precipitation_probability') not in [none, 'unavailable', 'unknown', '', 'n/a'] else 'indisponible' }} %.
+            Couverture nuageuse : {{ state_attr('sensor.prevision_meteo_demain', 'cloud_coverage') if state_attr('sensor.prevision_meteo_demain', 'cloud_coverage') not in [none, 'unavailable', 'unknown', '', 'n/a'] else 'indisponible' }} %.
+            Vent : {{ state_attr('sensor.prevision_meteo_demain', 'wind_speed') if state_attr('sensor.prevision_meteo_demain', 'wind_speed') not in [none, 'unavailable', 'unknown', '', 'n/a'] else 'indisponible' }} km/h.
+            Indice UV : {{ state_attr('sensor.prevision_meteo_demain', 'uv_index') if state_attr('sensor.prevision_meteo_demain', 'uv_index') not in [none, 'unavailable', 'unknown', '', 'n/a'] else 'indisponible' }}.
 
-            Voici la météo prévue pour demain. Le temps sera {{
-            condition_fr }}.  Température maximale : {{
-            state_attr('sensor.prevision_meteo_demain', 'temperature') | default(0)
-            | float | round(0) }} degrés.  Température minimale : {{
-            state_attr('sensor.prevision_meteo_demain', 'templow') | default(0) |
-            float | round(0) }} degrés.  {% set pluie =
-            state_attr('sensor.prevision_meteo_demain', 'precipitation_probability')
-            %} {% if pluie != 'n/a' %}
-              Risque de pluie : {{ pluie }} pourcents. 
-            {% endif %} {% set nuages = state_attr('sensor.prevision_meteo_demain',
-            'cloud_coverage') %}  {% if nuages != 'n/a' %} 
-              Couverture nuageuse : {{ nuages }} pourcents. 
-            {% endif %}  Vent : {{ state_attr('sensor.prevision_meteo_demain',
-            'wind_speed') | default(0) | float | round(0) }} kilomètres par heure. 
-            Indice UV : {{ state_attr('sensor.prevision_meteo_demain', 'uv_index')
-            }} sur 10.
+            Fais une annonce orale en français de deux ou trois phrases,
+            entre 30 et 50 mots maximum.
+            Présente les grandes tendances de demain, les températures et le risque
+            de pluie. Donne un conseil utile pour préparer la journée du lendemain :
+            vêtements chauds, veste, parapluie ou protection solaire selon les données.
+            Tu peux terminer par une remarque amusante et affectueuse.
+            Varie les formulations et évite de réciter une liste de chiffres.
+            N'invente aucune donnée, aucune alerte et aucune prévision horaire.
+            Si une valeur est indisponible, ignore-la.
+        response_variable: llm_response
+
+      - action: rest_command.karotz_dev_say
+        data:
+          text: >-
+            {{ llm_response.get('response', {}).get('speech', {}).get('plain', {}).get('speech', '')
+              or "Pour demain, pense à vérifier les prévisions avant de partir. Bonne soirée !" }}
+
     mode: single
