@@ -133,23 +133,23 @@ rfid_unassign # Désassigne un tag RFID : rfid_unassign?tag=ID
 clear_rfid # Efface tous les tags RFID : clear_rfid
 
 # ==========================================
-# SNAPSHOTS (Sauvegardes d'état)
+# Snapshot (sauvegarde)
 # ==========================================
 
-snapshot # Prend un snapshot de l'état actuel : snapshot
+snapshot # Fais une sauvegarde 
 snapshot_ftp # Transfert un snapshot par FTP : snapshot_ftp
 snapshot_get # Récupère un snapshot : snapshot_get?id=ID
 snapshot_list # Liste tous les snapshots : snapshot_list
 snapshot_view # Affiche un snapshot : snapshot_view?id=ID
-save_snapshot # Sauvegarde manuellement l'état : save_snapshot
-clear_snapshots # Efface tous les snapshots : clear_snapshots
+save_snapshot # Sauvegarde le snapshot : save_snapshot
+clear_snapshots # Efface tous le snapshot : clear_snapshots
 
 # ==========================================
 # SYSTÈME ET ADMINISTRATION
 # ==========================================
 
 status # Affiche le statut complet du Karotz : status (retourne JSON avec version, sleep, led_color, etc.)
-check_health # Vérifie la santé du système : check_health
+check_health # Vérifie si le karotz est allumé : check_health
 health_check_config # Vérifie la configuration de santé : health_check_config
 info.sh # Affiche les informations système : info.sh
 get_free_space # Récupère l'espace libre : get_free_space
@@ -163,15 +163,15 @@ start_ok # Vérification du démarrage : start_ok
 # COMMANDES ET SCRIPTS
 # ==========================================
 
-cmd # Exécute une commande système : cmd?command=CMD (attention : sécurité)
-cmdlist # Liste les commandes disponibles : cmdlist
-replay_last_action # Rejoue la dernière action exécutée : replay_last_action
+cmd # Exécute une commande système : cmd?cmd=CMD (attention : sécurité)
+cmdlist # Liste des commandes disponibles pour le controle audio
+replay_last_action # Rejoue la dernière action exécutée (HomeRabbit only) : replay_last_action
 display_cache # Affiche le cache de l'affichage : display_cache
 clear_cache # Efface le cache du système : clear_cache
 reset_install_flag # Réinitialise le flag d'installation : reset_install_flag
 
 # ==========================================
-# INSTALLATION DES APPLICATIONS
+# INSTALLATION DES APPLICATIONS (OpenKarotz web install)
 # ==========================================
 
 apps.clock.install # Installe l'application horloge : apps.clock.install
@@ -184,12 +184,12 @@ apps_list # Liste toutes les applications installées : apps_list
 # PACKAGES OPENKAROTZ
 # ==========================================
 
-package-enablessh.sh # Active l'accès SSH : package-enablessh.sh
+package-enablessh.sh # Active l'accès SSH (HomeRabbit actif by default): package-enablessh.sh
 package-openkarotz.sh # Installe/configure OpenKarotz : package-openkarotz.sh
 package-reset.sh # Réinitialise le package OpenKarotz : package-reset.sh
 package-run.sh # Exécute le package OpenKarotz : package-run.sh
 package-showlog.sh # Affiche les logs du package : package-showlog.sh
-package-timebutton.sh # Configure le bouton temporel : package-timebutton.sh
+package-timebutton.sh # Configure le bouton temporel (HomeRabbit actif by default) : package-timebutton.sh
 package-update-installpage.sh # Met à jour la page d'installation : package-update-installpage.sh
 
 # ==========================================
@@ -241,7 +241,7 @@ url.inc # Include pour la gestion des URLs
 webcam # Prend une photo avec la webcam : webcam (retourne une image)
 
 # ==========================================
-# SCRIPT SHELL
+# SCRIPT SHELL (HomeRabbit only)
 # ==========================================
 
 karotz_last_action.sh # Script shell : récupère la dernière action du Karotz (appelé par le système)
