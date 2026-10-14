@@ -1,0 +1,55 @@
+#!/bin/bash
+
+source /www/cgi-bin/setup.inc
+source /www/cgi-bin/url.inc
+source /www/cgi-bin/utils.inc
+source /www/cgi-bin/leds.inc
+source /www/cgi-bin/ears.inc
+
+ReadUrlParam
+
+H=${URLParam[hour]}
+ 
+CheckMandatoryDirectory  "$CNF_DATADIR/Apps"
+CheckMandatoryDirectory  "$CNF_DATADIR/Apps/Clock"
+CheckMandatoryDirectory  "$CNF_DATADIR/Apps/Clock/Data" 
+        
+if [ -e "$CNF_DATADIR/Run/karotz.sleep" ]; then
+   DATA='{"return":"1","msg":"Unable to perform action, rabbit is sleeping."}'
+   SendResponse "$DATA"
+   exit 0
+fi
+
+Log "[APPS][CLOCK]" "Clock Called"
+
+if [ "$H" == "" ]; then
+  D=$(date +%H)
+  HOUR=$(( 10#$D ))
+else
+  HOUR=$H
+fi
+
+MIN=1  
+if [ ! -d "$CNF_DATADIR/Apps/Clock/Data/$HOUR" ]; then
+   DATA='{"return":"1","msg":"No sound for this time."}'
+   SendResponse "$DATA"
+   exit 0
+fi
+       find  $CNF_DATADIR/Apps/Clock/Data/$HOUR -name "*.mp3" > $CNF_DATADIR/Tmp/tmplst
+       NB=$(cat $CNF_DATADIR/Tmp/tmplst | wc -l)
+       r=$RANDOM
+       if [ $NB -gt 0 ]; then
+          SOUND=$[($RANDOM % ($[$NB - $MIN] + 1)) + $MIN] >>/dev/null 2>>/dev/null
+          if [ -f "$CNF_DATADIR/Apps/Clock/Data/$HOUR/$SOUND.mp3" ]; then
+            Log "[APPS][CLOCK]"  "Playing sound : "$CNF_DATADIR/Apps/Clock/Data/$HOUR/$SOUND.mp3
+            PlaySound  $CNF_DATADIR/Apps/Clock/Data/$HOUR/$SOUND.mp3 1
+            EarsReset
+            DATA='{"return":"0","hour":"'$HOUR'"}'
+       else
+	    DATA='{"return":"1","msg":"No sound for this time."}'       
+       fi
+       else
+          DATA='{"return":"1","hour":"'$HOUR'"}'
+       fi
+
+SendResponse "$DATA"

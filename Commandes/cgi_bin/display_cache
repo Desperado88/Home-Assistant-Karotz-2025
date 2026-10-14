@@ -1,0 +1,7 @@
+#!/bin/bash
+
+source /usr/www/cgi-bin/utils.inc
+
+COUNT=$(ls -1 /tmp/*.mp3 2>/dev/null | wc -l)
+DATA='{ "count":"'${COUNT}'", "return":"0" }'
+SendResponse "${DATA}"

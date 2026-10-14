@@ -1,0 +1,33 @@
+#!/bin/bash
+
+source /www/cgi-bin/setup.inc
+source /www/cgi-bin/url.inc
+source /www/cgi-bin/utils.inc
+
+KillProcess
+ReadUrlParam
+
+
+TAG_ID=${URLParam[tag]}
+
+if [ "$TAG_ID" == "" ]; then 
+   DATA='{"return":"1","msg":"Missing mandatory parameters."}'
+   SendResponse "$DATA"
+   exit 0
+fi
+
+if [ ! -e "$CNF_DATADIR/Rfid/$TAG_ID.rfid" ]; then
+   DATA='{"return":"1","msg":"Tag ID not found."}'
+   SendResponse "$DATA"
+   exit 0
+fi 
+      
+# Clear existing information
+rm -f $CNF_DATADIR/Rfid/$TAG_ID.cmd 
+rm -f $CNF_DATADIR/Rfid/$TAG_ID.var
+rm -f $CNF_DATADIR/Rfid/$TAG_ID.action 
+rm -f $CNF_DATADIR/Rfid/$TAG_ID.name 
+
+DATA='{"return":"0","tag":"'$TAG_ID'"}'   
+SendResponse "$DATA"
+

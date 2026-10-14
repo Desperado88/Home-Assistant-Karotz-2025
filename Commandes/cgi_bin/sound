@@ -1,0 +1,46 @@
+#!/bin/bash
+
+source /www/cgi-bin/setup.inc
+source /www/cgi-bin/url.inc
+source /www/cgi-bin/utils.inc
+
+ReadUrlParam
+
+if [ ! -e "$CNF_DATADIR/Run/karotz.sleep" ]; then
+    SOUND_ID=${URLParam[id]}
+    SOUND_URL=${URLParam[url]}
+   
+    if [ ! "$SOUND_ID" = "" ] && [ ! "$SOUND_URL" == "" ]; then
+        DATA='{"return": "1", "msg": "You cannot use ID and URL parameters at the same time."}'
+        SendResponse "$DATA"
+        exit 0
+    fi
+    
+    if [ "$SOUND_ID" == "" ] && [ "$SOUND_URL" == "" ]; then
+        DATA='{"return": "1", "msg": "No sound to play."}'
+        SendResponse "$DATA"
+        exit 0
+    fi
+   
+    if [ ! "$SOUND_ID" = "" ]; then
+        if [ -e  "$CNF_DATADIR/Sounds/${SOUND_ID}.mp3" ]; then
+            KillProcess SOUNDS
+            PlaySound $CNF_DATADIR/Sounds/${SOUND_ID}.mp3 
+            Log "[SOUNDS]" "Playing sound ${SOUND_ID}" 
+            DATA='{"return": "0"}' 
+        else
+            Log "[SOUNDS]"  "Unable to find ${SOUND_ID}" 1
+            DATA='{"return": "1", "msg": "Unable to find sound : '${SOUND_ID}'"}'
+        fi
+    else 
+        Log "[SOUNDS]" "Playing sound $SOUND_URL"
+        KillProcess SOUNDS
+        sleep 1
+        PlaySoundEx $SOUND_URL 1
+        DATA='{"return": "'$?'", "url": "'$SOUND_URL'"}'
+    fi   
+else
+    DATA='{"return": "1", "msg": "Unable to perform action, rabbit is sleeping."}'
+fi
+
+SendResponse "$DATA"

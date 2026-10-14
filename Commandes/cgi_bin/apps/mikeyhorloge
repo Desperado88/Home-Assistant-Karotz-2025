@@ -1,0 +1,16 @@
+#!/bin/bash
+source /www/cgi-bin/setup.inc
+source /www/cgi-bin/url.inc
+source /www/cgi-bin/utils.inc
+
+if [ ! -e "$CNF_DATADIR/Run/karotz.sleep" ]; then
+    Log "[MIKEY_CLOCK]"  "Lecture de l'heure"
+    KillProcess SOUNDS
+    wget http://karotz.mikey-life.com/OpenKarotzHorloge/horloge.php -O /tmp/mikeyhorloge.mp3
+    /usr/bin/madplay -Q /tmp/mikeyhorloge.mp3 >/dev/null 2>>/dev/null
+    DATA='{"return":"'$?'"}'
+else
+    DATA='{"return":"1","msg":"Unable to perform action, rabbit is sleeping."}'
+fi
+
+SendResponse "$DATA"

@@ -1,0 +1,503 @@
+# ==========================================
+# AUTOMATISATION KAROTZ VIVANT
+# Active de 7h05 à 21h45 avec actions aléatoires
+# Utilise les commandes REST du Karotz (karotz_dev_*)
+# ==========================================
+
+input_boolean:
+  karotz_dev_life:
+    name: Karotz Dev Mode Vie
+    initial: true
+    icon: mdi:rabbit
+
+# ==========================================
+# AUTOMATISATIONS
+# ==========================================
+
+automation:
+  # Démarrage du mode vie à 7h05
+  - id: karotz_dev_life_start
+    alias: "Karotz - Mode vie ON"
+    trigger:
+      - trigger: time
+        at: "07:05:00"
+    condition:
+      - condition: state
+        entity_id: input_boolean.karotz_dev_life
+        state: "on"
+    action:
+      - action: rest_command.karotz_dev_wakeup
+      - delay: "00:00:02"
+      - action: rest_command.karotz_dev_say
+        data:
+          text: "Bonjour ! Je me réveille ! Prêt pour une nouvelle journée !"
+      - delay: "00:00:03"
+      - action: automation.turn_on
+        target:
+          entity_id: automation.karotz_dev_random_actions
+
+  # Arrêt du mode vie à 21h45
+  - id: karotz_dev_life_end
+    alias: "Karotz - Mode vie OFF"
+    trigger:
+      - trigger: time
+        at: "21:45:00"
+    condition:
+      - condition: state
+        entity_id: input_boolean.karotz_dev_life
+        state: "on"
+    action:
+      - action: rest_command.karotz_dev_say
+        data:
+          text: "Bonne nuit ! Je vais me reposer. À demain !"
+      - delay: "00:00:03"
+      - action: rest_command.karotz_dev_sleep
+      - action: automation.turn_off
+        target:
+          entity_id: automation.karotz_dev_random_actions
+
+  # Actions aléatoires principales (toutes les 20-40 minutes)
+  - id: karotz_dev_random_actions
+    alias: "Karotz - Actions aléatoires"
+    trigger:
+      - trigger: time_pattern
+        minutes: "/20"
+    condition:
+      - condition: time
+        after: "07:00:00"
+        before: "21:45:00"
+      - condition: state
+        entity_id: input_boolean.karotz_dev_life
+        state: "on"
+      - condition: state
+        entity_id: sensor.karotz_dev_status
+        attribute: sleep
+        state: "0"
+      - condition: template
+        value_template: "{{ (range(1,4) | random) == 1 }}" # 33% de chance
+    action:
+      - action: script.karotz_dev_random_action
+
+  # Actions aux heures pleines
+  - id: karotz_dev_hourly_action
+    alias: "Karotz - Action horaire"
+    trigger:
+      - trigger: time_pattern
+        minutes: 0
+    condition:
+      - condition: time
+        after: "07:00:00"
+        before: "21:45:00"
+      - condition: state
+        entity_id: input_boolean.karotz_dev_life
+        state: "on"
+      - condition: state
+        entity_id: sensor.karotz_dev_status
+        attribute: sleep
+        state: "0"
+    action:
+      - action: script.karotz_dev_announce_time
+      - delay: "00:00:05"
+      - action: script.karotz_dev_random_action
+
+  # Pause déjeuner
+  - id: karotz_dev_lunch_break
+    alias: "Karotz - Pause déjeuner"
+    trigger:
+      - trigger: time
+        at: "12:30:00"
+    condition:
+      - condition: state
+        entity_id: input_boolean.karotz_dev_life
+        state: "on"
+    action:
+      - action: rest_command.karotz_dev_say
+        data:
+          text: "C'est l'heure du déjeuner ! Bon appétit à tous !"
+      - delay: "00:00:05"
+      - action: script.karotz_dev_ear_dance
+
+  # Retour de pause déjeuner
+  - id: karotz_dev_back_from_lunch
+    alias: "Karotz - Retour déjeuner"
+    trigger:
+      - trigger: time
+        at: "13:30:00"
+    condition:
+      - condition: state
+        entity_id: input_boolean.karotz_dev_life
+        state: "on"
+    action:
+      - action: rest_command.karotz_dev_say
+        data:
+          text: "J'espère que vous avez bien mangé ! On reprend !"
+      - delay: "00:00:03"
+      - action: script.karotz_dev_stretch
+
+# ==========================================
+# SCRIPTS - ACTIONS PRINCIPALES
+# ==========================================
+
+script:
+  # ==========================================
+  # Action aléatoire principale
+  # ==========================================
+  karotz_dev_random_action:
+    alias: "Karotz - Action aléatoire"
+    sequence:
+      - variables:
+          action_type: "{{ range(1, 13) | random }}"
+      - choose:
+          # 1. Raconter une blague
+          - conditions:
+              - condition: template
+                value_template: "{{ action_type == 1 }}"
+            sequence:
+              - action: script.karotz_dev_tell_joke
+          
+          # 2. Annoncer l'heure
+          - conditions:
+              - condition: template
+                value_template: "{{ action_type == 2 }}"
+            sequence:
+              - action: script.karotz_dev_announce_time
+          
+          # 3. Danse des oreilles
+          - conditions:
+              - condition: template
+                value_template: "{{ action_type == 3 }}"
+            sequence:
+              - action: script.karotz_dev_ear_dance
+          
+          # 4. Spectacle de lumières
+          - conditions:
+              - condition: template
+                value_template: "{{ action_type == 4 }}"
+            sequence:
+              - action: script.karotz_dev_light_show
+          
+          # 5. Tai Chi
+          - conditions:
+              - condition: template
+                value_template: "{{ action_type == 5 }}"
+            sequence:
+              - action: script.karotz_dev_tai_chi_show
+          
+          # 6. Son aléatoire
+          - conditions:
+              - condition: template
+                value_template: "{{ action_type == 6 }}"
+            sequence:
+              - action: script.karotz_dev_random_sound
+          
+          # 7. Étirement
+          - conditions:
+              - condition: template
+                value_template: "{{ action_type == 7 }}"
+            sequence:
+              - action: script.karotz_dev_stretch
+          
+          # 8. Bâillement
+          - conditions:
+              - condition: template
+                value_template: "{{ action_type == 8 }}"
+            sequence:
+              - action: script.karotz_dev_yawn
+          
+          # 9. Oreilles aléatoires
+          - conditions:
+              - condition: template
+                value_template: "{{ action_type == 9 }}"
+            sequence:
+              - action: rest_command.karotz_dev_ears_random
+              - delay: "00:00:03"
+              - action: rest_command.karotz_dev_ears_reset
+          
+          # 10. Changement de couleur
+          - conditions:
+              - condition: template
+                value_template: "{{ action_type == 10 }}"
+            sequence:
+              - action: script.karotz_dev_random_color
+          
+          # 11. Action surprise (combinée)
+          - conditions:
+              - condition: template
+                value_template: "{{ action_type == 11 }}"
+            sequence:
+              - action: script.karotz_dev_surprise
+          
+          # 12. Dire quelque chose
+          - conditions:
+              - condition: template
+                value_template: "{{ action_type == 12 }}"
+            sequence:
+              - action: script.karotz_dev_random_message
+
+  # ==========================================
+  # Actions individuelles
+  # ==========================================
+  
+  # Raconter une blague
+  karotz_dev_tell_joke:
+    alias: "Karotz - Raconter une blague"
+    sequence:
+      - action: rest_command.karotz_dev_ears
+        data:
+          left: 0
+          right: 0
+      - delay: "00:00:01"
+      - action: rest_command.karotz_dev_say
+        data_template:
+          text: >
+            {% set jokes = [
+              "Pourquoi les plongeurs plongent-ils toujours en arrière et jamais en avant ? Parce que sinon ils tombent dans le bateau !",
+              "Que dit un escargot quand il croise une limace ? Regarde un nudiste !",
+              "Qu'est-ce qui est jaune et qui attend ? Jonathan !",
+              "Pourquoi les poissons n'aiment pas jouer au tennis ? Parce qu'ils ont peur du filet !",
+              "Comment appelle-t-on un chat tombé dans un pot de peinture le jour de Noël ? Un chat-pitaine !",
+              "Que dit un informaticien quand il se noie ? F1 F1 !",
+              "Comment fait-on pour allumer un barbecue breton ? On utilise des breizh !",
+              "Qu'est-ce qui est transparent et qui sent la carotte ? Un pet de lapin !",
+              "Pourquoi Mickey Mouse ? Parce que Mario Bros !",
+              "Qu'est-ce qui est pire que de trouver un ver dans sa pomme ? Trouver la moitié d'un ver !",
+              "Pourquoi les livres ont-ils toujours chaud ? Parce qu'ils ont toujours une couverture !",
+              "Comment appelle-t-on un faux spaghetti ? Un impasta !"
+            ] %}
+            {{ jokes | random }}
+      - delay: "00:00:02"
+      - action: rest_command.karotz_dev_ears
+        data:
+          left: 8
+          right: 8
+
+  # Annoncer l'heure
+  karotz_dev_announce_time:
+    alias: "Karotz - Annoncer l'heure"
+    sequence:
+      - action: rest_command.karotz_dev_ears
+        data:
+          left: 16
+          right: 16
+      - delay: "00:00:01"
+      - action: rest_command.karotz_dev_say
+        data_template:
+          text: "Il est {{ now().strftime('%H heures %M') }}"
+      - delay: "00:00:02"
+      - action: rest_command.karotz_dev_ears
+        data:
+          left: 8
+          right: 8
+
+  # Danse des oreilles
+  karotz_dev_ear_dance:
+    alias: "Karotz - Danse des oreilles"
+    sequence:
+      - action: rest_command.karotz_dev_say
+        data:
+          text: "Regardez ça !"
+      - delay: "00:00:02"
+      - repeat:
+          count: 8
+          sequence:
+            - action: rest_command.karotz_dev_ears
+              data_template:
+                left: "{{ range(0, 17) | random }}"
+                right: "{{ range(0, 17) | random }}"
+            - delay: "00:00:00.3"
+      - action: rest_command.karotz_dev_ears
+        data:
+          left: 8
+          right: 8
+
+  # Spectacle de lumières
+  karotz_dev_light_show:
+    alias: "Karotz - Spectacle de lumières"
+    sequence:
+      - action: rest_command.karotz_dev_say
+        data:
+          text: "Spectacle de lumières !"
+      - variables:
+          colors: ["ff0000", "00ff00", "0000ff", "ffff00", "ff00ff", "00ffff", "ffffff"]
+          color1: "{{ colors | random }}"
+          color2: "{{ colors | random }}"
+      - action: input_text.set_value
+        data:
+          entity_id: input_text.karotz_dev_color_1
+          value: "{{ color1 }}"
+      - action: input_text.set_value
+        data:
+          entity_id: input_text.karotz_dev_color_2
+          value: "{{ color2 }}"
+      - action: input_number.set_value
+        data:
+          entity_id: input_number.karotz_dev_light_speed
+          value: 500
+      - action: rest_command.karotz_dev_light
+        data: {}
+      - delay: "00:00:03"
+      - action: input_number.set_value
+        data:
+          entity_id: input_number.karotz_dev_light_speed
+          value: 1000
+      - action: rest_command.karotz_dev_light
+        data: {}
+      - delay: "00:00:03"
+      - action: input_number.set_value
+        data:
+          entity_id: input_number.karotz_dev_light_speed
+          value: 1500
+      - action: rest_command.karotz_dev_light
+        data: {}
+      - delay: "00:00:03"
+      - action: rest_command.karotz_dev_light_fixed
+        data: {}
+
+  # Tai Chi
+  karotz_dev_tai_chi_show:
+    alias: "Karotz - Tai Chi"
+    sequence:
+      - action: rest_command.karotz_dev_say
+        data:
+          text: "Concentration..."
+      - delay: "00:00:02"
+      - action: rest_command.karotz_dev_tai_chi
+      - delay: "00:00:05"
+      - action: rest_command.karotz_dev_say
+        data:
+          text: "C'est bon pour le corps et l'esprit !"
+
+  # Son aléatoire
+  karotz_dev_random_sound:
+    alias: "Karotz - Son aléatoire"
+    sequence:
+      - variables:
+          sounds: ["bip1", "flush", "jet1", "laser_15", "ready", "saut1", "start", "twang_01", "twang_04"]
+          sound_id: "{{ sounds | random }}"
+      - action: rest_command.karotz_dev_sound
+        data_template:
+          id: "{{ sound_id }}"
+
+  # Étirement
+  karotz_dev_stretch:
+    alias: "Karotz - S'étirer"
+    sequence:
+      - action: rest_command.karotz_dev_say
+        data_template:
+          text: "{{ ['Allez un petit étirement !', 'Il est temps de se dégourdir !', 'Un peu d\'exercice !', 'Je me réveille les muscles !'] | random }}"
+      - delay: "00:00:02"
+      - action: rest_command.karotz_dev_ears
+        data:
+          left: 0
+          right: 16
+      - delay: "00:00:01"
+      - action: rest_command.karotz_dev_ears
+        data:
+          left: 16
+          right: 0
+      - delay: "00:00:01"
+      - action: rest_command.karotz_dev_ears
+        data:
+          left: 8
+          right: 8
+      - delay: "00:00:01"
+      - action: rest_command.karotz_dev_say
+        data:
+          text: "Ahhh, c'est bon !"
+
+  # Bâillement
+  karotz_dev_yawn:
+    alias: "Karotz - Bâiller"
+    sequence:
+      - action: rest_command.karotz_dev_say
+        data_template:
+          text: "{{ ['Haaaaa petit bâillement !', 'Je suis un peu fatigué', 'Hooooo excusez-moi', 'Il est tard pour moi !'] | random }}"
+      - action: rest_command.karotz_dev_ears
+        data:
+          left: 0
+          right: 0
+      - delay: "00:00:02"
+      - action: rest_command.karotz_dev_ears
+        data:
+          left: 16
+          right: 16
+      - delay: "00:00:01"
+      - action: rest_command.karotz_dev_ears
+        data:
+          left: 8
+          right: 8
+
+  # Couleur aléatoire
+  karotz_dev_random_color:
+    alias: "Karotz - Couleur aléatoire"
+    sequence:
+      - action: rest_command.karotz_dev_say
+        data:
+          text: "Changement de couleur !"
+      - variables:
+          colors: ["ff0000", "00ff00", "0000ff", "ffff00", "ff00ff", "00ffff", "ff8800", "ff0088", "8800ff"]
+          new_color: "{{ colors | random }}"
+      - action: input_text.set_value
+        data:
+          entity_id: input_text.karotz_dev_color_1
+          value: "{{ new_color }}"
+      - action: input_text.set_value
+        data:
+          entity_id: input_text.karotz_dev_color_2
+          value: "000000"
+      - action: rest_command.karotz_dev_light_fixed
+        data: {}
+      - delay: "00:00:03"
+      - action: rest_command.karotz_dev_light
+        data: {}
+
+  # Action surprise (combinée)
+  karotz_dev_surprise:
+    alias: "Karotz - Surprise"
+    sequence:
+      - action: rest_command.karotz_dev_say
+        data:
+          text: "Surprise !"
+      - action: rest_command.karotz_dev_ears_random
+      - delay: "00:00:02"
+      - action: rest_command.karotz_dev_tai_chi
+      - delay: "00:00:03"
+      - action: rest_command.karotz_dev_ears
+        data:
+          left: 8
+          right: 8
+
+  # Message aléatoire
+  karotz_dev_random_message:
+    alias: "Karotz - Message aléatoire"
+    sequence:
+      - variables:
+          messages: [
+            "Bonjour ! Comment ça va aujourd'hui ?",
+            "Il fait beau aujourd'hui, non ?",
+            "Je suis content de vous voir !",
+            "N'oubliez pas de boire de l'eau !",
+            "La vie est belle !",
+            "Un petit câlin ?",
+            "Je surveille la maison !",
+            "Tout va bien ici !",
+            "Pensez à aérer la pièce !",
+            "Je suis votre compagnon préféré !",
+            "Que la force soit avec vous !",
+            "Avez-vous pris votre café ce matin ?",
+            "Je kiffe ma vie de lapin robot !",
+            "Home Assistant, c'est génial !"
+          ]
+      - action: rest_command.karotz_dev_say
+        data_template:
+          text: "{{ messages | random }}"
+      - delay: "00:00:02"
+      - action: rest_command.karotz_dev_ears
+        data_template:
+          left: "{{ range(0, 17) | random }}"
+          right: "{{ range(0, 17) | random }}"
+      - delay: "00:00:02"
+      - action: rest_command.karotz_dev_ears
+        data:
+          left: 8
+          right: 8

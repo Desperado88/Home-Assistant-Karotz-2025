@@ -1,0 +1,24 @@
+#!/bin/bash
+
+source /www/cgi-bin/setup.inc
+source /www/cgi-bin/url.inc
+source /www/cgi-bin/utils.inc
+source /www/cgi-bin/leds.inc
+source /www/cgi-bin/ears.inc
+
+KillProcess
+
+if [ ! -e "$CNF_DATADIR/Run/karotz.sleep" ]; then  
+     Log  "Going to sleep"
+     EarsReset
+     Leds 00FF66 00FF00 1
+     EarsMove 5 5 50
+     Leds 000000
+     echo  "1" > $CNF_DATADIR/Run/karotz.sleep
+     date +%s  > $CNF_DATADIR/Run/karotz.time.sleep
+     DATA='{"return":"0"}'
+else
+     DATA='{"return":"1","msg":"Unable to perform action, rabbit is already sleeping."}'
+fi
+
+SendResponse "$DATA"

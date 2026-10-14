@@ -1,0 +1,24 @@
+#!/bin/bash
+
+source /www/cgi-bin/setup.inc
+source /www/cgi-bin/url.inc
+source /www/cgi-bin/utils.inc
+source /www/cgi-bin/leds.inc
+source /www/cgi-bin/ears.inc
+
+ReadUrlParam
+
+CHK=${URLParam[enable]}
+CheckMandatoryParameter "$CHK" enable
+if [ "$CHK" == "1" ]; then
+	echo "1" > "$CNF_DATADIR/Run/karotz.check"
+	Log "[SYSTEM]"  "Network check enabled"
+	DATA='{"return":"0","silent":"Network check enabled"}'
+else
+	rm -rf   /usr/openkarotz/Run/karotz.check
+	Log "[SYSTEM]"  "Network check disabled"
+	DATA='{"return":"0","msg":"Network check disable"}'
+fi
+
+SendResponse "$DATA"
+

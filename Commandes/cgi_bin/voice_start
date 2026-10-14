@@ -1,0 +1,26 @@
+#!/bin/bash
+
+source /usr/www/cgi-bin/setup.inc
+source /usr/www/cgi-bin/utils.inc
+source /usr/www/cgi-bin/leds.inc
+
+VOICE_FILE="/tmp/karotz_voice.raw"
+PID_FILE="$CNF_DATADIR/Run/voice.record.pid"
+CMD_FILE="$CNF_DATADIR/Run/voice.recorder_cmd"
+DEFAULT_REC_CMD="/usr/scripts/k2k/rec > $VOICE_FILE"
+
+KillProcess SOUNDS
+Leds 00FFFF 000000 1 1 300
+rm -f "$VOICE_FILE"
+
+if [ -f "$CMD_FILE" ]; then
+    REC_CMD=$(cat "$CMD_FILE")
+else
+    REC_CMD="$DEFAULT_REC_CMD"
+fi
+
+sh -c "$REC_CMD" >/tmp/karotz_voice_record.log 2>&1 &
+echo "$!" > "$PID_FILE"
+
+DATA='{"return":"0","msg":"voice recording started"}'
+SendResponse "$DATA"
