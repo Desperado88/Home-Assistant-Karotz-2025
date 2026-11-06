@@ -14,8 +14,9 @@ automation:
 
     actions:
       - action: input_number.set_value
-        data:
+        target:
           entity_id: input_number.karotz_dev_ear_left
+        data:
           value: >
             {% set rain = states('sensor.treillieres_rain_chance') | float(0) %}
             {% if rain < 5 %}
@@ -27,8 +28,9 @@ automation:
             {% endif %}
 
       - action: input_number.set_value
-        data:
+        target:
           entity_id: input_number.karotz_dev_ear_right
+        data:
           value: >
             {% set rain = states('sensor.treillieres_rain_chance') | float(0) %}
             {% if rain < 5 %}
@@ -40,8 +42,9 @@ automation:
             {% endif %}
 
       - action: input_text.set_value
-        data:
+        target:
           entity_id: input_text.karotz_dev_color_1
+        data:
           value: >
             {% set temp = states('sensor.pac_atom_temp_ext') | float(20) %}
             {% if temp <= -10 %}ADD8E6
@@ -57,13 +60,15 @@ automation:
             {% endif %}
 
       - action: input_text.set_value
-        data:
+        target:
           entity_id: input_text.karotz_dev_color_2
+        data:
           value: "000000"
 
       - action: input_number.set_value
-        data:
+        target:
           entity_id: input_number.karotz_dev_light_speed
+        data:
           value: >
             {% set wind = states('sensor.weather_station_vitesse_moyenne_du_vent_km_h') | float(0) %}
             {% set result = 2000 - ((wind // 5) * 150) %}
@@ -130,8 +135,9 @@ automation:
     actions:
       # Oreille gauche selon le risque de pluie
       - action: input_number.set_value
-        data:
+        target:
           entity_id: input_number.karotz_dev_ear_left
+        data:
           value: >
             {% set pluie = state_attr('sensor.prevision_meteo_aujourd_hui', 'precipitation_probability') %}
             {% set pluie = pluie | float(0) if pluie not in [none, 'unavailable', 'unknown', '', 'n/a'] else 0 %}
@@ -145,8 +151,9 @@ automation:
 
       # Oreille droite selon le risque de pluie
       - action: input_number.set_value
-        data:
+        target:
           entity_id: input_number.karotz_dev_ear_right
+        data:
           value: >
             {% set pluie = state_attr('sensor.prevision_meteo_aujourd_hui', 'precipitation_probability') %}
             {% set pluie = pluie | float(0) if pluie not in [none, 'unavailable', 'unknown', '', 'n/a'] else 0 %}
@@ -160,8 +167,9 @@ automation:
 
       # Couleur de la LED selon la température maximale
       - action: input_text.set_value
-        data:
+        target:
           entity_id: input_text.karotz_dev_color_1
+        data:
           value: >
             {% set temp = state_attr('sensor.prevision_meteo_aujourd_hui', 'temperature') %}
             {% set temp = temp | float(20) if temp not in [none, 'unavailable', 'unknown', '', 'n/a'] else 20 %}
@@ -179,14 +187,16 @@ automation:
 
       # Couleur secondaire éteinte
       - action: input_text.set_value
-        data:
+        target:
           entity_id: input_text.karotz_dev_color_2
+        data:
           value: "000000"
 
       # Vitesse de clignotement selon le vent
       - action: input_number.set_value
-        data:
+        target:
           entity_id: input_number.karotz_dev_light_speed
+        data:
           value: >
             {% set wind = state_attr('sensor.prevision_meteo_aujourd_hui', 'wind_speed') %}
             {% set wind = wind | float(0) if wind not in [none, 'unavailable', 'unknown', '', 'n/a'] else 0 %}
